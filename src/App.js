@@ -72,7 +72,7 @@ function App() {
         })}
       </div>
 
-      <span>cloud storage</span>
+      <span>cloud storage test</span>
       
     </div>
   );
