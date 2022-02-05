@@ -30,12 +30,9 @@ function FirebaseRequests() {
     db.collection("values").onSnapshot((snap) => {
       let arr = [];
       snap.docs.forEach((doc) => {
-        var docData = {id: doc.id, value: doc.data() }
-          console.log(docData)
-          arr.push({id: doc.id, value: doc.data() })
+        arr.push({id: doc.id, value: doc.data() })
       })
       setDocuments(arr)
-      console.log(arr[0].id, arr[1].id)
     })
   }
 
