@@ -4,13 +4,15 @@ import { db, auth } from "./firebase"
 import { ref, set } from "firebase/database"
 import { useEffect, useState } from 'react';
 import FirebaseRequests from './components/FirebaseRequests';
+import StorageRequests from './components/StorageRequests';
 
 function App() {
   return (
     <div>
-      <span>firebase</span>
+      <h2>firebase</h2>
       <FirebaseRequests></FirebaseRequests>
-      <span>cloud storage test</span>
+      <h2>cloud storage test</h2>
+      <StorageRequests></StorageRequests>
     </div>
   );
 }

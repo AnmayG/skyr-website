@@ -1,7 +1,5 @@
-import logo from '../logo.svg';
 import '../App.css';
 import { db, auth } from "../firebase"
-import { ref, set } from "firebase/database"
 import { useEffect, useState } from 'react';
 
 function FirebaseRequests() {
@@ -57,22 +55,23 @@ function FirebaseRequests() {
     getAllDocuments()
   }
 
-
   useEffect(() => {
     textSnapshot()
+    getAllDocuments()
   }, []);
 
   return (
-    <div className="App">
+    <div className="storage-requests">
       <input onBlur={getValue} type='text' />
       <button type='button' onClick={buttonClicked}>Add</button>
       <div>
         <span>Values</span>
         {values.map(item => {
-          return (<div>
-              <p>Document: {item.id} Value: {item.value}</p>
-              <br></br>
-            </div>);
+          return (
+            <div key={item.id}>
+                <p>Document: {item.id} Value: {item.value}</p>
+            </div>
+            );
         })}
       </div>
     </div>
