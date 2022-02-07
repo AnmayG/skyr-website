@@ -1,10 +1,8 @@
-import logo from './logo.svg';
 import './App.css';
-import { db, auth } from "./firebase"
-import { ref, set } from "firebase/database"
 import { useEffect, useState } from 'react';
-import FirebaseRequests from './components/FirebaseRequests';
-import StorageRequests from './components/StorageRequests';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import AboutUs from './pages/AboutUs';
 
 function App() {
   return (
@@ -14,6 +12,12 @@ function App() {
     //   <h2>cloud storage test</h2>
     //   <StorageRequests></StorageRequests>
     // </div>
+    <BrowserRouter>
+      <Routes>
+        <Route exact path="/" element={<Home />} />
+        <Route exact path="/aboutus" element={<AboutUs />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
