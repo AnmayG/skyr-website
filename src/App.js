@@ -4,6 +4,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
 
+function HomeScreen({history}) {
+  return(
+    <Home history={history}/>
+  )
+}
+
 function App() {
   return (
     // <div>
@@ -14,7 +20,7 @@ function App() {
     // </div>
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<Home />} />
+        <Route exact path="/" element={<HomeScreen />} />
         <Route exact path="/aboutus" element={<AboutUs />} />
       </Routes>
     </BrowserRouter>

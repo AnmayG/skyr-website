@@ -1,10 +1,10 @@
 import React from "react";
-import NavigationBar from "../components/NavigationBar";
+import Navbar from '../components/Navbar'
 
 export default function AboutUs() {
     return(
         <div>
-            <NavigationBar />
+            <Navbar />
             <h1 className="text-3xl font-bold underline">
 
             </h1>

@@ -51,9 +51,9 @@ function StorageRequests() {
             });
     }
 
-    useEffect(() => {
-        handleFetch()
-    }, [])
+    // useEffect(() => {
+    //     handleFetch()
+    // }, [])
 
     return(
         <div className="storage-requests">
@@ -63,10 +63,15 @@ function StorageRequests() {
                 onChange={handleUpload}
                 />
             </label>
+            <br></br>
+            <button onClick={handleFetch}>Update Files</button>
+            {console.log("FOO ", downloadUrls)}
             {downloadUrls.map(item => {
                 return (
                     <div key={item.url}>
-                        <p>Name: {item.name} URL: {item.url}</p>
+                        { console.log("call:", downloadUrls) }
+                        <p>Name: {item.name}</p> 
+                        <p>URL: {item.url}</p>
                     </div>
                 );
             })}
