@@ -3,10 +3,17 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
+import Editor from './pages/Editor';
 
 function HomeScreen({history}) {
   return(
     <Home history={history}/>
+  )
+}
+
+function AboutUsScreen({history}) {
+  return(
+    <AboutUs history={history}/>
   )
 }
 
@@ -21,7 +28,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route exact path="/" element={<HomeScreen />} />
-        <Route exact path="/aboutus" element={<AboutUs />} />
+        <Route exact path="/aboutus" element={<AboutUsScreen />} />
+        <Route exact path="/editor" element={<Editor />} />
       </Routes>
     </BrowserRouter>
   );
