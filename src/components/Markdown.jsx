@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import testmd from '../test.md' // For testing purposes, simply change the fetch statement to import the test file instead
 
-const Markdown = () => {
+const Markdown = (downloadUrl) => {
+    const [markdown, setMarkdown] = useState("")
 
     function fetchFromDownloadURL(url) {
         console.log(url)
@@ -11,27 +14,9 @@ const Markdown = () => {
             // },
             // mode: "no-cors"
         })
-        .then((response) => response.blob())
-        .then((blob) => {
-            // Create blob link to download
-            const url = window.URL.createObjectURL(
-            new Blob([blob]),
-            );
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute(
-                'download',
-                `FileName.pdf`,
-            );
-    
-            // Append to html link element page
-            document.body.appendChild(link);
-    
-            // Start download
-            // link.click();
-    
-            // Clean up and remove the link
-            link.parentNode.removeChild(link);
+        .then((response) => response.text())
+        .then((text) => {
+            setMarkdown(text)
         })
         .catch((error) => {
             console.error(error)
@@ -39,10 +24,9 @@ const Markdown = () => {
     }
 
     return (
-        <div>
-            { console.log("here") }
-            { fetchFromDownloadURL('https://firebasestorage.googleapis.com/v0/b/skyrobotics-fc578.appspot.com/o/tutorials%2Ftutorial_3.md?alt=media&token=10dd258a-fd73-4d81-9801-cbbdd6408445') }
-            Test
+        <div className="m-2">
+            { fetchFromDownloadURL(downloadUrl.downloadUrl) }
+            <ReactMarkdown className="prose" children={markdown}/>
         </div>
     )
 }

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { isLabelWithInternallyDisabledControl } from '@testing-library/user-event/dist/utils';
 import { ref, listAll, getDownloadURL, getMetadata } from "firebase/storage";
 
-function StorageRequests() {
+function StorageRequests(setUrls) {
 
     const [downloadUrls, setDownloadUrls] = useState([]);
 
@@ -45,6 +45,7 @@ function StorageRequests() {
                 });
                 console.log(tempURLs)
                 setDownloadUrls(tempURLs)
+                setUrls(tempURLs)
             }).catch((error) => {
                 // Uh-oh, an error occurred!
                 console.error(error)

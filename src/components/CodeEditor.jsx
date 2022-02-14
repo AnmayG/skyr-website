@@ -9,19 +9,20 @@ export default function CodeEditor() {
     const [editorTheme, setEditorTheme] = useState("");
 
     return (
-        <div>
+        <div className="border-2">
             {/* Document information*/}
-            <div className='h-7 text-base'>
+            <div className='h-7 text-base border-2 border-black'>
                 work
             </div>
             <CodeMirror
                 value={tempCode}
                 autoFocus="true"
-                height='31rem'
-                className='h-100% outline outline-1 outline-black'
+                height='30.9rem'
+                
+                className='h-[31rem] border-2 border-black border-t-0'
                 extensions={[python()]}
                 onChange={(value, viewUpdate) => {
-                    console.log('value:', value);
+                    // console.log('value:', value);
                 }}
             />
         </div>
