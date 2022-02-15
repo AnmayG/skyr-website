@@ -3,13 +3,16 @@ import { StreamLanguage } from '@codemirror/stream-parser';
 import { python } from '@codemirror/lang-python';
 import { useState } from 'react';
 
-const tempCode = `print("Hello World!")`;
+const tempCode = `print("Hello World!")
+if True:
+\tprint("python test")
+print("if statement should have ran")`;
 
 export default function CodeEditor() {
     const [editorTheme, setEditorTheme] = useState("");
 
     return (
-        <div className="border-2">
+        <div className="">
             {/* Document information*/}
             <div className='h-7 text-base border-2 border-black'>
                 work
@@ -18,7 +21,6 @@ export default function CodeEditor() {
                 value={tempCode}
                 autoFocus="true"
                 height='30.9rem'
-                
                 className='h-[31rem] border-2 border-black border-t-0'
                 extensions={[python()]}
                 onChange={(value, viewUpdate) => {

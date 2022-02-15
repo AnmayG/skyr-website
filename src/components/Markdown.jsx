@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import testmd from '../test.md' // For testing purposes, simply change the fetch statement to import the test file instead
 
-const Markdown = (downloadUrl) => {
+const Markdown = (props) => {
     const [markdown, setMarkdown] = useState("")
 
-    function fetchFromDownloadURL(url) {
-        console.log(url)
-        fetch(url, {
+    async function fetchFromDownloadURL(url) {
+        await fetch(url, {
             method: 'GET',
             // headers: {
             //     "Access-Control-Allow-Origin": "*"
@@ -23,9 +22,18 @@ const Markdown = (downloadUrl) => {
         });
     }
 
+    useEffect(() => {
+        if(typeof props.downloadUrl !== "undefined") {
+            fetchFromDownloadURL(props.downloadUrl)
+        }
+        return () => {
+            setMarkdown("")
+        }
+    }, [])
+    
+
     return (
         <div className="m-2">
-            { fetchFromDownloadURL(downloadUrl.downloadUrl) }
             <ReactMarkdown className="prose" children={markdown}/>
         </div>
     )
