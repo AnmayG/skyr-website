@@ -1,15 +1,25 @@
 import CodeMirror from '@uiw/react-codemirror';
 import { StreamLanguage } from '@codemirror/stream-parser';
 import { python } from '@codemirror/lang-python';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const tempCode = `print("Hello World!")
-if True:
-\tprint("python test")
-print("if statement should have ran")`;
+const tempCode = `start()
+set_outputs(26, 19, 13)
+turn_off(26, 19, 13)
 
-export default function CodeEditor() {
+while True:
+  blink(26, 0.2)
+  blink(19, 0.2)
+  blink(13, 0.2)`;
+
+export default function CodeEditor(props) {
     const [editorTheme, setEditorTheme] = useState("");
+
+    useEffect(() => {
+      props.setChildData("from lib import *\n" + tempCode)
+      return () => {}
+    }, [])
+    
 
     return (
         <div className="">
@@ -24,7 +34,7 @@ export default function CodeEditor() {
                 className='h-[31rem] border-2 border-black border-t-0'
                 extensions={[python()]}
                 onChange={(value, viewUpdate) => {
-                    // console.log('value:', value);
+                    props.setChildData("from lib import *\n" + value)
                 }}
             />
         </div>

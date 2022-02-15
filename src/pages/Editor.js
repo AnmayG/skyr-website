@@ -14,47 +14,74 @@ const Editor = () => {
     const [ipAddress, setIpAddress]   = useState("http://10.0.0.237:9000")
     const [socket, setSocket]         = useState(null)
 
-    // LED vars
+    // LED vars for testing
     const [redOn, setRedOn]           = useState(false)
     const [blueOn, setBlueOn]         = useState(false)
     const [greenOn, setGreenOn]       = useState(false)
 
+    // CodeMirror state
+    const [codeString, setCodeString] = useState("")
+
     useEffect(() => {
         const newSocket = io(ipAddress, { transports : ['websocket'] });
         newSocket.on("connect", () => {
-            console.log("connected to " + ipAddress)
             setConnected(true)
+        })
+        newSocket.on("disconnect", () => {
+            setConnected(false)
         })
         setSocket(newSocket);
         return () => newSocket.close();
-    }, [setSocket]);
+    }, [setSocket, ipAddress]);
 
     function buttonEventSend(type) {
         if(!isConnected) {
             alert("Server disconnected")
         }
+        var red = redOn
+        var blue = blueOn
+        var green = greenOn
 
         // TODO: Fix this terrible code it sucks :(
         switch(type) {
             case "red":
                 setRedOn(!redOn)
+                red = !redOn
                 break;
             case "blue":
                 setBlueOn(!blueOn)
+                blue = !blueOn
                 break;
             case "green":
                 setGreenOn(!greenOn)
+                green = !greenOn
                 break;
         }
 
-        console.log(redOn, blueOn, greenOn)
+        socket.emit('led-toggle', {
+            r: red,
+            g: green,
+            b: blue,
+        });
+    }
+
+    function pushPythonCode() {
+        socket.emit("python-push", {
+            code: codeString,
+        })
+    }
+
+    function disconnect() {
+        socket.emit("python-kill", {
+            command: "stop",
+        })
     }
 
     return (
         <div className=''>
             <Navbar />
             <div className="w-2/3 inline-block align-top m-0 border-black border-0">
-                <CodeEditor />
+                <CodeEditor setChildData={setCodeString}/>
             </div>
             <div className='h-full w-1/3 inline-block m-0'>
                 <div className='h-7 text-base w-full border-2 border-l-0 border-black'>
@@ -66,15 +93,26 @@ const Editor = () => {
                 </div>
             </div>
             <div className='w-[90%] border-2 border-black inline-block align-top p-[10px]'>
-                <p className="">RGB LED IoT Appliation</p>
                 <div className="">
-                    <div className="bg-red-500 text-center" onClick={() => {buttonEventSend("red")}}>Red</div>
-                    <div className="bg-green-500 text-center" onClick={() => {buttonEventSend("blue")}}>Green</div>
-                    <div className="bg-blue-500 text-center" onClick={() => {buttonEventSend("green")}}>Blue</div>
+                    <div className="bg-red-500 text-center m-2" onClick={() => {buttonEventSend("red")}}>Red</div>
+                    <div className="bg-green-500 text-center m-2" onClick={() => {buttonEventSend("green")}}>Green</div>
+                    <div className="bg-blue-500 text-center m-2" onClick={() => {buttonEventSend("blue")}}>Blue</div>
                 </div>
             </div>
-            <div className='w-[10%] border-2 border-black border-l-0 inline-block align-top p-[10px]'>
-                Here2
+            <div className='w-[10%] border-2 border-black border-l-0 inline-block align-top p-[10px] overflow-auto h-[128px]'>
+                <input type="text"
+                onKeyUp={(e) => {
+                    if (e.key === 'Enter') {
+                        setIpAddress("http://" + e.target.value + ":9000")
+                    }
+                }}
+                placeholder={ipAddress}/>
+                <div>Joined: {isConnected.toString()}</div>
+                <div className='bg-blue-200 text-center m-2 rounded-full' onClick={pushPythonCode}>Push</div>
+                <div className='bg-red-200 text-center m-2 rounded-full' onClick={() => {
+                    console.log("here")
+                    disconnect()
+                }}>Stop</div>
             </div>
         </div>
     )

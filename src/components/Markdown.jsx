@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkToc from 'remark-toc';
 import testmd from '../test.md' // For testing purposes, simply change the fetch statement to import the test file instead
 
 const Markdown = (props) => {
@@ -34,7 +35,7 @@ const Markdown = (props) => {
 
     return (
         <div className="m-2">
-            <ReactMarkdown className="prose" children={markdown}/>
+            <ReactMarkdown className="prose" children={markdown} remarkPlugins={[remarkToc]}/>
         </div>
     )
 }
