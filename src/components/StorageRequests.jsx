@@ -2,7 +2,7 @@ import { db, auth, storage } from '../firebase'
 import { useEffect, useState } from 'react'
 import { ref, listAll, getDownloadURL, getMetadata } from "firebase/storage";
 
-function StorageRequests(urls) {
+function StorageRequests(props) {
 
     const [downloadUrls, setDownloadUrls] = useState([]);
 
@@ -28,7 +28,6 @@ function StorageRequests(urls) {
 
     async function handleFetch() {
         console.log("Start fetch");
-        console.log("props: " + urls)
         const listRef = await ref(storage, 'tutorials');
         console.log(listRef)
         await listAll(listRef)
@@ -45,7 +44,7 @@ function StorageRequests(urls) {
                     })
                 }
                 setDownloadUrls(tempURLs)
-
+                props.setChildData(tempURLs[0])
             }).catch((error) => {
                 // Uh-oh, an error occurred!
                 console.error(error)

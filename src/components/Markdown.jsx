@@ -30,7 +30,7 @@ const Markdown = (props) => {
         return () => {
             setMarkdown("")
         }
-    }, [])
+    }, [props.downloadUrl])
     
 
     return (

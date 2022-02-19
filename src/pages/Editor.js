@@ -7,7 +7,7 @@ import io from 'socket.io-client'
 
 const Editor = () => {
     // Markdown state
-    const [urls, setUrls]             = useState([])
+    const [url, setUrl] = useState("https://firebasestorage.googleapis.com/v0/b/skyrobotics-fc578.appspot.com/o/tutorials%2Ftest.md?alt=media&token=cd1f6cdd-e17c-47c3-bcc9-30a853b535a9")
     
     // Connection state
     const [isConnected, setConnected] = useState(false)
@@ -30,6 +30,9 @@ const Editor = () => {
         newSocket.on("disconnect", () => {
             setConnected(false)
         })
+
+        newSocket.on("program-output")
+
         setSocket(newSocket);
         return () => newSocket.close();
     }, [setSocket, ipAddress]);
@@ -66,12 +69,16 @@ const Editor = () => {
     }
 
     function pushPythonCode() {
+        if(!isConnected) alert("Server disconnected")
+
         socket.emit("python-push", {
             code: codeString,
         })
     }
 
     function disconnect() {
+        if(!isConnected) alert("Server disconnected")
+
         socket.emit("python-kill", {
             command: "stop",
         })
@@ -87,9 +94,9 @@ const Editor = () => {
                 <div className='h-7 text-base w-full border-2 border-l-0 border-black'>
                     Tutorials
                 </div>
-                {/* <StorageRequests urls={urls} className="p-2"/> */}
+                {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
                 <div className='h-[31rem] overflow-auto border-2 border-black border-l-0 border-t-0'>
-                    <Markdown downloadUrl={"https://firebasestorage.googleapis.com/v0/b/skyrobotics-fc578.appspot.com/o/tutorials%2Ftest.md?alt=media&token=cd1f6cdd-e17c-47c3-bcc9-30a853b535a9"}/>
+                    <Markdown downloadUrl={url}/>
                 </div>
             </div>
             <div className='w-[90%] border-2 border-black inline-block align-top p-[10px]'>
@@ -109,10 +116,7 @@ const Editor = () => {
                 placeholder={ipAddress}/>
                 <div>Joined: {isConnected.toString()}</div>
                 <div className='bg-blue-200 text-center m-2 rounded-full' onClick={pushPythonCode}>Push</div>
-                <div className='bg-red-200 text-center m-2 rounded-full' onClick={() => {
-                    console.log("here")
-                    disconnect()
-                }}>Stop</div>
+                <div className='bg-red-200 text-center m-2 rounded-full' onClick={() => {disconnect()}}>Stop</div>
             </div>
         </div>
     )

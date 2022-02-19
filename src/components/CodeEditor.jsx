@@ -25,7 +25,7 @@ export default function CodeEditor(props) {
         <div className="">
             {/* Document information*/}
             <div className='h-7 text-base border-2 border-black'>
-                work
+                Code Header
             </div>
             <CodeMirror
                 value={tempCode}
