@@ -87,18 +87,21 @@ const Editor = () => {
     return (
         <div className=''>
             <Navbar />
-            <div className="w-2/3 inline-block align-top m-0 border-black border-0">
-                <CodeEditor setChildData={setCodeString}/>
-            </div>
-            <div className='h-full w-1/3 inline-block m-0'>
-                <div className='h-7 text-base w-full border-2 border-l-0 border-black'>
-                    Tutorials
+            <div className='flex'>
+                <div className="w-2/3 align-top m-0 border-black border-0">
+                    <CodeEditor setChildData={setCodeString}/>
                 </div>
-                {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
-                <div className='h-[31rem] overflow-auto border-2 border-black border-l-0 border-t-0'>
-                    <Markdown downloadUrl={url}/>
+                <div className='h-full w-1/3 m-0'>
+                    <div className='h-7 text-base w-full border-2 border-l-0 border-black'>
+                        Tutorials
+                    </div>
+                    {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
+                    <div className='h-[31rem] overflow-auto border-2 border-black border-l-0 border-t-0'>
+                        <Markdown downloadUrl={url}/>
+                    </div>
                 </div>
             </div>
+            
             <div className='w-[90%] border-2 border-black inline-block align-top p-[10px]'>
                 <div className="">
                     <div className="bg-red-500 text-center m-2" onClick={() => {buttonEventSend("red")}}>Red</div>

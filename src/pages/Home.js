@@ -4,10 +4,11 @@ import FirebaseRequests from '../components/FirebaseRequests';
 import StorageRequests from '../components/StorageRequests';
 import Navbar from '../components/Navbar'
 
-function Home({ history }) {
+function Home() {
+
   return (
-    <div className="bg-glass h-screen min-h-screen">
-            <Navbar history={history} />
+    <div className="h-screen min-h-screen">
+            <Navbar />
             <div className="flex flex-row-reverse ml-20 mr-20">
                 <div className="w-1/2">
                     <img src="" />

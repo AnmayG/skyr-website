@@ -12,9 +12,10 @@ export default function AboutUs() {
             <Navbar />
             <div className="m-2">
                 <div>
-                    <h2>firebase</h2>
+                    <h2 className="font-bold text-xl">firebase</h2>
                     <FirebaseRequests></FirebaseRequests>
-                    <h2>cloud storage test</h2>
+                    <br></br>
+                    <h2 className="font-bold text-xl">cloud storage test</h2>
                     <StorageRequests setChildData={(url) => {
                         console.log(url.url)
                         setUrl(url.url)

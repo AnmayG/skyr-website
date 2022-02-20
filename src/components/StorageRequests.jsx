@@ -44,7 +44,7 @@ function StorageRequests(props) {
                     })
                 }
                 setDownloadUrls(tempURLs)
-                props.setChildData(tempURLs[0])
+                props.setChildData(tempURLs[tempURLs.length - 1])
             }).catch((error) => {
                 // Uh-oh, an error occurred!
                 console.error(error)

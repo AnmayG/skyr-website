@@ -4,18 +4,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
 import Editor from './pages/Editor';
-
-function HomeScreen({history}) {
-  return(
-    <Home history={history}/>
-  )
-}
-
-function AboutUsScreen({history}) {
-  return(
-    <AboutUs history={history}/>
-  )
-}
+import Courses from './pages/Courses';
+import Community from './pages/Community';
+import NotFound from './pages/NotFound';
+import LogIn from './pages/LogIn';
+import SignUp from './pages/SignUp';
 
 function App() {
   return (
@@ -27,9 +20,14 @@ function App() {
     // </div>
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<HomeScreen />} />
-        <Route exact path="/aboutus" element={<AboutUsScreen />} />
+        <Route exact path="/" element={<Home />} />
+        <Route exact path="/aboutus" element={<AboutUs />} />
         <Route exact path="/editor" element={<Editor />} />
+        <Route exact path="/courses" element={<Courses />} />
+        <Route exact path="/community" element={<Community />} />
+        <Route exact path="/login" element={<LogIn />} />
+        <Route exact path="/signup" element={<SignUp />} />
+        <Route path="*" element={<NotFound />}/>
       </Routes>
     </BrowserRouter>
   );

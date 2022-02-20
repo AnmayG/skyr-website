@@ -1,26 +1,43 @@
 import React, {useEffect, useState} from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
-const Navbar = ({ history }) => {
+const Navbar = () => {
     const [word, setWord] = useState("")
+    let navigate = useNavigate()
 
     const handleDown = (e) => {
         if (e.key === 'Enter') {
-            console.log(history)
-            history.push("/q/" + word)
+            navigate("/q/" + word)
         }
     }
 
     return (
-        <div className="flex w-screen justify-between items-center pl-20 pr-20 pt-4 pb-6 bg-white">
-            <Link className="text-xl font-semibold cursor-pointer" style={{textDecoration: 'none'}} to="/">SkyRobotics</Link>
-            {/* <p className="text-xl font-semibold cursor-pointer" onClick={() => { history.push("/") }}>SkyRobotics</p> */}
-            <input type="text" className="bg-white rounded w-3/5 h-10 pl-4 pr-4 text-base shadow" placeholder="Search Tutorials" onKeyDown={handleDown} onChange={(e) => {setWord(e.target.value)}}/>
-            <div className="flex items-end">
-                <Link style={{textDecoration: 'none'}} to="/aboutus">ABOUT US</Link>
+        <div className="flex w-screen justify-between items-center lg:px-14 md:px-8 sm:px-4 pt-3 pb-6 bg-white">
+            <div className='flex justify-center items-center whitespace-nowrap'>
+                <img src='../../skyr-logo.svg' className='h-10 mr-2' onClick={() => {navigate("/")}}></img>
+                <Link className="text-xl text-center font-bold cursor-pointer shrink-0 mr-8" style={{textDecoration: 'none'}} to="/">SkyRobotics</Link>
+                {/* <input type="text" className="bg-white rounded mx-16 w-full h-10 px-4 text-base shadow" placeholder="Search Tutorials" onKeyDown={handleDown} onChange={(e) => {setWord(e.target.value)}}/> */}
+                <div className="text-center mr-8">
+                    <Link style={{textDecoration: 'none'}} to="/aboutus">About Us</Link>
+                </div>
+                <div className="text-center mr-8">
+                    <Link style={{textDecoration: 'none'}} className="text-base" to="/courses">Courses</Link>
+                </div>
+                <div className="text-center mr-8">
+                    <Link style={{textDecoration: 'none'}} className="text-base" to="/community">Community</Link>
+                </div>
+
             </div>
-            <div className="flex items-end">
-                <Link style={{textDecoration: 'none'}} className="outline outline-offset-8 rounded text-base" to="/editor">+ New Project</Link>
+            <div className='flex justify-evenly items-center whitespace-nowrap'>
+                <div className="items-center text-center mr-8">
+                    <Link style={{textDecoration: 'none'}} className="border-2 border-black touch-manipulation rounded-xl p-2 text-base text-center font-semibold" to="/editor">+ NEW PROJECT</Link>
+                </div>
+                <div className="items-end text-center mr-8">
+                    <Link style={{textDecoration: 'none'}} className="text-base font-bold" to="/login">Log In</Link>
+                </div>
+                <div className="items-end text-center">
+                    <Link style={{textDecoration: 'none'}} className="text-base" to="/signup">Sign Up</Link>
+                </div>
             </div>
         </div>
     )
