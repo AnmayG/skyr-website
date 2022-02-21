@@ -59,8 +59,8 @@ function FirebaseRequests() {
 
   return (
     <div className="storage-requests">
-      <input onBlur={getValue} type='text' />
-      <button type='button' onClick={buttonClicked}>Add</button>
+      <input className="outline outline-1 mr-2" onBlur={getValue} type='text' />
+      <button className="outline outline-1" type='button' onClick={buttonClicked}>Add</button>
       <div>
         <span>Values</span>
         {values.map(item => {

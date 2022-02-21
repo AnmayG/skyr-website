@@ -7,6 +7,7 @@ const Navbar = () => {
     const [word, setWord] = useState("")
     let navigate = useNavigate()
 
+
     const handleDown = (e) => {
         if (e.key === 'Enter') {
             navigate("/q/" + word)
@@ -14,7 +15,7 @@ const Navbar = () => {
     }
 
     return (
-        <div className="flex w-screen justify-between items-center lg:px-14 md:px-8 sm:px-4 pt-3 pb-6 bg-white">
+        <div className="flex w-screen justify-between items-center lg:px-14 md:px-8 sm:px-4 pt-3 pb-3 bg-white">
             <div className='flex justify-center items-center whitespace-nowrap'>
                 <img src='../../skyr-logo.svg' className='h-10 mr-2' onClick={() => {navigate("/")}} alt=""></img>
                 <Link className="text-xl text-center font-bold cursor-pointer shrink-0 mr-8" style={{textDecoration: 'none'}} to="/">SkyRobotics</Link>

@@ -1,9 +1,7 @@
-import '../App.css';
 import { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar'
+import Navbar from '../../components/Navbar'
 
-function Home() {
-
+function LandingPage() {
   return (
     <div className="h-screen min-h-screen">
             <Navbar />
@@ -32,4 +30,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default LandingPage;
