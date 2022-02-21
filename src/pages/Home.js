@@ -1,7 +1,5 @@
 import '../App.css';
 import { useEffect, useState } from 'react';
-import FirebaseRequests from '../components/FirebaseRequests';
-import StorageRequests from '../components/StorageRequests';
 import Navbar from '../components/Navbar'
 
 function Home() {
@@ -11,7 +9,7 @@ function Home() {
             <Navbar />
             <div className="flex flex-row-reverse ml-20 mr-20">
                 <div className="w-1/2">
-                    <img src="" />
+                    <img src="" alt=""/>
                 </div>
                 <div className="flex items-center w-1/2">
                     <div className="space-y-2">
