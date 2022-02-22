@@ -6,7 +6,7 @@ const Dashboard = () => {
     <div>
         <Navbar />
         <div className='ml-20'>
-            Here
+            This is the dashboard! Your files will show up here.
         </div>
     </div>
   )
