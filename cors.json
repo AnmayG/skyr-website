@@ -1,7 +1,7 @@
 [
     {
-      "origin": ["https://example.appspot.com"],
-      "method": ["GET"],
+      "origin": ["http://localhost:3000"],
+      "method": ["GET", "HEAD", "DELETE"],
       "responseHeader": ["Content-Type"],
       "maxAgeSeconds": 3600
     }
