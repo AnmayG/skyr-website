@@ -19,7 +19,6 @@ const PasswordReset = () => {
                 type="text"
                 placeholder="Email Address"
                 onChange={(e) => {
-                    console.log(email)
                     setEmail(e.target.value);
                 }}
                 />

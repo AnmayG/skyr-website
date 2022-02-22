@@ -1,16 +1,18 @@
-import './App.css';
-import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LandingPage from './pages/default/LandingPage';
-import AboutUs from './pages/AboutUs';
-import Editor from './pages/Editor';
-import Courses from './pages/Courses';
-import Community from './pages/Community';
-import NotFound from './pages/NotFound';
-import LogIn from './pages/authentication/LogIn';
-import SignUp from './pages/authentication/SignUp';
-import Confirmation from './pages/authentication/Confirmation';
-import PasswordReset from './pages/authentication/PasswordReset';
+import "./App.css";
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/default/LandingPage";
+import AboutUs from "./pages/default/AboutUs";
+import Editor from "./pages/editors/Editor";
+import Courses from "./pages/Courses";
+import Community from "./pages/Community";
+import NotFound from "./pages/NotFound";
+import LogIn from "./pages/authentication/LogIn";
+import SignUp from "./pages/authentication/SignUp";
+import Confirmation from "./pages/authentication/Confirmation";
+import PasswordReset from "./pages/authentication/PasswordReset";
+import Dashboard from "./pages/editors/Dashboard";
+import RequireAuth from "./pages/authentication/RequireAuth";
 
 function App() {
   return (
@@ -31,7 +33,16 @@ function App() {
         <Route exact path="/signup" element={<SignUp />} />
         <Route exact path="/confirm" element={<Confirmation />} />
         <Route exact path="/passwordreset" element={<PasswordReset />} />
-        <Route path="*" element={<NotFound />}/>
+        <Route
+          exact
+          path="/dashboard"
+          element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

@@ -32,7 +32,7 @@ const SignUp = () => {
         console.log(user);
         if(user.email !== null) {
           console.log(user.email)
-          // navigate("/confirm");
+          navigate("/confirm");
         }
       })
       .catch((error) => {

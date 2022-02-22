@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import Navbar from '../components/Navbar'
-import CodeEditor from "../components/CodeEditor"
-import Markdown from '../components/Markdown'
-import StorageRequests from '../components/StorageRequests'
+import Navbar from '../../components/Navbar'
+import CodeEditor from "../../components/CodeEditor"
+import Markdown from '../../components/Markdown'
+import StorageRequests from '../../components/StorageRequests'
 import io from 'socket.io-client'
 
 const Editor = () => {
