@@ -9,7 +9,7 @@ const Markdown = (props) => {
     async function fetchFromDownloadURL(url) {
         await fetch(url, {
             method: 'GET',
-            // headers: {
+            // headers: {zoom
             //     "Access-Control-Allow-Origin": "*"
             // },
             // mode: "no-cors"
