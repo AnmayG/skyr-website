@@ -4,7 +4,9 @@ import { Navigate, useLocation } from "react-router-dom";
 import { auth } from "../../firebase";
 
 onAuthStateChanged(auth, (user) => {
-    if(user !== null) console.log(user.email)
+    if(user !== null) {
+        console.log(user.email)
+    }
 })
 
 function RequireAuth({ children }) {

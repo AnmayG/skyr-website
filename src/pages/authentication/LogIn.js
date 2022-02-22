@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar";
 import { auth } from "../../firebase";
 import {
   signInWithEmailAndPassword,
+  onAuthStateChanged
 } from "firebase/auth";
 import { StyledFirebaseAuth } from "react-firebaseui";
 import firebase from "firebase/compat/app";
@@ -13,6 +14,7 @@ const LogIn = () => {
   const [image, setImage] = useState("./penguin1.png")
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Configure FirebaseUI.
@@ -27,9 +29,8 @@ const LogIn = () => {
   function signInUser() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user);
-        navigate("/dashboard");
+        // const user = userCredential.user;
+        setLoading(true)
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -37,6 +38,14 @@ const LogIn = () => {
         console.log(errorCode, errorMessage);
       });
   }
+
+  onAuthStateChanged(auth, (user) => {
+      if(user !== null) {
+        navigate("/dashboard")
+      } else {
+        console.log("Loading")
+      }
+  })
 
   return (
     <div className="flex flex-col h-screen w-screen">
