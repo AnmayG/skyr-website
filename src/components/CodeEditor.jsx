@@ -24,7 +24,7 @@ export default function CodeEditor(props) {
     return (
         <div className="">
             {/* Document information*/}
-            <div className='h-7 text-base border-2 border-black'>
+            <div className='h-7 text-base border-2 border-black m-2'>
                 Code Header
             </div>
             <CodeMirror
