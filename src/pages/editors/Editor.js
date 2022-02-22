@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react'
 import Navbar from '../../components/Navbar'
 import CodeEditor from "../../components/CodeEditor"
 import Markdown from '../../components/Markdown'
-import StorageRequests from '../../components/StorageRequests'
 import io from 'socket.io-client'
 
 const Editor = () => {
     // Markdown state
-    const [url, setUrl] = useState("https://firebasestorage.googleapis.com/v0/b/skyrobotics-fc578.appspot.com/o/tutorials%2Ftest.md?alt=media&token=cd1f6cdd-e17c-47c3-bcc9-30a853b535a9")
+    const [url] = useState("https://firebasestorage.googleapis.com/v0/b/skyrobotics-fc578.appspot.com/o/tutorials%2Ftest.md?alt=media&token=cd1f6cdd-e17c-47c3-bcc9-30a853b535a9")
     
     // Connection state
     const [isConnected, setConnected] = useState(false)
@@ -59,6 +58,8 @@ const Editor = () => {
                 setGreenOn(!greenOn)
                 green = !greenOn
                 break;
+            default:
+                console.log("how")
         }
 
         socket.emit('led-toggle', {

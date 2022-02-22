@@ -4,7 +4,6 @@ import Navbar from "../../components/Navbar";
 import { auth } from "../../firebase";
 import {
   createUserWithEmailAndPassword,
-  GoogleAuthProvider,
 } from "firebase/auth";
 import { StyledFirebaseAuth } from "react-firebaseui";
 import firebase from "firebase/compat/app";
@@ -14,7 +13,7 @@ const SignUp = () => {
   const [image, setImage] = useState("./penguin1.png")
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("")
+  // const [error, setError] = useState("")
   const navigate = useNavigate()
 
   // Configure FirebaseUI.
