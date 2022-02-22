@@ -9,10 +9,7 @@ import {
   Divider,
   ListItemIcon,
 } from "@mui/material";
-import {
-    Settings,
-    Logout
-} from "@mui/icons-material"
+import { Settings, Logout } from "@mui/icons-material";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -31,7 +28,7 @@ const Navbar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+
   onAuthStateChanged(auth, (user) => {
     if (user) {
       const image = user.photoURL;
@@ -41,7 +38,7 @@ const Navbar = () => {
       // User is signed out
       setIsAuthenticated(false);
     }
-  });  
+  });
 
   return (
     <div className="flex w-screen justify-between items-center lg:px-14 md:px-8 sm:px-4 pt-3 pb-3 bg-white">
@@ -146,7 +143,7 @@ const Navbar = () => {
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
               >
-                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }} src={image} />
+                <Avatar sx={{ m: 0, bgcolor: "secondary.main" }} src={image} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -194,16 +191,18 @@ const Navbar = () => {
                 </ListItemIcon>
                 Settings
               </MenuItem>
-              <MenuItem onClick={() => {
-                    // console.log("here")
-                    signOut(auth)
-                        .then(() => {
-                            navigate("/");
-                        })
-                        .catch((error) => {
-                            console.error(error)
-                        })
-                }}>
+              <MenuItem
+                onClick={() => {
+                  // console.log("here")
+                  signOut(auth)
+                    .then(() => {
+                      navigate("/");
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
+                }}
+              >
                 <ListItemIcon>
                   <Logout fontSize="small" />
                 </ListItemIcon>

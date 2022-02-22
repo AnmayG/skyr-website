@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { auth } from "../../firebase";
@@ -39,13 +39,19 @@ const LogIn = () => {
       });
   }
 
-  onAuthStateChanged(auth, (user) => {
-      if(user !== null) {
-        navigate("/dashboard")
-      } else {
-        console.log("Loading")
-      }
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+        if(user !== null) {
+          navigate("/dashboard")
+        } else {
+          console.log("Loading")
+        }
+    })
+  
+    return () => {
+    }
   })
+  
 
   return (
     <div className="flex flex-col h-screen w-screen">
