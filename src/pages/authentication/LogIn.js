@@ -56,9 +56,9 @@ const LogIn = () => {
   return (
     <div className="flex flex-col h-screen w-screen">
       <Navbar />
-      <div className="flex flex-col flex-grow items-center justify-start bg-gray-200">
+      <div className="flex flex-col flex-grow items-center justify-start bg-gray-200 rounded-lg">
         <img alt="" src={image} height={400} width={400}/>
-        <div className="min-w-[500px] border-2 border-gray-400 bg-white border-opacity-30 shadow">
+        <div className="min-w-[500px] border-2 border-gray-400 bg-white border-opacity-30 shadow rounded-xl">
           <p className="text-2xl font-bold text-center mt-8 mb-2">
             Welcome Back
           </p>

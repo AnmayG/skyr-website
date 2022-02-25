@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CourseCard from "../../components/CourseCard";
 import Navbar from "../../components/Navbar";
 import ProjectCard from "../../components/ProjectCard";
-import { addDocument } from "../../components/FirestoreInterface";
+import { addDocument, initUser } from "../../components/FirestoreInterface";
 import { auth, db } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Dashboard = () => {
+  
+  useEffect(() => {
+    var createdUser = false
+
+    onAuthStateChanged(auth, (user) => {
+        if(user.metadata.creationTime === user.metadata.lastSignInTime && !createdUser) {
+            createdUser = true
+            console.log("new user " + user.metadata)
+            initUser()
+        } else {
+            console.log("old user")
+        }
+    });
+  
+    return () => {
+      createdUser = true
+    }
+  }, [])
+  
+
   return (
     <div className="flex flex-col w-screen h-screen bg-gray-200">
       <Navbar />
@@ -14,7 +35,10 @@ const Dashboard = () => {
           <div
             className="outline outline-1 w-fit"
             onClick={() => {
-              addDocument(auth.currentUser.uid, { name: "hello" });
+              addDocument(auth.currentUser.uid, { 
+                  name: "hello",
+                  text: "Hello World!"
+             });
             }}
           >
             Add user
@@ -24,7 +48,7 @@ const Dashboard = () => {
             <ProjectCard
               fileName="test"
               createdDate="22 02 2022"
-              creator={auth.currentUser}
+              creator={ auth.currentUser }
             />
           </div>
         </div>
