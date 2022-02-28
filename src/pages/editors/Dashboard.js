@@ -3,30 +3,34 @@ import CourseCard from "../../components/dashboard/CourseCard";
 import Navbar from "../../components/general/Navbar";
 import ProjectCard from "../../components/dashboard/ProjectCard";
 import { addDocument, initUser } from "../../interfaces/FirestoreInterface";
-import { readDatabaseDocument, updateDatabaseDocument } from "../../interfaces/RealtimeDBInterface";
+import {
+  readDatabaseDocument,
+  updateDatabaseDocument,
+} from "../../interfaces/RealtimeDBInterface";
 import { auth, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const Dashboard = () => {
-  
   useEffect(() => {
-    var createdUser = false
+    var createdUser = false;
 
     onAuthStateChanged(auth, (user) => {
-        if(user.metadata.creationTime === user.metadata.lastSignInTime && !createdUser) {
-            createdUser = true
-            console.log("new user " + user.metadata)
-            initUser()
-        } else {
-            console.log("old user")
-        }
+      if (
+        user.metadata.creationTime === user.metadata.lastSignInTime &&
+        !createdUser
+      ) {
+        createdUser = true;
+        console.log("new user " + user.metadata);
+        initUser();
+      } else {
+        console.log("old user");
+      }
     });
-  
+
     return () => {
-      createdUser = true
-    }
-  }, [])
-  
+      createdUser = true;
+    };
+  }, []);
 
   return (
     <div className="flex flex-col w-screen h-screen bg-gray-200">
@@ -36,10 +40,10 @@ const Dashboard = () => {
           <div
             className="outline outline-1 w-fit"
             onClick={() => {
-              addDocument(auth.currentUser.uid, { 
-                  name: "hello",
-                  text: "Hello World!"
-             });
+              addDocument(auth.currentUser.uid, {
+                name: "hello",
+                text: "Hello World!",
+              });
             }}
           >
             Add user
@@ -49,7 +53,7 @@ const Dashboard = () => {
             <ProjectCard
               fileName="test"
               createdDate="22 02 2022"
-              creator={ auth.currentUser }
+              creator={auth.currentUser}
             />
           </div>
         </div>

@@ -10,10 +10,12 @@ function initUser() {
     });
 
   // TODO: Figure out a way to condense this into one API call
-  db.collection("/users/" + auth.currentUser.uid + "/documents/").doc().set({
-    name: "My First Project",
-    text: "Hello world!",
-  });
+  db.collection("/users/" + auth.currentUser.uid + "/documents/")
+    .doc()
+    .set({
+      name: "My First Project",
+      text: "Hello world!",
+    });
 }
 
 function addDocument(userId, documentMetaData) {

@@ -68,10 +68,9 @@ const Editor = (props) => {
       }
     });
     return () => {
-        dbRefConnected = true;
-    }
-  }, [])
-  
+      dbRefConnected = true;
+    };
+  }, []);
 
   function buttonEventSend(type) {
     if (!isConnected) {
@@ -124,25 +123,25 @@ const Editor = (props) => {
 
   function databaseTransaction() {
     console.log(codeString);
-    const uid = auth.currentUser.uid
+    const uid = auth.currentUser.uid;
     runTransaction(dbRef, (transaction) => {
       if (transaction) {
-          console.log("First ", transaction)
-          // If the updates field and the uid version both exist
-          if(transaction.updates && transaction.updates[uid]) {
-            console.log("here")
-            setCodeString(transaction.value)
-            transaction.updates[uid] = null
-          } else {
-              transaction.value = codeString
-              if(!transaction.updates) {
-                  transaction.updates = {}
-              }
-              transaction.updates[uid] = true
+        console.log("First ", transaction);
+        // If the updates field and the uid version both exist
+        if (transaction.updates && transaction.updates[uid]) {
+          console.log("here");
+          setCodeString(transaction.value);
+          transaction.updates[uid] = null;
+        } else {
+          transaction.value = codeString;
+          if (!transaction.updates) {
+            transaction.updates = {};
           }
-          console.log(transaction)
+          transaction.updates[uid] = true;
+        }
+        console.log(transaction);
       }
-      return transaction
+      return transaction;
     });
   }
 
@@ -150,9 +149,7 @@ const Editor = (props) => {
     <div className="">
       <Navbar />
       <div className="flex">
-          <div onClick={databaseTransaction}>
-              Do Transaction
-          </div>
+        <div onClick={databaseTransaction}>Do Transaction</div>
         <div className="w-2/3 align-top m-0 border-black border-0">
           <CodeEditor setChildData={setCodeString} />
         </div>

@@ -31,10 +31,10 @@ const Navbar = () => {
 
   // When logged in hide the login and signup buttons in favor of the avatar and dashboard buttons
   useEffect(() => {
-    let isAuthed = true
+    let isAuthed = true;
 
     onAuthStateChanged(auth, (user) => {
-      if(isAuthed) {
+      if (isAuthed) {
         if (user) {
           const image = user.photoURL;
           setImage(image);
@@ -45,11 +45,11 @@ const Navbar = () => {
         }
       }
     });
-  
+
     return () => {
-      isAuthed = false
-    }
-  }, [])
+      isAuthed = false;
+    };
+  }, []);
 
   return (
     <div className="flex w-screen justify-between items-center lg:px-14 md:px-8 sm:px-4 pt-3 pb-3 bg-white">

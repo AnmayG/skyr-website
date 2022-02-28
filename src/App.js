@@ -5,7 +5,8 @@ import LandingPage from "./pages/default/LandingPage";
 import AboutUs from "./pages/default/AboutUs";
 import Editor from "./pages/editors/Editor";
 import Courses from "./pages/Courses";
-import Community from "./pages/community/Community";
+import CommunityHome from "./pages/community/CommunityHome";
+import CommunityEditor from "./pages/community/CommunityEditor";
 import NotFound from "./pages/default/NotFound";
 import LogIn from "./pages/authentication/LogIn";
 import SignUp from "./pages/authentication/SignUp";
@@ -16,26 +17,27 @@ import RequireAuth from "./pages/authentication/RequireAuth";
 
 function App() {
   return (
-    // <div>
     <BrowserRouter>
       <Routes>
         <Route exact path="/" element={<LandingPage />} />
         <Route exact path="/aboutus" element={<AboutUs />} />
         <Route exact path="/editor/" element={<Editor />} />
         <Route exact path="/courses" element={<Courses />} />
-        <Route exact path="/community" element={<Community />} />
+        <Route exact path="/community" element={<CommunityHome />} />
         <Route exact path="/login" element={<LogIn />} />
         <Route exact path="/signup" element={<SignUp />} />
         <Route exact path="/confirm" element={<Confirmation />} />
         <Route exact path="/passwordreset" element={<PasswordReset />} />
         <Route
-          exact path="/dashboard"
+          exact
+          path="/dashboard"
           element={
             <RequireAuth>
               <Dashboard />
             </RequireAuth>
           }
         />
+        <Route exact path="/mdeditor/" element={<CommunityEditor />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
