@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkToc from 'remark-toc';
-import testmd from '../test.md' // For testing purposes, simply change the fetch statement to import the test file instead
+import testmd from '../../test.md' // For testing purposes, simply change the fetch statement to import the test file instead
 
 const Markdown = (props) => {
     const [markdown, setMarkdown] = useState("")

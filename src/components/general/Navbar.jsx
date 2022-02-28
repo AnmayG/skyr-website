@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Settings, Logout, SwitchAccount } from "@mui/icons-material";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../../firebase";
 
 const Navbar = () => {
   // const [word, setWord] = useState("")

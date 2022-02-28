@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import CourseCard from "../../components/CourseCard";
-import Navbar from "../../components/Navbar";
-import ProjectCard from "../../components/ProjectCard";
-import { addDocument } from "../../components/FirestoreInterface";
-import { readDatabaseDocument, updateDatabaseDocument } from "../../components/RealtimeDBInterface";
+import CourseCard from "../../components/dashboard/CourseCard";
+import Navbar from "../../components/general/Navbar";
+import ProjectCard from "../../components/dashboard/ProjectCard";
+import { addDocument, initUser } from "../../interfaces/FirestoreInterface";
+import { readDatabaseDocument, updateDatabaseDocument } from "../../interfaces/RealtimeDBInterface";
 import { auth, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 

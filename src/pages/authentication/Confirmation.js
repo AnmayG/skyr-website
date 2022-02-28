@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Navbar from '../../components/Navbar'
+import Navbar from '../../components/general/Navbar'
 import { auth } from '../../firebase'
 import { sendEmailVerification } from "firebase/auth"
 import { Link } from 'react-router-dom'
