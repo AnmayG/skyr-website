@@ -3,12 +3,6 @@ import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { auth } from "../../firebase";
 
-onAuthStateChanged(auth, (user) => {
-  if (user !== null) {
-      
-  }
-});
-
 function RequireAuth({ children }) {
   let location = useLocation();
   if (auth.currentUser === null) {

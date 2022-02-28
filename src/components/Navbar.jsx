@@ -9,7 +9,7 @@ import {
   Divider,
   ListItemIcon,
 } from "@mui/material";
-import { Settings, Logout } from "@mui/icons-material";
+import { Settings, Logout, SwitchAccount } from "@mui/icons-material";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -29,16 +29,27 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      const image = user.photoURL;
-      setImage(image);
-      setIsAuthenticated(true);
-    } else {
-      // User is signed out
-      setIsAuthenticated(false);
+  // When logged in hide the login and signup buttons in favor of the avatar and dashboard buttons
+  useEffect(() => {
+    let isAuthed = true
+
+    onAuthStateChanged(auth, (user) => {
+      if(isAuthed) {
+        if (user) {
+          const image = user.photoURL;
+          setImage(image);
+          setIsAuthenticated(true);
+        } else {
+          // User is signed out
+          setIsAuthenticated(false);
+        }
+      }
+    });
+  
+    return () => {
+      isAuthed = false
     }
-  });
+  }, [])
 
   return (
     <div className="flex w-screen justify-between items-center lg:px-14 md:px-8 sm:px-4 pt-3 pb-3 bg-white">
@@ -207,6 +218,23 @@ const Navbar = () => {
                   <Logout fontSize="small" />
                 </ListItemIcon>
                 <span>Logout</span>
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  // console.log("here")
+                  signOut(auth)
+                    .then(() => {
+                      navigate("/login");
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
+                }}
+              >
+                <ListItemIcon>
+                  <SwitchAccount fontSize="small" />
+                </ListItemIcon>
+                <span>Switch Account</span>
               </MenuItem>
             </Menu>
           </div>
