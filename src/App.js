@@ -17,16 +17,11 @@ import RequireAuth from "./pages/authentication/RequireAuth";
 function App() {
   return (
     // <div>
-    //   <h2>firebase</h2>
-    //   <FirebaseRequests></FirebaseRequests>
-    //   <h2>cloud storage test</h2>
-    //   <StorageRequests></StorageRequests>
-    // </div>
     <BrowserRouter>
       <Routes>
         <Route exact path="/" element={<LandingPage />} />
         <Route exact path="/aboutus" element={<AboutUs />} />
-        <Route exact path="/editor" element={<Editor />} />
+        <Route exact path="/editor/" element={<Editor />} />
         <Route exact path="/courses" element={<Courses />} />
         <Route exact path="/community" element={<Community />} />
         <Route exact path="/login" element={<LogIn />} />
@@ -34,8 +29,7 @@ function App() {
         <Route exact path="/confirm" element={<Confirmation />} />
         <Route exact path="/passwordreset" element={<PasswordReset />} />
         <Route
-          exact
-          path="/dashboard"
+          exact path="/dashboard"
           element={
             <RequireAuth>
               <Dashboard />

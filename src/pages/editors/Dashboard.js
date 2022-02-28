@@ -3,6 +3,7 @@ import CourseCard from "../../components/CourseCard";
 import Navbar from "../../components/Navbar";
 import ProjectCard from "../../components/ProjectCard";
 import { addDocument } from "../../components/FirestoreInterface";
+import { readDatabaseDocument, updateDatabaseDocument } from "../../components/RealtimeDBInterface";
 import { auth, db } from "../../firebase";
 
 const Dashboard = () => {

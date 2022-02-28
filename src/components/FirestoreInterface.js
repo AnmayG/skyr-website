@@ -18,7 +18,7 @@ function readFirestoreUserDocumentData(userId, documentID) {
 }
 
 function updateFirestoreItem() {
-
+    
 }
 
 function deleteFirestoreItem() {
