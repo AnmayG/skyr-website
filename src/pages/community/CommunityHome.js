@@ -4,7 +4,7 @@ import Footer from "../../components/general/Footer";
 import { useNavigate } from "react-router-dom";
 
 const CommunityHome = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div className="h-screen bg-gray-100">
@@ -14,7 +14,7 @@ const CommunityHome = () => {
           <button
             className="m-4 rounded-full bg-green-500 p-4 text-white font-extrabold text-xl"
             onClick={() => {
-              navigate("/mdeditor")
+              navigate("/mdeditor");
             }}
           >
             Get started

@@ -69,7 +69,7 @@ const Editor = (props) => {
   // Check document exists else navigate to 404
   useEffect(() => {
     // If no ID provided/new project has been created
-    if(!docId) {
+    if (!docId) {
       // Create new document
     }
 

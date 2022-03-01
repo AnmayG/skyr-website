@@ -7,16 +7,15 @@ export default function CodeEditor(props) {
   const [codeValue, setCodeValue] = useState();
 
   useEffect(() => {
-    setCodeValue(props.CodeValue)
+    setCodeValue(props.CodeValue);
     // props.setChildData("from lib import *\n" + codeValue);
     return () => {};
   }, []);
 
   useEffect(() => {
-    setCodeValue(props.CodeValue)
-    return () => {}
-  }, [props.CodeValue])
-  
+    setCodeValue(props.CodeValue);
+    return () => {};
+  }, [props.CodeValue]);
 
   return (
     <div className="">

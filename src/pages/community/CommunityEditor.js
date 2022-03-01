@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/general/Navbar";
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { rdb, db, auth } from "../../firebase";
 import { set, ref, onValue, runTransaction } from "firebase/database";
 
@@ -17,15 +17,14 @@ function CommunityEditor() {
       if (snapshot.val() !== null && !dbRefConnected) {
         const data = snapshot.val().value;
       } else if (snapshot.val() === null) {
-        navigate("/404")
+        navigate("/404");
       }
-    })
-  
+    });
+
     return () => {
       // Clear up the async to prevent memory leaks
-    }
-  }, [])
-  
+    };
+  }, []);
 
   return (
     <div className="bg-white">

@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import CourseCard from "../../components/dashboard/CourseCard";
 import Navbar from "../../components/general/Navbar";
 import ProjectCard from "../../components/dashboard/ProjectCard";
-import { addDocument, listUserFirestoreDocuments, initUser } from "../../interfaces/FirestoreInterface";
+import {
+  addDocument,
+  listUserFirestoreDocuments,
+  initUser,
+} from "../../interfaces/FirestoreInterface";
 import {
   readDatabaseDocument,
   updateDatabaseDocument,
@@ -11,28 +15,32 @@ import { auth, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const Dashboard = () => {
-  const [projects, setProjects] = useState([])
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     var createdUser = false;
 
     onAuthStateChanged(auth, (user) => {
-        if(user.metadata.creationTime === user.metadata.lastSignInTime && !createdUser && !localStorage.getItem("initialized")) {
-            createdUser = true
-            localStorage.setItem("initialized", "true")
-            initUser()
-        } else {
-            console.log("old user")
-        }
-        console.log(user.uid)
-        listUserFirestoreDocuments(user.uid)
+      if (
+        user.metadata.creationTime === user.metadata.lastSignInTime &&
+        !createdUser &&
+        !localStorage.getItem("initialized")
+      ) {
+        createdUser = true;
+        localStorage.setItem("initialized", "true");
+        initUser();
+      } else {
+        console.log("old user");
+      }
+      console.log(user.uid);
+      listUserFirestoreDocuments(user.uid);
     });
-    
+
     return () => {
-      createdUser = true
-    }
-  }, [])
-  
+      createdUser = true;
+    };
+  }, []);
+
   return (
     <div className="flex flex-col w-screen h-screen bg-white">
       <Navbar />
@@ -41,11 +49,11 @@ const Dashboard = () => {
           <div
             className="outline outline-1 w-fit"
             onClick={() => {
-              addDocument(auth.currentUser.uid, { 
-                  name: "hello",
-                  text: "Hello World!",
-                  date: new Date().toDateString()
-             });
+              addDocument(auth.currentUser.uid, {
+                name: "hello",
+                text: "Hello World!",
+                date: new Date().toDateString(),
+              });
             }}
           >
             Add document
