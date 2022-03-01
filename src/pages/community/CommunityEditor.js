@@ -17,7 +17,7 @@ function CommunityEditor() {
       if (snapshot.val() !== null && !dbRefConnected) {
         const data = snapshot.val().value;
       } else if (snapshot.val() === null) {
-        navigate("/404");
+        // navigate("/404");
       }
     });
 
