@@ -34,10 +34,19 @@ const Editor = (props) => {
   const [greenOn, setGreenOn] = useState(false);
 
   // CodeMirror state
-  const [codeString, setCodeString] = useState("");
+  const [sentCodeString, setSentCodeString] = useState(``);
+  // start()
+  // set_outputs(26, 19, 13)
+  // turn_off(26, 19, 13)
 
+  // while True:
+  //   blink(26, 0.2)
+  //   blink(19, 0.2)
+  //   blink(13, 0.2)
+  const [recCodeString, setRecCodeString] = useState("");
+
+  // Websocket Connection
   useEffect(() => {
-    // Websocket Connection
     const newSocket = io(ipAddress, { transports: ["websocket"] });
     newSocket.on("connect", () => {
       setConnected(true);
@@ -56,12 +65,18 @@ const Editor = (props) => {
     };
   }, [setSocket, ipAddress]);
 
+  // Check document exists else navigate to 404
   useEffect(() => {
+    // If no ID provided/new project has been created
+    if(!docId) {
+      // Create new document
+    }
+
     var dbRefConnected = false;
     onValue(dbRef, (snapshot) => {
-      if (snapshot.val() !== null && !dbRefConnected) {
+      if (snapshot.val() && !dbRefConnected) {
         const data = snapshot.val().value;
-        // console.log(data);
+        setSentCodeString(data);
       } else if (snapshot.val() === null) {
         navigate("/404");
       }
@@ -108,7 +123,7 @@ const Editor = (props) => {
     if (!isConnected) alert("Server disconnected");
 
     socket.emit("python-push", {
-      code: codeString,
+      code: `from lib import *\n ${recCodeString}`,
     });
   }
 
@@ -120,25 +135,13 @@ const Editor = (props) => {
     });
   }
 
-  function databaseTransaction() {
-    console.log(codeString);
+  function databaseTransaction(codeString) {
+    setRecCodeString(codeString);
     const uid = auth.currentUser.uid;
     runTransaction(dbRef, (transaction) => {
       if (transaction) {
-        console.log("First ", transaction);
-        // If the updates field and the uid version both exist
-        if (transaction.updates && transaction.updates[uid]) {
-          console.log("here");
-          setCodeString(transaction.value);
-          transaction.updates[uid] = null;
-        } else {
-          transaction.value = codeString;
-          if (!transaction.updates) {
-            transaction.updates = {};
-          }
-          transaction.updates[uid] = true;
-        }
-        console.log(transaction);
+        // Set the value
+        transaction.value = codeString;
       }
       return transaction;
     });
@@ -147,17 +150,34 @@ const Editor = (props) => {
   return (
     <div className="">
       <Navbar />
-      <div className="flex">
-        <div onClick={databaseTransaction}>Do Transaction</div>
-        <div className="w-2/3 align-top m-0 border-black border-0">
-          <CodeEditor setChildData={setCodeString} />
+      <div className="flex justify-start">
+        <div className="w-full">
+          <div className="h-7 text-base border-2 border-black ml-2 flex justify-between">
+            <div className="ml-2">Code Header</div>
+            <div
+              onClick={() => {
+                databaseTransaction(recCodeString);
+              }}
+              className="mr-2"
+            >
+              Save
+            </div>
+          </div>
+          <div className="w-full align-top ml-2 border-black border-0">
+            <CodeEditor
+              setChildData={(codeString) => {
+                databaseTransaction(codeString);
+              }}
+              CodeValue={sentCodeString}
+            />
+          </div>
         </div>
-        <div className="h-full w-1/3 m-0">
+        <div className="h-[31rem] mr-2">
           <div className="h-7 text-base w-full border-2 border-l-0 border-black">
             Tutorials
           </div>
           {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
-          <div className="h-[31rem] overflow-auto border-2 border-black border-l-0 border-t-0">
+          <div className="h-full w-full overflow-y-auto border-2 border-black border-t-0">
             <Markdown downloadUrl={url} />
           </div>
         </div>
@@ -220,11 +240,5 @@ const Editor = (props) => {
     </div>
   );
 };
-
-/*
- While the beginning of the imperialist movement saw a wide prevalence of ideas like Poor Man's Burden that served to
- demonize imperialization, over time these attitudes shifted to become pro-imperialist, resulting in the induction of
- territories and states like Hawaii and Puerto Rico into the US.
- */
 
 export default Editor;
