@@ -7,13 +7,13 @@ function initUser() {
     .set({
       name: auth.currentUser.displayName,
       date: new Date(auth.currentUser.metadata.creationTime),
-    });
-
-  // TODO: Figure out a way to condense this into one API call
-  db.collection("/users/" + auth.currentUser.uid + "/documents/").doc().set({
-    name: "My First Project",
-    text: "Hello world!",
-  });
+    }).then(() => {
+      // TODO: Figure out a way to condense this into one API call
+      db.collection("/users/" + auth.currentUser.uid + "/documents/").doc().set({
+        name: "My First Project",
+        date: new Date().getDate()
+      });
+    });  
 }
 
 function addDocument(userId, documentMetaData) {
@@ -31,7 +31,12 @@ function addDocument(userId, documentMetaData) {
 function readFirestoreUserDocumentData(userId, documentID) {}
 
 function listUserFirestoreDocuments(userId) {
-  db.collection("/users/user-documents");
+  db.collection(`/users/${userId}/documents/`)
+    .onSnapshot((list) => {
+      list.docs.forEach((doc) => {
+        console.log(doc)
+      })
+    })
 }
 
 function updateFirestoreItem() {}

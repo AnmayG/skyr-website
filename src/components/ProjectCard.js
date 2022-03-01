@@ -4,7 +4,7 @@ import React from 'react'
 function ProjectCard(props) {
     // props includes fileName, createdDate, and creator uid
   return (
-    <div className='flex justify-between w-full py-3 bg-white'>
+    <div className='flex justify-between w-full py-3 bg-white border-gray-200 border rounded-xl'>
         <div className='flex justify-start items-center'>
             <div className='ml-10'>{props.fileName}</div>
         </div>

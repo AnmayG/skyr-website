@@ -1,35 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import CourseCard from "../../components/CourseCard";
 import Navbar from "../../components/Navbar";
 import ProjectCard from "../../components/ProjectCard";
-import { addDocument } from "../../components/FirestoreInterface";
+import { addDocument, listUserFirestoreDocuments, initUser } from "../../components/FirestoreInterface";
 import { readDatabaseDocument, updateDatabaseDocument } from "../../components/RealtimeDBInterface";
 import { auth, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const Dashboard = () => {
-  
+  const [projects, setProjects] = useState([])
+
   useEffect(() => {
     var createdUser = false
 
     onAuthStateChanged(auth, (user) => {
-        if(user.metadata.creationTime === user.metadata.lastSignInTime && !createdUser) {
+        if(user.metadata.creationTime === user.metadata.lastSignInTime && !createdUser && !localStorage.getItem("initialized")) {
             createdUser = true
-            console.log("new user " + user.metadata)
+            localStorage.setItem("initialized", "true")
             initUser()
         } else {
             console.log("old user")
         }
+        console.log(user.uid)
+        listUserFirestoreDocuments(user.uid)
     });
-  
+    
     return () => {
       createdUser = true
     }
   }, [])
   
-
   return (
-    <div className="flex flex-col w-screen h-screen bg-gray-200">
+    <div className="flex flex-col w-screen h-screen bg-white">
       <Navbar />
       <div className="w-screen h-[100%]">
         <div className="max-h-[40%] h-[40%]">
@@ -38,14 +40,16 @@ const Dashboard = () => {
             onClick={() => {
               addDocument(auth.currentUser.uid, { 
                   name: "hello",
-                  text: "Hello World!"
+                  text: "Hello World!",
+                  date: new Date().toDateString()
              });
             }}
           >
-            Add user
+            Add document
           </div>
           <div className="ml-10 mt-3 mb-3">Your Files:</div>
-          <div className="mx-20 bg-gray-200 h-full">
+          <div className="mx-20 h-full">
+            {}
             <ProjectCard
               fileName="test"
               createdDate="22 02 2022"
@@ -55,7 +59,7 @@ const Dashboard = () => {
         </div>
         <div className="max-h-[50%]">
           <div className="ml-10 mt-10 mb-3">Enrolled Courses:</div>
-          <div className="mx-20 bg-gray-200 h-full">
+          <div className="mx-20 bg-white h-full">
             <CourseCard courseName="test" enrolledDate="22 02 2022" />
           </div>
         </div>

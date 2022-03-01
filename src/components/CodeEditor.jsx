@@ -1,43 +1,36 @@
-import CodeMirror from '@uiw/react-codemirror';
-import { StreamLanguage } from '@codemirror/stream-parser';
-import { python } from '@codemirror/lang-python';
-import { useEffect, useState } from 'react';
-
-const tempCode = `start()
-set_outputs(26, 19, 13)
-turn_off(26, 19, 13)
-
-while True:
-  blink(26, 0.2)
-  blink(19, 0.2)
-  blink(13, 0.2)`;
+import CodeMirror from "@uiw/react-codemirror";
+import { python } from "@codemirror/lang-python";
+import { useEffect, useState } from "react";
 
 export default function CodeEditor(props) {
-    const [editorTheme, setEditorTheme] = useState("");
+  const [editorTheme, setEditorTheme] = useState("");
+  const [codeValue, setCodeValue] = useState();
 
-    useEffect(() => {
-      props.setChildData("from lib import *\n" + tempCode)
-      return () => {}
-    }, [])
-    
+  useEffect(() => {
+    setCodeValue(props.CodeValue)
+    // props.setChildData("from lib import *\n" + codeValue);
+    return () => {};
+  }, []);
 
-    return (
-        <div className="">
-            {/* Document information*/}
-            <div className='h-7 text-base border-2 border-black m-2'>
-                Code Header
-            </div>
-            <CodeMirror
-                value={tempCode}
-                autoFocus="true"
-                height='30.9rem'
-                className='h-[31rem] border-2 border-black border-t-0'
-                extensions={[python()]}
-                onChange={(value, viewUpdate) => {
-                    props.setChildData("from lib import *\n" + value)
-                }}
-            />
-        </div>
-        
-    );
+  useEffect(() => {
+    setCodeValue(props.CodeValue)
+    return () => {}
+  }, [props.CodeValue])
+  
+
+  return (
+    <div className="">
+      <CodeMirror
+        value={codeValue}
+        autoFocus="true"
+        height="30.9rem"
+        className="h-[31rem] border-2 border-black border-t-0"
+        extensions={[python()]}
+        onChange={(value, viewUpdate) => {
+          setCodeValue(value.trim());
+          props.setChildData(value.trim());
+        }}
+      />
+    </div>
+  );
 }
