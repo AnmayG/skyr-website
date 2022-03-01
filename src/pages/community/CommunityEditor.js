@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/general/Navbar";
 import { useNavigate, useSearchParams } from "react-router-dom"
-import { onValue } from "firebase/database";
 import { rdb, db, auth } from "../../firebase";
+import { set, ref, onValue, runTransaction } from "firebase/database";
 
 function CommunityEditor() {
   const [params] = useSearchParams();
