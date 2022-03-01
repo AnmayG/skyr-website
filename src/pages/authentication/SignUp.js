@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/general/Navbar";
 import { auth } from "../../firebase";
-import {
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { StyledFirebaseAuth } from "react-firebaseui";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 
 const SignUp = () => {
-  const [image, setImage] = useState("./penguin1.png")
+  const [image, setImage] = useState("./penguin1.png");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // const [error, setError] = useState("")
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // Configure FirebaseUI.
   const uiConfig = {
@@ -29,8 +27,8 @@ const SignUp = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
-        if(user.email !== null) {
-          console.log(user.email)
+        if (user.email !== null) {
+          console.log(user.email);
           navigate("/confirm");
         }
       })
@@ -51,16 +49,14 @@ const SignUp = () => {
         item.textContent = item.textContent.replace("Sign in", "Sign up");
       }
     }
-    return () => {
-    }
-  })
-  
+    return () => {};
+  });
 
   return (
     <div className="flex flex-col h-screen w-screen">
       <Navbar />
       <div className="flex flex-col flex-grow items-center justify-start bg-gray-200">
-        <img alt="" src={image} height={400} width={400}/>
+        <img alt="" src={image} height={400} width={400} />
         <div className="min-w-[500px] border-2 border-gray-400 border-opacity-30 bg-white shadow">
           <p className="text-2xl font-bold text-center mt-8 mb-2">Sign Up</p>
           <div className="m-0">
@@ -72,7 +68,9 @@ const SignUp = () => {
           </div>
           <div className="flex w-full mt-3 items-center">
             <div className="h-[1.5px] bg-gray-200 w-[40%] ml-2"></div>
-            <p className="text-2xl text-center font-bold w-[20%] text-gray-400">OR</p>
+            <p className="text-2xl text-center font-bold w-[20%] text-gray-400">
+              OR
+            </p>
             <div className="h-[1.5px] bg-gray-200 w-[40%] mr-2"></div>
           </div>
           <div className="mx-8 flex flex-col items-center justify-center my-0">
@@ -87,7 +85,7 @@ const SignUp = () => {
                 setEmail(e.target.value);
               }}
               onFocus={() => {
-                setImage("./penguin1.png")
+                setImage("./penguin1.png");
               }}
             />
             <label className="text-sm text-left w-full mt-3 mb-0 text-gray-500">
@@ -106,7 +104,7 @@ const SignUp = () => {
                 }
               }}
               onFocus={() => {
-                setImage("./penguin2.png")
+                setImage("./penguin2.png");
               }}
             />
             <button

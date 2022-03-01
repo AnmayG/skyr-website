@@ -1,12 +1,12 @@
-import React from 'react'
-import Navbar from '../components/Navbar'
+import React from "react";
+import Navbar from "../components/general/Navbar";
 
 const Courses = () => {
   return (
     <div>
-        <Navbar/>
+      <Navbar />
     </div>
-  )
-}
+  );
+};
 
-export default Courses
+export default Courses;

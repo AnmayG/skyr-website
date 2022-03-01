@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar";
-import CodeEditor from "../../components/CodeEditor";
-import Markdown from "../../components/Markdown";
+import Navbar from "../../components/general/Navbar";
+import CodeEditor from "../../components/code-editor/CodeEditor";
+import Markdown from "../../components/code-editor/Markdown";
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import { rdb, db, auth } from "../../firebase";
@@ -10,7 +10,7 @@ import { set, ref, onValue, runTransaction } from "firebase/database";
 import {
   readDatabaseDocument,
   updateDatabaseDocument,
-} from "../../components/RealtimeDBInterface";
+} from "../../interfaces/RealtimeDBInterface";
 
 const Editor = (props) => {
   // URL Params

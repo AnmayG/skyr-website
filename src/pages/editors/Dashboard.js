@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import CourseCard from "../../components/CourseCard";
-import Navbar from "../../components/Navbar";
-import ProjectCard from "../../components/ProjectCard";
-import { addDocument, listUserFirestoreDocuments, initUser } from "../../components/FirestoreInterface";
-import { readDatabaseDocument, updateDatabaseDocument } from "../../components/RealtimeDBInterface";
+import CourseCard from "../../components/dashboard/CourseCard";
+import Navbar from "../../components/general/Navbar";
+import ProjectCard from "../../components/dashboard/ProjectCard";
+import { addDocument, listUserFirestoreDocuments, initUser } from "../../interfaces/FirestoreInterface";
+import {
+  readDatabaseDocument,
+  updateDatabaseDocument,
+} from "../../interfaces/RealtimeDBInterface";
 import { auth, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -11,7 +14,7 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([])
 
   useEffect(() => {
-    var createdUser = false
+    var createdUser = false;
 
     onAuthStateChanged(auth, (user) => {
         if(user.metadata.creationTime === user.metadata.lastSignInTime && !createdUser && !localStorage.getItem("initialized")) {
@@ -53,7 +56,7 @@ const Dashboard = () => {
             <ProjectCard
               fileName="test"
               createdDate="22 02 2022"
-              creator={ auth.currentUser }
+              creator={auth.currentUser}
             />
           </div>
         </div>
