@@ -12,11 +12,10 @@ function CommunityEditor() {
   const navigate = useNavigate();
 
   async function getDocument(reference) {
-    const docSnap = await getDoc(reference);
-    if(docSnap.exists()) {
-      const data = docSnap.data()
-      console.log("document data", data);
-      return data;
+    const docSnap = await reference.get();
+    if(docSnap) {
+      console.log("document data", docSnap.data());
+      return docSnap.data();
     } else {
       navigate("/404")
     }
@@ -28,8 +27,14 @@ function CommunityEditor() {
     const dbRef = null
     if(docId) {
       // Document id exists; check if its a valid path
-      const dbRef = doc(db, "community", docId);
-      getDocument(dbRef);
+      const dbRef = db.collection("community").doc(docId);
+      var doc = getDocument(dbRef);
+      console.log("Doc:", doc)
+      if(doc) {
+        // valid path
+      } else {
+        // invalid path
+      }
     } else {
       // Document id does not exist; right now 404 but later new project
       navigate("/404")
@@ -55,7 +60,13 @@ function CommunityEditor() {
   return (
     <div className="bg-white">
       <Navbar />
-      <div>Here</div>
+      <div className="w-screen flex flex-col items-center justify-center">
+        <p className="w-full text-center m-8 text-2xl font-bold">
+          This page is under development! Sorry!
+        </p>
+        <img alt="" src={"/penguin404.svg"} height={200} width={200} />
+        <div className="h-[2px] w-[300px] bg-gray-200" />
+      </div>
     </div>
   );
 }

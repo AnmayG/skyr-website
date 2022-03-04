@@ -12,7 +12,14 @@ export default function AboutUs() {
   return (
     <div>
       <Navbar />
-      <div className="m-2">
+      <div className="w-screen flex flex-col items-center justify-center">
+        <p className="w-full text-center m-8 text-2xl font-bold">
+          This page is under development! Sorry!
+        </p>
+        <img alt="" src={"/penguin404.svg"} height={200} width={200} />
+        <div className="h-[2px] w-[300px] bg-gray-200" />
+      </div>
+      {/* <div className="m-2">
         <div>
           <h2 className="font-bold text-xl">firebase</h2>
           <FirebaseRequests></FirebaseRequests>
@@ -27,7 +34,7 @@ export default function AboutUs() {
         </div>
         <p>Output URL: {url}</p>
         <Markdown downloadUrl={url} />
-      </div>
+      </div> */}
     </div>
   );
 }

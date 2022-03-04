@@ -10,15 +10,22 @@ const CommunityHome = () => {
     <div className="h-screen bg-gray-100">
       <Navbar />
       <div className="h-full">
-        <div className="flex items-center justify-center">
-          <button
+          <div className="flex items-center justify-center">
+            <div className="w-screen flex flex-col items-center justify-center">
+            <p className="w-full text-center m-8 text-2xl font-bold">
+              This page is under development! Sorry!
+            </p>
+            <img alt="" src={"/penguin404.svg"} height={200} width={200} />
+            <div className="h-[2px] w-[300px] bg-gray-200" />
+          </div>
+          {/* <button
             className="m-4 rounded-full bg-green-500 p-4 text-white font-extrabold text-xl"
             onClick={() => {
               navigate("/mdeditor");
             }}
           >
             Get started
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
