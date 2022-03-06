@@ -99,7 +99,7 @@ const Navbar = () => {
           <Link
             style={{ textDecoration: "none" }}
             className="border-2 border-black touch-manipulation rounded-3xl p-2 text-base text-center font-semibold"
-            to="/editor"
+            to="/newproject"
           >
             + NEW PROJECT
           </Link>

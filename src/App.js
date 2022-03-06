@@ -14,6 +14,7 @@ import Confirmation from "./pages/authentication/Confirmation";
 import PasswordReset from "./pages/authentication/PasswordReset";
 import Dashboard from "./pages/editors/Dashboard";
 import RequireAuth from "./pages/authentication/RequireAuth";
+import NewProjectInterstitialPage from "./pages/editors/NewProject";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<LandingPage />} />
         <Route exact path="/aboutus" element={<AboutUs />} />
+        <Route exact path="/newproject" element={<NewProjectInterstitialPage />} />
         <Route exact path="/editor/" element={<Editor />} />
         <Route exact path="/courses" element={<Courses />} />
         <Route exact path="/community" element={<CommunityHome />} />
