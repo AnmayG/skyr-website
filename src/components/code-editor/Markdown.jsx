@@ -33,7 +33,7 @@ const Markdown = (props) => {
   }, [props.downloadUrl]);
 
   return (
-    <div className="m-2">
+    <div className="m-4">
       <ReactMarkdown
         className="prose"
         children={markdown}

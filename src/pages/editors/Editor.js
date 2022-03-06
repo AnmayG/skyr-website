@@ -6,17 +6,31 @@ import Markdown from "../../components/code-editor/Markdown";
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import { rdb, db, auth } from "../../firebase";
-import { set, ref, onValue, runTransaction } from "firebase/database";
+import { set, push, ref, onValue, runTransaction } from "firebase/database";
 import {
   readDatabaseDocument,
   updateDatabaseDocument,
 } from "../../interfaces/RealtimeDBInterface";
+const sampleCode = `start()
+set_outputs(26, 19, 13)
+turn_off(26, 19, 13)
+
+while True:
+  blink(26, 0.2)
+  blink(19, 0.2)
+  blink(13, 0.2)`;
 
 const Editor = (props) => {
   // URL Params
   const [params] = useSearchParams();
   const docId = params.get("id");
-  const dbRef = ref(rdb, `/${docId}`);
+  var dbRef = null;
+  if (docId) {
+    dbRef = ref(rdb, `/${docId}`);
+  } else {
+    const overallRef = ref(rdb, `/`);
+    dbRef = push(overallRef);
+  }
   const navigate = useNavigate();
 
   // Markdown state
@@ -36,14 +50,6 @@ const Editor = (props) => {
 
   // CodeMirror state
   const [sentCodeString, setSentCodeString] = useState(``);
-  // start()
-  // set_outputs(26, 19, 13)
-  // turn_off(26, 19, 13)
-
-  // while True:
-  //   blink(26, 0.2)
-  //   blink(19, 0.2)
-  //   blink(13, 0.2)
   const [recCodeString, setRecCodeString] = useState("");
 
   // Websocket Connection
@@ -71,6 +77,22 @@ const Editor = (props) => {
     // If no ID provided/new project has been created
     if (!docId) {
       // Create new document
+      console.log("here");
+      completeTransaction(sampleCode).then(() => {
+        console.log(dbRef.key);
+        navigate(`/editor/?id=${dbRef.key}`);
+      });
+      // runTransaction(dbRef, (transaction) => {
+      //   if (transaction) {
+      //     // Set the value
+      //     console.log("the hell")
+      //     transaction.value = sampleCode;
+      //   }
+      //   return transaction;
+      // });
+      // console.log(dbRef.key)
+      // navigate(`/editor/?id=${dbRef.key}`)
+      return;
     }
 
     var dbRefConnected = false;
@@ -136,16 +158,21 @@ const Editor = (props) => {
     });
   }
 
-  function databaseTransaction(codeString) {
-    setRecCodeString(codeString);
-    const uid = auth.currentUser.uid;
-    runTransaction(dbRef, (transaction) => {
+  async function completeTransaction(codeString) {
+    await runTransaction(dbRef, (transaction) => {
       if (transaction) {
         // Set the value
+        console.log("here1324");
         transaction.value = codeString;
       }
       return transaction;
     });
+  }
+
+  function databaseTransaction(codeString) {
+    setRecCodeString(codeString);
+    const uid = auth.currentUser.uid;
+    completeTransaction(codeString);
   }
 
   return (
