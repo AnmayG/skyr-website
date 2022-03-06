@@ -135,6 +135,7 @@ const Editor = (props) => {
     await runTransaction(dbRef, (transaction) => {
       if (transaction) {
         // Set the value
+        console.log("here1324");
         transaction.value = codeString;
       }
       return transaction;
