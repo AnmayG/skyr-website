@@ -23,6 +23,7 @@ while True:
 const Editor = (props) => {
   // URL Params
   const [params] = useSearchParams();
+  
   const docId = params.get("id");
   var dbRef = ref(rdb, `/${docId}`);
   const navigate = useNavigate();
