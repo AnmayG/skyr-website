@@ -7,7 +7,7 @@ const CommunityHome = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen bg-gray-100">
+    <div className="w-screen">
       <Navbar />
       <div className="h-full">
           <div className="flex items-center justify-center">

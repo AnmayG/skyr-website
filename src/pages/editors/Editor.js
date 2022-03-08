@@ -11,6 +11,11 @@ import {
   readDatabaseDocument,
   updateDatabaseDocument,
 } from "../../interfaces/RealtimeDBInterface";
+import {
+  socketLedToggle,
+  pushPythonCode,
+  disconnect
+} from "../../interfaces/SocketInterface";
 const sampleCode = `start()
 set_outputs(26, 19, 13)
 turn_off(26, 19, 13)
@@ -23,7 +28,7 @@ while True:
 const Editor = (props) => {
   // URL Params
   const [params] = useSearchParams();
-  
+
   const docId = params.get("id");
   var dbRef = ref(rdb, `/${docId}`);
   const navigate = useNavigate();
@@ -83,13 +88,14 @@ const Editor = (props) => {
     };
   }, []);
 
+  // Send info thorough socket
   function buttonEventSend(type) {
     if (!isConnected) {
       alert("Server disconnected");
     }
     var red = redOn;
-    var blue = blueOn;
     var green = greenOn;
+    var blue = blueOn;
 
     // TODO: Fix this terrible code it sucks :(
     switch (type) {
@@ -97,46 +103,25 @@ const Editor = (props) => {
         setRedOn(!redOn);
         red = !redOn;
         break;
-      case "blue":
-        setBlueOn(!blueOn);
-        blue = !blueOn;
-        break;
       case "green":
         setGreenOn(!greenOn);
         green = !greenOn;
+        break;
+      case "blue":
+        setBlueOn(!blueOn);
+        blue = !blueOn;
         break;
       default:
         console.log("how");
     }
 
-    socket.emit("led-toggle", {
-      r: red,
-      g: green,
-      b: blue,
-    });
-  }
-
-  function pushPythonCode() {
-    if (!isConnected) alert("Server disconnected");
-
-    socket.emit("python-push", {
-      code: `from lib import *\n ${recCodeString}`,
-    });
-  }
-
-  function disconnect() {
-    if (!isConnected) alert("Server disconnected");
-
-    socket.emit("python-kill", {
-      command: "stop",
-    });
+    socketLedToggle(socket, red, green, blue);
   }
 
   async function completeTransaction(codeString) {
     await runTransaction(dbRef, (transaction) => {
       if (transaction) {
         // Set the value
-        console.log("here1324");
         transaction.value = codeString;
       }
       return transaction;
@@ -150,12 +135,13 @@ const Editor = (props) => {
   }
 
   return (
-    <div className="">
+    <div className="h-screen">
       <Navbar />
       <div className="flex justify-start">
-        <div className="w-full">
-          <div className="h-7 text-base border-2 border-black ml-2 flex justify-between">
-            <div className="ml-2">Code Header</div>
+        <div className="w-[70vw]">
+          {/* Code Editor */}
+          <div className="h-7 text-base border-2 border-black flex justify-between">
+            <div className="ml-2">Code Editor</div>
             <div
               onClick={() => {
                 databaseTransaction(recCodeString);
@@ -165,7 +151,7 @@ const Editor = (props) => {
               Save
             </div>
           </div>
-          <div className="w-full align-top ml-2 border-black border-0">
+          <div className="h-[70vh] w-full align-top border-black border-0">
             <CodeEditor
               setChildData={(codeString) => {
                 databaseTransaction(codeString);
@@ -174,71 +160,79 @@ const Editor = (props) => {
             />
           </div>
         </div>
-        <div className="h-[31rem] mr-2">
-          <div className="h-7 text-base w-full border-2 border-l-0 border-black">
+        {/* Markdown */}
+        <div className="h-[70vh] w-[30vw]">
+          <div className="h-7 w-full text-base border-2 border-l-0 border-black pl-2">
             Tutorials
           </div>
           {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
-          <div className="h-full w-full overflow-y-auto border-2 border-black border-t-0">
+          <div className="h-full w-full overflow-y-auto border-2 border-black border-y-0">
             <Markdown downloadUrl={url} />
           </div>
         </div>
       </div>
 
-      <div className="w-[90%] border-2 border-black inline-block align-top p-[10px]">
-        <div className="">
+      {/* Terminal and buttons */}
+      <div className="flex h-[144px] w-full">
+        <div className="w-[90%] border-2 border-black p-[10px] h-full">
+          <div className="">
+            <div
+              className="bg-red-500 text-center m-2"
+              onClick={() => {
+                buttonEventSend("red");
+              }}
+            >
+              Red
+            </div>
+            <div
+              className="bg-green-500 text-center m-2"
+              onClick={() => {
+                buttonEventSend("green");
+              }}
+            >
+              Green
+            </div>
+            <div
+              className="bg-blue-500 text-center m-2"
+              onClick={() => {
+                buttonEventSend("blue");
+              }}
+            >
+              Blue
+            </div>
+          </div>
+        </div>
+        <div className="w-[10%] border-2 border-black border-l-0 p-[10px] overflow-clip h-full">
+          <input
+            type="text"
+            onKeyUp={(e) => {
+              if (e.key === "Enter") {
+                setIpAddress("http://" + e.target.value + ":9000");
+              }
+            }}
+            placeholder={ipAddress}
+          />
+          <div>Joined: {isConnected.toString()}</div>
           <div
-            className="bg-red-500 text-center m-2"
+            className="bg-blue-200 text-center m-2 rounded-full"
             onClick={() => {
-              buttonEventSend("red");
+              pushPythonCode(socket, isConnected, recCodeString);
             }}
           >
-            Red
+            Push
           </div>
           <div
-            className="bg-green-500 text-center m-2"
+            className="bg-red-200 text-center m-2 rounded-full"
             onClick={() => {
-              buttonEventSend("green");
+              disconnect(socket, isConnected);
             }}
           >
-            Green
-          </div>
-          <div
-            className="bg-blue-500 text-center m-2"
-            onClick={() => {
-              buttonEventSend("blue");
-            }}
-          >
-            Blue
+            Stop
           </div>
         </div>
       </div>
-      <div className="w-[10%] border-2 border-black border-l-0 inline-block align-top p-[10px] overflow-auto h-[128px]">
-        <input
-          type="text"
-          onKeyUp={(e) => {
-            if (e.key === "Enter") {
-              setIpAddress("http://" + e.target.value + ":9000");
-            }
-          }}
-          placeholder={ipAddress}
-        />
-        <div>Joined: {isConnected.toString()}</div>
-        <div
-          className="bg-blue-200 text-center m-2 rounded-full"
-          onClick={pushPythonCode}
-        >
-          Push
-        </div>
-        <div
-          className="bg-red-200 text-center m-2 rounded-full"
-          onClick={() => {
-            disconnect();
-          }}
-        >
-          Stop
-        </div>
-      </div>
+      {/* Courses */}
+      <div></div>
     </div>
   );
 };

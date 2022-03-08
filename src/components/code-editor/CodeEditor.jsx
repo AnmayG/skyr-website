@@ -22,8 +22,9 @@ export default function CodeEditor(props) {
       <CodeMirror
         value={codeValue}
         autoFocus="true"
-        height="30.9rem"
-        className="h-[31rem] border-2 border-black border-t-0"
+        height="70vh"
+        width="69.9vw"
+        className="border-2 border-black border-t-0 border-r-0"
         extensions={[python()]}
         onChange={(value, viewUpdate) => {
           setCodeValue(value.trim());
