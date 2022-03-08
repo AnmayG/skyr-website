@@ -8,8 +8,12 @@ import { useSearchParams } from "react-router-dom";
 import { rdb, db, auth } from "../../firebase";
 import { set, push, ref, onValue, runTransaction } from "firebase/database";
 import {
+    readFirestoreUserDocumentData
+} from "../../interfaces/FirestoreInterface"
+import {
   readDatabaseDocument,
   updateDatabaseDocument,
+  completeTransaction
 } from "../../interfaces/RealtimeDBInterface";
 import {
   socketLedToggle,
@@ -30,7 +34,7 @@ const Editor = (props) => {
   const [params] = useSearchParams();
 
   const docId = params.get("id");
-  var dbRef = ref(rdb, `/${docId}`);
+  const dbRef = ref(rdb, `/${docId}`);
   const navigate = useNavigate();
 
   // Markdown state
@@ -79,6 +83,7 @@ const Editor = (props) => {
       if (snapshot.val() && !dbRefConnected) {
         const data = snapshot.val().value;
         setSentCodeString(data);
+        readFirestoreUserDocumentData(auth.currentUser.uid, docId)
       } else if (snapshot.val() === null) {
         navigate("/404");
       }
@@ -118,16 +123,6 @@ const Editor = (props) => {
     socketLedToggle(socket, red, green, blue);
   }
 
-  async function completeTransaction(codeString) {
-    await runTransaction(dbRef, (transaction) => {
-      if (transaction) {
-        // Set the value
-        transaction.value = codeString;
-      }
-      return transaction;
-    });
-  }
-
   function databaseTransaction(codeString) {
     setRecCodeString(codeString);
     const uid = auth.currentUser.uid;
@@ -135,8 +130,13 @@ const Editor = (props) => {
   }
 
   return (
-    <div className="h-screen">
+    <div className="h-screen overflow-clip">
       <Navbar />
+      <div className="flex flex-col w-screen h-[5vh] bg-slate-200 justify-center">
+          <div className="ml-2">
+              Course Information: 
+          </div>
+      </div>
       <div className="flex justify-start">
         <div className="w-[70vw]">
           {/* Code Editor */}
@@ -151,7 +151,7 @@ const Editor = (props) => {
               Save
             </div>
           </div>
-          <div className="h-[70vh] w-full align-top border-black border-0">
+          <div className="h-[68vh] w-full align-top border-black border-0">
             <CodeEditor
               setChildData={(codeString) => {
                 databaseTransaction(codeString);
@@ -161,7 +161,7 @@ const Editor = (props) => {
           </div>
         </div>
         {/* Markdown */}
-        <div className="h-[70vh] w-[30vw]">
+        <div className="h-[68vh] w-[30vw]">
           <div className="h-7 w-full text-base border-2 border-l-0 border-black pl-2">
             Tutorials
           </div>
@@ -173,7 +173,7 @@ const Editor = (props) => {
       </div>
 
       {/* Terminal and buttons */}
-      <div className="flex h-[144px] w-full">
+      <div className="flex h-[17vh] w-full">
         <div className="w-[90%] border-2 border-black p-[10px] h-full">
           <div className="">
             <div

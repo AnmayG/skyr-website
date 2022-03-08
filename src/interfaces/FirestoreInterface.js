@@ -19,19 +19,29 @@ function initUser() {
     });
 }
 
-function addDocument(userId, documentMetaData) {
+async function addDocument(userId, documentMetaData) {
   db.collection("/users/" + userId + "/documents/")
     .doc()
     .set(documentMetaData)
     .then(() => {
       console.log("Addition successful");
     })
-    .catch(() => {
-      console.error("User addition failed.");
+    .catch((error) => {
+      console.error(error);
     });
 }
 
-function readFirestoreUserDocumentData(userId, documentID) {}
+async function readFirestoreUserDocumentData(userId, documentID) {
+  await db.doc(`/users/${userId}/documents/${documentID}`)
+    .get()
+    .then((doc) => {
+      console.log(doc.data())
+      return doc.data
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
 
 function listUserFirestoreDocuments(userId) {
   db.collection(`/users/${userId}/documents/`).onSnapshot((list) => {

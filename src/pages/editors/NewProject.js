@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/general/Navbar";
 import { set, push, ref, runTransaction } from "firebase/database";
-import { rdb } from "../../firebase";
+import { rdb, db, auth } from "../../firebase";
+import { addDocument } from "../../interfaces/FirestoreInterface";
 const sampleCode = `start()
 set_outputs(26, 19, 13)
 turn_off(26, 19, 13)
@@ -22,8 +23,14 @@ function NewProjectInterstitialPage() {
     set(dbRef, {
       value: sampleCode,
     }).then(() => {
-      console.log(dbRef.key);
-      navigate(`/editor/?id=${dbRef.key}`);
+      addDocument(auth.currentUser.uid, {
+        date: new Date().toDateString(),
+        name: "Untitled",
+        course: "None"
+      })
+      .then((output) => {
+        navigate(`/editor/?id=${dbRef.key}`);
+      });
     });
 
     return () => {
