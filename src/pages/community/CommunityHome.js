@@ -10,8 +10,8 @@ const CommunityHome = () => {
     <div className="w-screen">
       <Navbar />
       <div className="h-full">
-          <div className="flex items-center justify-center">
-            <div className="w-screen flex flex-col items-center justify-center">
+        <div className="flex items-center justify-center">
+          <div className="w-screen flex flex-col items-center justify-center">
             <p className="w-full text-center m-8 text-2xl font-bold">
               This page is under development!
             </p>

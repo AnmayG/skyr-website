@@ -20,10 +20,10 @@ function NewProjectInterstitialPage() {
   useEffect(() => {
     var dbRefConnected = false;
     set(dbRef, {
-        value: sampleCode,
+      value: sampleCode,
     }).then(() => {
-        console.log(dbRef.key);
-        navigate(`/editor/?id=${dbRef.key}`);
+      console.log(dbRef.key);
+      navigate(`/editor/?id=${dbRef.key}`);
     });
 
     return () => {

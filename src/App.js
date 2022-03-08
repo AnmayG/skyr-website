@@ -22,7 +22,11 @@ function App() {
       <Routes>
         <Route exact path="/" element={<LandingPage />} />
         <Route exact path="/aboutus" element={<AboutUs />} />
-        <Route exact path="/newproject" element={<NewProjectInterstitialPage />} />
+        <Route
+          exact
+          path="/newproject"
+          element={<NewProjectInterstitialPage />}
+        />
         <Route exact path="/editor/" element={<Editor />} />
         <Route exact path="/courses" element={<Courses />} />
         <Route exact path="/community" element={<CommunityHome />} />

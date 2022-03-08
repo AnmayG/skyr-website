@@ -14,7 +14,7 @@ import {
 import {
   socketLedToggle,
   pushPythonCode,
-  disconnect
+  disconnect,
 } from "../../interfaces/SocketInterface";
 const sampleCode = `start()
 set_outputs(26, 19, 13)
