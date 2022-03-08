@@ -1,0 +1,36 @@
+import CodeMirror from "@uiw/react-codemirror";
+import { python } from "@codemirror/lang-python";
+import { useEffect, useState } from "react";
+
+export default function CodeEditor(props) {
+  const [editorTheme, setEditorTheme] = useState("");
+  const [codeValue, setCodeValue] = useState();
+
+  useEffect(() => {
+    setCodeValue(props.CodeValue);
+    // props.setChildData("from lib import *\n" + codeValue);
+    return () => {};
+  }, []);
+
+  useEffect(() => {
+    setCodeValue(props.CodeValue);
+    return () => {};
+  }, [props.CodeValue]);
+
+  return (
+    <div className="">
+      <CodeMirror
+        value={codeValue}
+        autoFocus="true"
+        height="68vh"
+        width="69.9vw"
+        className="border-2 border-black border-t-0 border-r-0"
+        extensions={[python()]}
+        onChange={(value, viewUpdate) => {
+          setCodeValue(value.trim());
+          props.setChildData(value.trim());
+        }}
+      />
+    </div>
+  );
+}

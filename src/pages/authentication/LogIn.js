@@ -1,18 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/general/Navbar";
 import { auth } from "../../firebase";
-import {
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { StyledFirebaseAuth } from "react-firebaseui";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 
 const LogIn = () => {
-  const [image, setImage] = useState("./penguin1.png")
+  const [image, setImage] = useState("./penguin1.png");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Configure FirebaseUI.
@@ -27,9 +26,8 @@ const LogIn = () => {
   function signInUser() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user);
-        navigate("/dashboard");
+        // const user = userCredential.user;
+        setLoading(true);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -38,12 +36,24 @@ const LogIn = () => {
       });
   }
 
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user !== null) {
+        navigate("/dashboard");
+      } else {
+        console.log("Loading");
+      }
+    });
+
+    return () => {};
+  });
+
   return (
     <div className="flex flex-col h-screen w-screen">
       <Navbar />
-      <div className="flex flex-col flex-grow items-center justify-start bg-gray-200">
-        <img alt="" src={image} height={400} width={400}/>
-        <div className="min-w-[500px] border-2 border-gray-400 bg-white border-opacity-30 shadow">
+      <div className="flex flex-col flex-grow items-center justify-start bg-gray-200 rounded-lg">
+        <img alt="" src={image} height={400} width={400} />
+        <div className="min-w-[500px] border-2 border-gray-400 bg-white border-opacity-30 shadow rounded-xl">
           <p className="text-2xl font-bold text-center mt-8 mb-2">
             Welcome Back
           </p>
@@ -73,7 +83,7 @@ const LogIn = () => {
                 setEmail(e.target.value);
               }}
               onFocus={() => {
-                setImage("./penguin1.png")
+                setImage("./penguin1.png");
               }}
             />
             <label className="text-sm text-left w-full mt-3 mb-0 text-gray-500">
@@ -92,7 +102,7 @@ const LogIn = () => {
                 }
               }}
               onFocus={() => {
-                setImage("./penguin2.png")
+                setImage("./penguin2.png");
               }}
             />
             <button

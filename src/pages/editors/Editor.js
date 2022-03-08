@@ -1,135 +1,240 @@
-import React, { useState, useEffect } from 'react'
-import Navbar from '../../components/Navbar'
-import CodeEditor from "../../components/CodeEditor"
-import Markdown from '../../components/Markdown'
-import io from 'socket.io-client'
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/general/Navbar";
+import CodeEditor from "../../components/code-editor/CodeEditor";
+import Markdown from "../../components/code-editor/Markdown";
+import io from "socket.io-client";
+import { useSearchParams } from "react-router-dom";
+import { rdb, db, auth } from "../../firebase";
+import { set, push, ref, onValue, runTransaction } from "firebase/database";
+import {
+    readFirestoreUserDocumentData
+} from "../../interfaces/FirestoreInterface"
+import {
+  readDatabaseDocument,
+  updateDatabaseDocument,
+  completeTransaction
+} from "../../interfaces/RealtimeDBInterface";
+import {
+  socketLedToggle,
+  pushPythonCode,
+  disconnect,
+} from "../../interfaces/SocketInterface";
+const sampleCode = `start()
+set_outputs(26, 19, 13)
+turn_off(26, 19, 13)
 
-const Editor = () => {
-    // Markdown state
-    const [url] = useState("https://firebasestorage.googleapis.com/v0/b/skyrobotics-fc578.appspot.com/o/tutorials%2Ftest.md?alt=media&token=cd1f6cdd-e17c-47c3-bcc9-30a853b535a9")
-    
-    // Connection state
-    const [isConnected, setConnected] = useState(false)
-    const [ipAddress, setIpAddress]   = useState("http://10.0.0.237:9000")
-    const [socket, setSocket]         = useState(null)
+while True:
+  blink(26, 0.2)
+  blink(19, 0.2)
+  blink(13, 0.2)`;
 
-    // LED vars for testing
-    const [redOn, setRedOn]           = useState(false)
-    const [blueOn, setBlueOn]         = useState(false)
-    const [greenOn, setGreenOn]       = useState(false)
+const Editor = (props) => {
+  // URL Params
+  const [params] = useSearchParams();
 
-    // CodeMirror state
-    const [codeString, setCodeString] = useState("")
+  const docId = params.get("id");
+  const dbRef = ref(rdb, `/${docId}`);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const newSocket = io(ipAddress, { transports : ['websocket'] });
-        newSocket.on("connect", () => {
-            setConnected(true)
-        })
-        newSocket.on("disconnect", () => {
-            setConnected(false)
-        })
+  // Markdown state
+  const [url] = useState(
+    "https://firebasestorage.googleapis.com/v0/b/skyrobotics-fc578.appspot.com/o/tutorials%2Ftest.md?alt=media&token=cd1f6cdd-e17c-47c3-bcc9-30a853b535a9"
+  );
 
-        newSocket.on("program-output")
+  // Connection state
+  const [isConnected, setConnected] = useState(false);
+  const [ipAddress, setIpAddress] = useState("http://10.0.0.237:9000");
+  const [socket, setSocket] = useState(null);
 
-        setSocket(newSocket);
-        return () => newSocket.close();
-    }, [setSocket, ipAddress]);
+  // LED vars for testing
+  const [redOn, setRedOn] = useState(false);
+  const [blueOn, setBlueOn] = useState(false);
+  const [greenOn, setGreenOn] = useState(false);
 
-    function buttonEventSend(type) {
-        if(!isConnected) {
-            alert("Server disconnected")
-        }
-        var red = redOn
-        var blue = blueOn
-        var green = greenOn
+  // CodeMirror state
+  const [sentCodeString, setSentCodeString] = useState(``);
+  const [recCodeString, setRecCodeString] = useState("");
 
-        // TODO: Fix this terrible code it sucks :(
-        switch(type) {
-            case "red":
-                setRedOn(!redOn)
-                red = !redOn
-                break;
-            case "blue":
-                setBlueOn(!blueOn)
-                blue = !blueOn
-                break;
-            case "green":
-                setGreenOn(!greenOn)
-                green = !greenOn
-                break;
-            default:
-                console.log("how")
-        }
+  // Websocket Connection
+  useEffect(() => {
+    const newSocket = io(ipAddress, { transports: ["websocket"] });
+    newSocket.on("connect", () => {
+      setConnected(true);
+    });
+    newSocket.on("disconnect", () => {
+      setConnected(false);
+    });
 
-        socket.emit('led-toggle', {
-            r: red,
-            g: green,
-            b: blue,
-        });
+    newSocket.on("program-output", () => {
+      // print program logs
+    });
+
+    setSocket(newSocket);
+    return () => {
+      newSocket.close();
+    };
+  }, [setSocket, ipAddress]);
+
+  // Check document exists else navigate to 404
+  useEffect(() => {
+    var dbRefConnected = false;
+    onValue(dbRef, (snapshot) => {
+      if (snapshot.val() && !dbRefConnected) {
+        const data = snapshot.val().value;
+        setSentCodeString(data);
+        readFirestoreUserDocumentData(auth.currentUser.uid, docId)
+      } else if (snapshot.val() === null) {
+        navigate("/404");
+      }
+    });
+    return () => {
+      dbRefConnected = true;
+    };
+  }, []);
+
+  // Send info thorough socket
+  function buttonEventSend(type) {
+    if (!isConnected) {
+      alert("Server disconnected");
+    }
+    var red = redOn;
+    var green = greenOn;
+    var blue = blueOn;
+
+    // TODO: Fix this terrible code it sucks :(
+    switch (type) {
+      case "red":
+        setRedOn(!redOn);
+        red = !redOn;
+        break;
+      case "green":
+        setGreenOn(!greenOn);
+        green = !greenOn;
+        break;
+      case "blue":
+        setBlueOn(!blueOn);
+        blue = !blueOn;
+        break;
+      default:
+        console.log("how");
     }
 
-    function pushPythonCode() {
-        if(!isConnected) alert("Server disconnected")
+    socketLedToggle(socket, red, green, blue);
+  }
 
-        socket.emit("python-push", {
-            code: codeString,
-        })
-    }
+  function databaseTransaction(codeString) {
+    setRecCodeString(codeString);
+    const uid = auth.currentUser.uid;
+    completeTransaction(codeString);
+  }
 
-    function disconnect() {
-        if(!isConnected) alert("Server disconnected")
-
-        socket.emit("python-kill", {
-            command: "stop",
-        })
-    }
-
-    return (
-        <div className=''>
-            <Navbar />
-            <div className='flex'>
-                <div className="w-2/3 align-top m-0 border-black border-0">
-                    <CodeEditor setChildData={setCodeString}/>
-                </div>
-                <div className='h-full w-1/3 m-0'>
-                    <div className='h-7 text-base w-full border-2 border-l-0 border-black'>
-                        Tutorials
-                    </div>
-                    {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
-                    <div className='h-[31rem] overflow-auto border-2 border-black border-l-0 border-t-0'>
-                        <Markdown downloadUrl={url}/>
-                    </div>
-                </div>
+  return (
+    <div className="h-screen overflow-clip">
+      <Navbar />
+      <div className="flex flex-col w-screen h-[5vh] bg-slate-200 justify-center">
+          <div className="ml-2">
+              Course Information: 
+          </div>
+      </div>
+      <div className="flex justify-start">
+        <div className="w-[70vw]">
+          {/* Code Editor */}
+          <div className="h-7 text-base border-2 border-black flex justify-between">
+            <div className="ml-2">Code Editor</div>
+            <div
+              onClick={() => {
+                databaseTransaction(recCodeString);
+              }}
+              className="mr-2"
+            >
+              Save
             </div>
-            
-            <div className='w-[90%] border-2 border-black inline-block align-top p-[10px]'>
-                <div className="">
-                    <div className="bg-red-500 text-center m-2" onClick={() => {buttonEventSend("red")}}>Red</div>
-                    <div className="bg-green-500 text-center m-2" onClick={() => {buttonEventSend("green")}}>Green</div>
-                    <div className="bg-blue-500 text-center m-2" onClick={() => {buttonEventSend("blue")}}>Blue</div>
-                </div>
-            </div>
-            <div className='w-[10%] border-2 border-black border-l-0 inline-block align-top p-[10px] overflow-auto h-[128px]'>
-                <input type="text"
-                onKeyUp={(e) => {
-                    if (e.key === 'Enter') {
-                        setIpAddress("http://" + e.target.value + ":9000")
-                    }
-                }}
-                placeholder={ipAddress}/>
-                <div>Joined: {isConnected.toString()}</div>
-                <div className='bg-blue-200 text-center m-2 rounded-full' onClick={pushPythonCode}>Push</div>
-                <div className='bg-red-200 text-center m-2 rounded-full' onClick={() => {disconnect()}}>Stop</div>
-            </div>
+          </div>
+          <div className="h-[68vh] w-full align-top border-black border-0">
+            <CodeEditor
+              setChildData={(codeString) => {
+                databaseTransaction(codeString);
+              }}
+              CodeValue={sentCodeString}
+            />
+          </div>
         </div>
-    )
-}
+        {/* Markdown */}
+        <div className="h-[68vh] w-[30vw]">
+          <div className="h-7 w-full text-base border-2 border-l-0 border-black pl-2">
+            Tutorials
+          </div>
+          {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
+          <div className="h-full w-full overflow-y-auto border-2 border-black border-y-0">
+            <Markdown downloadUrl={url} />
+          </div>
+        </div>
+      </div>
 
-/*
- While the beginning of the imperialist movement saw a wide prevalence of ideas like Poor Man's Burden that served to
- demonize imperialization, over time these attitudes shifted to become pro-imperialist, resulting in the induction of
- territories and states like Hawaii and Puerto Rico into the US.
- */
+      {/* Terminal and buttons */}
+      <div className="flex h-[17vh] w-full">
+        <div className="w-[90%] border-2 border-black p-[10px] h-full">
+          <div className="">
+            <div
+              className="bg-red-500 text-center m-2"
+              onClick={() => {
+                buttonEventSend("red");
+              }}
+            >
+              Red
+            </div>
+            <div
+              className="bg-green-500 text-center m-2"
+              onClick={() => {
+                buttonEventSend("green");
+              }}
+            >
+              Green
+            </div>
+            <div
+              className="bg-blue-500 text-center m-2"
+              onClick={() => {
+                buttonEventSend("blue");
+              }}
+            >
+              Blue
+            </div>
+          </div>
+        </div>
+        <div className="w-[10%] border-2 border-black border-l-0 p-[10px] overflow-clip h-full">
+          <input
+            type="text"
+            onKeyUp={(e) => {
+              if (e.key === "Enter") {
+                setIpAddress("http://" + e.target.value + ":9000");
+              }
+            }}
+            placeholder={ipAddress}
+          />
+          <div>Joined: {isConnected.toString()}</div>
+          <div
+            className="bg-blue-200 text-center m-2 rounded-full"
+            onClick={() => {
+              pushPythonCode(socket, isConnected, recCodeString);
+            }}
+          >
+            Push
+          </div>
+          <div
+            className="bg-red-200 text-center m-2 rounded-full"
+            onClick={() => {
+              disconnect(socket, isConnected);
+            }}
+          >
+            Stop
+          </div>
+        </div>
+      </div>
+      {/* Courses */}
+      <div></div>
+    </div>
+  );
+};
 
-export default Editor
+export default Editor;

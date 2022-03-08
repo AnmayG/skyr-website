@@ -1,8 +1,8 @@
 [
-    {
-      "origin": ["http://localhost:3000"],
-      "method": ["GET", "HEAD", "DELETE"],
-      "responseHeader": ["Content-Type"],
-      "maxAgeSeconds": 3600
-    }
+  {
+    "origin": ["http://localhost:3000"],
+    "method": ["GET", "HEAD", "DELETE"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+  }
 ]
