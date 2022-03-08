@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/general/Navbar";
 import { set, push, ref, runTransaction } from "firebase/database";
 import { rdb, db, auth } from "../../firebase";
-import { addDocument } from "../../interfaces/FirestoreInterface";
+import { addDocumentWithID } from "../../interfaces/FirestoreInterface";
 const sampleCode = `start()
 set_outputs(26, 19, 13)
 turn_off(26, 19, 13)
@@ -23,7 +23,7 @@ function NewProjectInterstitialPage() {
     set(dbRef, {
       value: sampleCode,
     }).then(() => {
-      addDocument(auth.currentUser.uid, {
+      addDocumentWithID(auth.currentUser.uid, dbRef.key, {
         date: new Date().toDateString(),
         name: "Untitled",
         course: "None"

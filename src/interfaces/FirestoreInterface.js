@@ -19,8 +19,8 @@ function initUser() {
     });
 }
 
-async function addDocument(userId, documentMetaData) {
-  db.collection("/users/" + userId + "/documents/")
+async function addDocument(userID, documentMetaData) {
+  db.collection("/users/" + userID + "/documents/")
     .doc()
     .set(documentMetaData)
     .then(() => {
@@ -31,16 +31,30 @@ async function addDocument(userId, documentMetaData) {
     });
 }
 
-async function readFirestoreUserDocumentData(userId, documentID) {
-  await db.doc(`/users/${userId}/documents/${documentID}`)
-    .get()
-    .then((doc) => {
-      console.log(doc.data())
-      return doc.data
+async function addDocumentWithID(userID, documentID, documentMetaData) {
+  db.collection("/users/" + userID + "/documents")
+    .doc(documentID)
+    .set(documentMetaData)
+    .then(() => {
+      console.log("Addition with ID successful");
     })
     .catch((error) => {
-      console.error(error)
+      console.error(error);
+    });
+}
+
+async function readFirestoreUserDocumentData(userID, documentID) {
+  console.log(userID, documentID);
+  await db
+    .doc(`/users/${userID}/documents/${documentID}`)
+    .get()
+    .then((doc) => {
+      console.log(doc, doc.data());
+      return doc.data;
     })
+    .catch((error) => {
+      console.error(error);
+    });
 }
 
 function listUserFirestoreDocuments(userId) {
@@ -58,6 +72,7 @@ function deleteFirestoreItem() {}
 export {
   initUser,
   addDocument,
+  addDocumentWithID,
   readFirestoreUserDocumentData,
   listUserFirestoreDocuments,
   updateFirestoreItem,
