@@ -52,7 +52,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="flex w-screen justify-between items-center lg:px-14 md:px-8 sm:px-4 pt-3 pb-3 bg-white">
+    <div className="flex w-screen justify-between items-center lg:px-6 md:px-5 sm:px-4 h-[7vh] bg-white">
       <div className="flex justify-center items-center whitespace-nowrap">
         <img
           src="../../skyr-logo.svg"

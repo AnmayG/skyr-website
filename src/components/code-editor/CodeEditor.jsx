@@ -22,7 +22,7 @@ export default function CodeEditor(props) {
       <CodeMirror
         value={codeValue}
         autoFocus="true"
-        height="70vh"
+        height="68vh"
         width="69.9vw"
         className="border-2 border-black border-t-0 border-r-0"
         extensions={[python()]}
