@@ -137,6 +137,9 @@ const Editor = (props) => {
   return (
     <div className="h-screen">
       <Navbar />
+      <div className="h-[4.05vh] w-screen bg-slate-200">
+        Course Information
+      </div>
       <div className="flex justify-start">
         <div className="w-[70vw]">
           {/* Code Editor */}
@@ -173,7 +176,7 @@ const Editor = (props) => {
       </div>
 
       {/* Terminal and buttons */}
-      <div className="flex h-[144px] w-full">
+      <div className="flex h-[15vh] w-full">
         <div className="w-[90%] border-2 border-black p-[10px] h-full">
           <div className="">
             <div
