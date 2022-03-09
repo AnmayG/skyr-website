@@ -44,13 +44,11 @@ async function addDocumentWithID(userID, documentID, documentMetaData) {
 }
 
 async function readFirestoreUserDocumentData(userID, documentID) {
-  console.log(userID, documentID);
-  await db
+  return await db
     .doc(`/users/${userID}/documents/${documentID}`)
     .get()
     .then((doc) => {
-      console.log(doc, doc.data());
-      return doc.data;
+      return doc.data();
     })
     .catch((error) => {
       console.error(error);

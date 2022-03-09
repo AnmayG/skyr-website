@@ -20,6 +20,7 @@ import {
   pushPythonCode,
   disconnect,
 } from "../../interfaces/SocketInterface";
+import FileHeader from "../../components/code-editor/FileHeader";
 const sampleCode = `start()
 set_outputs(26, 19, 13)
 turn_off(26, 19, 13)
@@ -32,7 +33,6 @@ while True:
 const Editor = (props) => {
   // URL Params
   const [params] = useSearchParams();
-
   const docId = params.get("id");
   const dbRef = ref(rdb, `/${docId}`);
   const navigate = useNavigate();
@@ -83,7 +83,6 @@ const Editor = (props) => {
       if (snapshot.val() && !dbRefConnected) {
         const data = snapshot.val().value;
         setSentCodeString(data);
-        readFirestoreUserDocumentData(auth.currentUser.uid, docId)
       } else if (snapshot.val() === null) {
         navigate("/404");
       }
@@ -91,7 +90,7 @@ const Editor = (props) => {
     return () => {
       dbRefConnected = true;
     };
-  }, []);
+  }, []); 
 
   // Send info thorough socket
   function buttonEventSend(type) {
@@ -125,18 +124,14 @@ const Editor = (props) => {
 
   function databaseTransaction(codeString) {
     setRecCodeString(codeString);
-    const uid = auth.currentUser.uid;
+    // const uid = auth.currentUser.uid;
     completeTransaction(codeString);
   }
 
   return (
     <div className="h-screen overflow-clip">
       <Navbar />
-      <div className="flex flex-col w-screen h-[5vh] bg-slate-200 justify-center">
-          <div className="ml-2">
-              Course Information: 
-          </div>
-      </div>
+      <FileHeader docID={docId} tempName={"Untitled"}/>
       <div className="flex justify-start">
         <div className="w-[70vw]">
           {/* Code Editor */}
@@ -151,7 +146,7 @@ const Editor = (props) => {
               Save
             </div>
           </div>
-          <div className="h-[68vh] w-full align-top border-black border-0">
+          <div className="h-[67vh] w-full align-top border-black border-0">
             <CodeEditor
               setChildData={(codeString) => {
                 databaseTransaction(codeString);
@@ -160,8 +155,9 @@ const Editor = (props) => {
             />
           </div>
         </div>
+
         {/* Markdown */}
-        <div className="h-[68vh] w-[30vw]">
+        <div className="h-[67vh] w-[30vw]">
           <div className="h-7 w-full text-base border-2 border-l-0 border-black pl-2">
             Tutorials
           </div>
@@ -173,11 +169,11 @@ const Editor = (props) => {
       </div>
 
       {/* Terminal and buttons */}
-      <div className="flex h-[17vh] w-full">
+      <div className="flex h-[18vh] w-full">
         <div className="w-[90%] border-2 border-black p-[10px] h-full">
-          <div className="">
+          <div className="h-full">
             <div
-              className="bg-red-500 text-center m-2"
+              className="bg-red-500 text-center m-2 h-1/4"
               onClick={() => {
                 buttonEventSend("red");
               }}
@@ -185,7 +181,7 @@ const Editor = (props) => {
               Red
             </div>
             <div
-              className="bg-green-500 text-center m-2"
+              className="bg-green-500 text-center m-2 h-1/4"
               onClick={() => {
                 buttonEventSend("green");
               }}
@@ -193,7 +189,7 @@ const Editor = (props) => {
               Green
             </div>
             <div
-              className="bg-blue-500 text-center m-2"
+              className="bg-blue-500 text-center m-2 h-1/4"
               onClick={() => {
                 buttonEventSend("blue");
               }}

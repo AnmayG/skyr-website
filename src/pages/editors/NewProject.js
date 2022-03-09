@@ -23,6 +23,7 @@ function NewProjectInterstitialPage() {
     set(dbRef, {
       value: sampleCode,
     }).then(() => {
+      // TODO: Work out a method to pass this info to the next page in order to save API calls
       addDocumentWithID(auth.currentUser.uid, dbRef.key, {
         date: new Date().toDateString(),
         name: "Untitled",
