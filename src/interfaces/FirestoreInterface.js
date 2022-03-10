@@ -55,28 +55,19 @@ async function readFirestoreUserDocumentData(userID, documentID) {
     });
 }
 
-<<<<<<< HEAD
-function listUserFirestoreDocuments(userId) {
-  db.collection(`/users/${userId}/documents/`).onSnapshot((list) => {
-    if(list.empty) {
-      console.error("Invalid request; requested list empty")
-    }
-    list.docs.forEach((doc) => {
-      // console.log(doc.data());
-=======
 async function listUserFirestoreDocuments(userId) {
-  return await db
+  await db
     .collection(`/users/${userId}/documents/`)
-    .onSnapshot((list) => {
+    .onSnapshot(async (snap) => {
       var docDataList = [];
-      list.docs.forEach((doc) => {
-        docDataList.push(doc.data())
-        // .then((docData) => {
-        //   docDataList.push(docData)
-        // })
-      });
+      for(const docSnap of snap.docs) {
+        await docDataList.push({ id: docSnap.id, value: docSnap.data() });
+      }
+      console.log(docDataList)
+      // snapshot.docs.forEach((doc) => {
+      //   docDataList.push({ id: doc.id, value: doc.data() });
+      // });
       return docDataList;
->>>>>>> e3086309856ff698308b15213ac904af8c54f809
     });
 }
 
