@@ -7,13 +7,11 @@ import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import { rdb, db, auth } from "../../firebase";
 import { set, push, ref, onValue, runTransaction } from "firebase/database";
-import {
-    readFirestoreUserDocumentData
-} from "../../interfaces/FirestoreInterface"
+import { readFirestoreUserDocumentData } from "../../interfaces/FirestoreInterface";
 import {
   readDatabaseDocument,
   updateDatabaseDocument,
-  completeTransaction
+  completeTransaction,
 } from "../../interfaces/RealtimeDBInterface";
 import {
   socketLedToggle,
@@ -90,7 +88,7 @@ const Editor = (props) => {
     return () => {
       dbRefConnected = true;
     };
-  }, []); 
+  }, []);
 
   // Send info thorough socket
   function buttonEventSend(type) {
@@ -131,7 +129,7 @@ const Editor = (props) => {
   return (
     <div className="h-screen overflow-clip">
       <Navbar />
-      <FileHeader docID={docId} tempName={"Untitled"}/>
+      <FileHeader docID={docId} tempName={"Untitled"} />
       <div className="flex justify-start">
         <div className="w-[70vw]">
           {/* Code Editor */}

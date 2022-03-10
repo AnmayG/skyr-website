@@ -55,12 +55,19 @@ async function readFirestoreUserDocumentData(userID, documentID) {
     });
 }
 
-function listUserFirestoreDocuments(userId) {
-  db.collection(`/users/${userId}/documents/`).onSnapshot((list) => {
-    list.docs.forEach((doc) => {
-      console.log(doc);
+async function listUserFirestoreDocuments(userId) {
+  return await db
+    .collection(`/users/${userId}/documents/`)
+    .onSnapshot((list) => {
+      var docDataList = [];
+      list.docs.forEach((doc) => {
+        docDataList.push(doc.data())
+        // .then((docData) => {
+        //   docDataList.push(docData)
+        // })
+      });
+      return docDataList;
     });
-  });
 }
 
 function updateFirestoreItem() {}

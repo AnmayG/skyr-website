@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CourseCard from "../../components/dashboard/CourseCard";
 import Navbar from "../../components/general/Navbar";
 import ProjectCard from "../../components/dashboard/ProjectCard";
@@ -15,6 +16,7 @@ import { auth, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
@@ -32,8 +34,10 @@ const Dashboard = () => {
       } else {
         console.log("old user");
       }
-      console.log(user.uid);
-      listUserFirestoreDocuments(user.uid);
+      listUserFirestoreDocuments(user.uid)
+        .then((list) => {
+          console.log(list)
+        })
     });
 
     return () => {
@@ -49,18 +53,16 @@ const Dashboard = () => {
           <div
             className="outline outline-1 w-fit"
             onClick={() => {
-              addDocument(auth.currentUser.uid, {
-                name: "hello",
-                text: "Hello World!",
-                date: new Date().toDateString(),
-              });
+              navigate("/newproject")
             }}
           >
-            Add document
+            New Project
           </div>
           <div className="ml-10 mt-3 mb-3">Your Files:</div>
           <div className="mx-20 h-full">
-            {}
+            {
+              
+            }
             <ProjectCard
               fileName="test"
               createdDate="22 02 2022"

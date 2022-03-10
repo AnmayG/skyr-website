@@ -27,9 +27,8 @@ function NewProjectInterstitialPage() {
       addDocumentWithID(auth.currentUser.uid, dbRef.key, {
         date: new Date().toDateString(),
         name: "Untitled",
-        course: "None"
-      })
-      .then((output) => {
+        course: "None",
+      }).then((output) => {
         navigate(`/editor/?id=${dbRef.key}`);
       });
     });
