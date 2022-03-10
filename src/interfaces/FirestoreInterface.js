@@ -55,6 +55,7 @@ async function readFirestoreUserDocumentData(userID, documentID) {
     });
 }
 
+<<<<<<< HEAD
 function listUserFirestoreDocuments(userId) {
   db.collection(`/users/${userId}/documents/`).onSnapshot((list) => {
     if(list.empty) {
@@ -62,8 +63,21 @@ function listUserFirestoreDocuments(userId) {
     }
     list.docs.forEach((doc) => {
       // console.log(doc.data());
+=======
+async function listUserFirestoreDocuments(userId) {
+  return await db
+    .collection(`/users/${userId}/documents/`)
+    .onSnapshot((list) => {
+      var docDataList = [];
+      list.docs.forEach((doc) => {
+        docDataList.push(doc.data())
+        // .then((docData) => {
+        //   docDataList.push(docData)
+        // })
+      });
+      return docDataList;
+>>>>>>> e3086309856ff698308b15213ac904af8c54f809
     });
-  });
 }
 
 function updateFirestoreItem() {}

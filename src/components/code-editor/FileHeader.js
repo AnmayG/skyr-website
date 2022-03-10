@@ -5,7 +5,8 @@ import { readFirestoreUserDocumentData } from "../../interfaces/FirestoreInterfa
 
 const FileHeader = (props) => {
   const docId = props.docID;
-  const [name, setName] = useState(props.tempName)
+  const [name, setName] = useState(props.tempName);
+  const [course, setCourse] = useState("None")
 
   useEffect(() => {
     var docMetaDataFetched = false;
@@ -13,7 +14,7 @@ const FileHeader = (props) => {
       if (!docMetaDataFetched) {
         readFirestoreUserDocumentData(user.uid, docId)
           .then((doc) => {
-            setName(doc.name)
+            setName(doc.name);
           })
           .catch((error) => {
             console.error(error);
@@ -36,6 +37,6 @@ const FileHeader = (props) => {
       </div>
     </div>
   );
-}
+};
 
 export default FileHeader;
