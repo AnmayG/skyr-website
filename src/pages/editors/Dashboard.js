@@ -16,6 +16,17 @@ import { onAuthStateChanged } from "firebase/auth";
 
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
+  const sampleDocData = [
+    { course: "None", date: "Tue Mar 08 2022", name: "Untitled" },
+    { course: "One", date: "Wed Mar 09 2022", name: "Untitled1" },
+    { course: "Two", date: "Tue Mar 08 2022", name: "Untitled2" },
+    { course: "Three", date: "Tue Mar 08 2022", name: "Untitled3" },
+    { course: "Four", date: "Tue Mar 08 2022", name: "Untitled4" },
+    { course: "Five", date: "Tue Mar 08 2022", name: "Untitled5" },
+    { course: "Six", date: "Tue Mar 08 2022", name: "Untitled6" },
+    { course: "Seven", date: "Tue Mar 08 2022", name: "Untitled7" },
+    { course: "Eight", date: "Tue Mar 08 2022", name: "Untitled8" },
+  ];
 
   useEffect(() => {
     var createdUser = false;
@@ -44,8 +55,8 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col w-screen h-screen bg-white">
       <Navbar />
-      <div className="w-screen h-[100%]">
-        <div className="max-h-[40%] h-[40%]">
+      <div className="w-screen">
+        <div className="max-h-[40vh]">
           <div
             className="outline outline-1 w-fit"
             onClick={() => {
@@ -59,16 +70,20 @@ const Dashboard = () => {
             Add document
           </div>
           <div className="ml-10 mt-3 mb-3">Your Files:</div>
-          <div className="mx-20 h-full">
-            {}
-            <ProjectCard
-              fileName="test"
-              createdDate="22 02 2022"
-              creator={auth.currentUser}
-            />
+          <div className="mx-20 overflow-y-auto max-h-[35vh]">
+            {sampleDocData.map((docData) => {
+              console.log("here", docData)
+              return (
+                <ProjectCard
+                  fileName={docData.name}
+                  createdDate={docData.date}
+                  course={docData.course}
+                />
+              );
+            })}
           </div>
         </div>
-        <div className="max-h-[50%]">
+        <div className="max-h-[50vh]">
           <div className="ml-10 mt-10 mb-3">Enrolled Courses:</div>
           <div className="mx-20 bg-white h-full">
             <CourseCard courseName="test" enrolledDate="22 02 2022" />

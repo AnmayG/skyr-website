@@ -57,8 +57,11 @@ async function readFirestoreUserDocumentData(userID, documentID) {
 
 function listUserFirestoreDocuments(userId) {
   db.collection(`/users/${userId}/documents/`).onSnapshot((list) => {
+    if(list.empty) {
+      console.error("Invalid request; requested list empty")
+    }
     list.docs.forEach((doc) => {
-      console.log(doc);
+      // console.log(doc.data());
     });
   });
 }

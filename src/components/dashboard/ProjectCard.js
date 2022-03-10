@@ -10,7 +10,7 @@ function ProjectCard(props) {
       </div>
       <div className="flex justify-end items-center">
         <div className="mr-10">{props.createdDate}</div>
-        <Avatar className="mr-10" src={props.creator.imageUrl} />
+        {/* <Avatar className="mr-10" src={props.creator.imageUrl} /> */}
       </div>
     </div>
   );
