@@ -17,7 +17,7 @@ import { onAuthStateChanged } from "firebase/auth";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState({});
   const sampleDocData = [
     {
       id: 1,
@@ -60,7 +60,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     var createdUser = false;
-    async function func() {
+    async function authorized() {
       onAuthStateChanged(auth, async (user) => {
         if (
           user.metadata.creationTime === user.metadata.lastSignInTime &&
@@ -78,19 +78,19 @@ const Dashboard = () => {
         // })
       });
     }
-    async function func2(uid) {
+
+    async function firestoreFetch(uid) {
       const list = await listUserFirestoreDocuments(uid);
-      console.log("this is running after function call", list);
-      setDocDataList(list);
+      console.log("list:", JSON.stringify(list))
+      for(const item of list) {
+        console.log(JSON.stringify(item))
+      }
+      // console.log(list.toString(), list.length, JSON.stringify(list))
+      // const nonMutableList = JSON.parse(JSON.stringify(list));
+      // console.log("this is running after function call", list, [...list], nonMutableList);
+      // setDocDataList([...list]);
     }
-    func().then(func2(auth.currentUser.uid));
-    // func().then( async () => {
-    //   const list = await listUserFirestoreDocuments(auth.currentUser.uid)
-    //   .then((listReturn) => {
-    //     console.log("this is running after function call", listReturn);
-    //   })
-    //   // console.log("this is running after function call", list);
-    // })
+    authorized().then(firestoreFetch(auth.currentUser.uid));
 
     return () => {
       createdUser = true;
@@ -112,18 +112,22 @@ const Dashboard = () => {
           </div>
           <div className="ml-10 mt-3 mb-3">Your Files:</div>
           <div className="mx-20 overflow-y-auto max-h-[35vh]">
-            {console.log("dataList:", sampleDocData)}
-            {docDataList.map((docData) => {
-                console.log("here", docData)
-                return (
-                  <ProjectCard
-                    key={docData.id}
-                    fileName={docData.value.name}
-                    createdDate={docData.value.date}
-                    course={docData.value.course}
-                  />
-                );
-              })}
+            {console.log("dataList:", docDataList)}
+            {docDataList.forEach((docData) => {
+              console.log(docData)
+              return <div> words </div>;
+            })}
+            {docDataList.map((item, i) => {
+              console.log("here", item);
+              return (
+                <ProjectCard
+                  key={i}
+                  fileName={item.value.name}
+                  createdDate={item.value.date}
+                  course={item.value.course}
+                />
+              );
+            })}
             {/* {docDataList ? (
               docDataList.map((docData) => {
                 console.log("here", docData)
