@@ -56,30 +56,41 @@ const Dashboard = () => {
       value: { course: "Eight", date: "Tue Mar 08 2022", name: "Untitled8" },
     },
   ];
+  const [docDataList, setDocDataList] = useState([]);
 
   useEffect(() => {
     var createdUser = false;
-
-    onAuthStateChanged(auth, (user) => {
-      if (
-        user.metadata.creationTime === user.metadata.lastSignInTime &&
-        !createdUser &&
-        !localStorage.getItem("initialized")
-      ) {
-        createdUser = true;
-        localStorage.setItem("initialized", "true");
-        initUser();
-      } else {
-        console.log("old user");
-      }
-      var list = listUserFirestoreDocuments(user.uid).then((output) => {
-        console.log("this is running");
-        console.log(output);
+    async function func() {
+      onAuthStateChanged(auth, async (user) => {
+        if (
+          user.metadata.creationTime === user.metadata.lastSignInTime &&
+          !createdUser &&
+          !localStorage.getItem("initialized")
+        ) {
+          createdUser = true;
+          localStorage.setItem("initialized", "true");
+          initUser();
+        } else {
+          console.log("old user");
+        }
+        // .then((list) => {
+        //   console.log(list)
+        // })
       });
-      // .then((list) => {
-      //   console.log(list)
-      // })
-    });
+    }
+    async function func2(uid) {
+      const list = await listUserFirestoreDocuments(uid);
+      console.log("this is running after function call", list);
+      setDocDataList(list);
+    }
+    func().then(func2(auth.currentUser.uid));
+    // func().then( async () => {
+    //   const list = await listUserFirestoreDocuments(auth.currentUser.uid)
+    //   .then((listReturn) => {
+    //     console.log("this is running after function call", listReturn);
+    //   })
+    //   // console.log("this is running after function call", list);
+    // })
 
     return () => {
       createdUser = true;
@@ -101,23 +112,39 @@ const Dashboard = () => {
           </div>
           <div className="ml-10 mt-3 mb-3">Your Files:</div>
           <div className="mx-20 overflow-y-auto max-h-[35vh]">
-            {sampleDocData.map((docData) => {
-              // console.log("here", docData)
-              return (
-                <ProjectCard
-                  key={docData.id}
-                  fileName={docData.value.name}
-                  createdDate={docData.value.date}
-                  course={docData.value.course}
-                />
-              );
-            })}
+            {console.log("dataList:", sampleDocData)}
+            {docDataList.map((docData) => {
+                console.log("here", docData)
+                return (
+                  <ProjectCard
+                    key={docData.id}
+                    fileName={docData.value.name}
+                    createdDate={docData.value.date}
+                    course={docData.value.course}
+                  />
+                );
+              })}
+            {/* {docDataList ? (
+              docDataList.map((docData) => {
+                console.log("here", docData)
+                return (
+                  <ProjectCard
+                    key={docData.id}
+                    fileName={docData.value.name}
+                    createdDate={docData.value.date}
+                    course={docData.value.course}
+                  />
+                );
+              })
+            ) : (
+              <p>Loading...</p>
+            )} */}
           </div>
-        </div>
-        <div className="max-h-[50vh]">
-          <div className="ml-10 mt-10 mb-3">Enrolled Courses:</div>
-          <div className="mx-20 bg-white h-full">
-            <CourseCard courseName="test" enrolledDate="22 02 2022" />
+          <div className="max-h-[50vh]">
+            <div className="ml-10 mt-10 mb-3">Enrolled Courses:</div>
+            <div className="mx-20 bg-white h-full">
+              <CourseCard courseName="test" enrolledDate="22 02 2022" />
+            </div>
           </div>
         </div>
       </div>

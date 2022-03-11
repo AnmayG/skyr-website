@@ -56,19 +56,19 @@ async function readFirestoreUserDocumentData(userID, documentID) {
 }
 
 async function listUserFirestoreDocuments(userId) {
-  await db
+  var docDataList = []
+  db
     .collection(`/users/${userId}/documents/`)
-    .onSnapshot(async (snap) => {
-      var docDataList = [];
-      for(const docSnap of snap.docs) {
-        await docDataList.push({ id: docSnap.id, value: docSnap.data() });
-      }
-      console.log(docDataList)
-      // snapshot.docs.forEach((doc) => {
-      //   docDataList.push({ id: doc.id, value: doc.data() });
-      // });
-      return docDataList;
+    .onSnapshot((list) => {
+      list.docs.forEach((doc) => {
+        docDataList.push({id: doc.id, value: doc.data()})
+        // .then((docData) => {
+        //   docDataList.push(docData)
+        // })
+      });
+      // console.log("this is running in firestore interface", docDataList)
     });
+  return docDataList
 }
 
 function updateFirestoreItem() {}
