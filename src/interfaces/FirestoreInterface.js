@@ -55,11 +55,12 @@ async function readFirestoreUserDocumentData(userID, documentID) {
     });
 }
 
-async function listUserFirestoreDocuments(userId) {
-  var docDataList = {}
-  const someList = await db
+function listUserFirestoreDocuments(userId) {
+  var docDataList = []
+  const someList = db
     .collection(`/users/${userId}/documents/`)
     .onSnapshot((list) => {
+      console.log(list)
       for(const doc of list.docs) {
         docDataList = [...docDataList, {id: doc.id, value: doc.data()}]        
       }

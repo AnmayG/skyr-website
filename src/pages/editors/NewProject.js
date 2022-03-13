@@ -18,6 +18,7 @@ function NewProjectInterstitialPage() {
   const dbRef = push(overallRef);
   const navigate = useNavigate();
 
+
   useEffect(() => {
     var dbRefConnected = false;
     set(dbRef, {

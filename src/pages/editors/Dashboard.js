@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import CourseCard from "../../components/dashboard/CourseCard";
 import Navbar from "../../components/general/Navbar";
@@ -57,6 +57,7 @@ const Dashboard = () => {
     },
   ];
   const [docDataList, setDocDataList] = useState([]);
+  const docDataListRef = useRef([]);
 
   useEffect(() => {
     var createdUser = false;
