@@ -14,84 +14,28 @@ import {
 } from "../../interfaces/RealtimeDBInterface";
 import { auth, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import ProjectsList from "../../components/dashboard/ProjectsList";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState({});
-  const sampleDocData = [
-    {
-      id: 1,
-      value: { course: "None", date: "Tue Mar 08 2022", name: "Untitled" },
-    },
-    {
-      id: 2,
-      value: { course: "One", date: "Wed Mar 09 2022", name: "Untitled1" },
-    },
-    {
-      id: 3,
-      value: { course: "Two", date: "Tue Mar 08 2022", name: "Untitled2" },
-    },
-    {
-      id: 4,
-      value: { course: "Three", date: "Tue Mar 08 2022", name: "Untitled3" },
-    },
-    {
-      id: 5,
-      value: { course: "Four", date: "Tue Mar 08 2022", name: "Untitled4" },
-    },
-    {
-      id: 6,
-      value: { course: "Five", date: "Tue Mar 08 2022", name: "Untitled5" },
-    },
-    {
-      id: 7,
-      value: { course: "Six", date: "Tue Mar 08 2022", name: "Untitled6" },
-    },
-    {
-      id: 8,
-      value: { course: "Seven", date: "Tue Mar 08 2022", name: "Untitled7" },
-    },
-    {
-      id: 9,
-      value: { course: "Eight", date: "Tue Mar 08 2022", name: "Untitled8" },
-    },
-  ];
   const [docDataList, setDocDataList] = useState([]);
   const docDataListRef = useRef([]);
 
   useEffect(() => {
     var createdUser = false;
-    async function authorized() {
-      onAuthStateChanged(auth, async (user) => {
-        if (
-          user.metadata.creationTime === user.metadata.lastSignInTime &&
-          !createdUser &&
-          !localStorage.getItem("initialized")
-        ) {
-          createdUser = true;
-          localStorage.setItem("initialized", "true");
-          initUser();
-        } else {
-          console.log("old user");
-        }
-        // .then((list) => {
-        //   console.log(list)
-        // })
-      });
-    }
-
-    async function firestoreFetch(uid) {
-      const list = await listUserFirestoreDocuments(uid);
-      console.log("list:", JSON.stringify(list))
-      for(const item of list) {
-        console.log(JSON.stringify(item))
+    onAuthStateChanged(auth, async (user) => {
+      if (
+        user.metadata.creationTime === user.metadata.lastSignInTime &&
+        !createdUser &&
+        !localStorage.getItem("initialized")
+      ) {
+        createdUser = true;
+        localStorage.setItem("initialized", "true");
+        initUser();
+      } else {
+        console.log("old user");
       }
-      // console.log(list.toString(), list.length, JSON.stringify(list))
-      // const nonMutableList = JSON.parse(JSON.stringify(list));
-      // console.log("this is running after function call", list, [...list], nonMutableList);
-      // setDocDataList([...list]);
-    }
-    authorized().then(firestoreFetch(auth.currentUser.uid));
+    });
 
     return () => {
       createdUser = true;
@@ -112,39 +56,7 @@ const Dashboard = () => {
             New Project
           </div>
           <div className="ml-10 mt-3 mb-3">Your Files:</div>
-          <div className="mx-20 overflow-y-auto max-h-[35vh]">
-            {console.log("dataList:", docDataList)}
-            {docDataList.forEach((docData) => {
-              console.log(docData)
-              return <div> words </div>;
-            })}
-            {docDataList.map((item, i) => {
-              console.log("here", item);
-              return (
-                <ProjectCard
-                  key={i}
-                  fileName={item.value.name}
-                  createdDate={item.value.date}
-                  course={item.value.course}
-                />
-              );
-            })}
-            {/* {docDataList ? (
-              docDataList.map((docData) => {
-                console.log("here", docData)
-                return (
-                  <ProjectCard
-                    key={docData.id}
-                    fileName={docData.value.name}
-                    createdDate={docData.value.date}
-                    course={docData.value.course}
-                  />
-                );
-              })
-            ) : (
-              <p>Loading...</p>
-            )} */}
-          </div>
+          <ProjectsList />
           <div className="max-h-[50vh]">
             <div className="ml-10 mt-10 mb-3">Enrolled Courses:</div>
             <div className="mx-20 bg-white h-full">
