@@ -42,7 +42,7 @@ const Editor = (props) => {
 
   // Connection state
   const [isConnected, setConnected] = useState(false);
-  const [ipAddress, setIpAddress] = useState("http://10.0.0.237:9000");
+  const [ipAddress, setIpAddress] = useState("http://raspberrypi.local:9000");
   const [socket, setSocket] = useState(null);
 
   // LED vars for testing
@@ -168,7 +168,7 @@ const Editor = (props) => {
 
       {/* Terminal and buttons */}
       <div className="flex h-[18vh] w-full">
-        <div className="w-[90%] border-2 border-black p-[10px] h-full">
+        {/* <div className="w-[90%] border-2 border-black p-[10px] h-full">
           <div className="h-full">
             <div
               className="bg-red-500 text-center m-2 h-1/4"
@@ -195,10 +195,12 @@ const Editor = (props) => {
               Blue
             </div>
           </div>
-        </div>
-        <div className="w-[10%] border-2 border-black border-l-0 p-[10px] overflow-clip h-full">
+        </div> */}
+        {/* w-[10%] */}
+        <div className="w-full border-2 border-black border-l-0 p-[10px] overflow-clip h-full">
           <input
             type="text"
+            className="w-full"
             onKeyUp={(e) => {
               if (e.key === "Enter") {
                 setIpAddress("http://" + e.target.value + ":9000");
