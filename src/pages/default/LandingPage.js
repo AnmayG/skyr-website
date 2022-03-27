@@ -1,23 +1,51 @@
 import Navbar from "../../components/general/Navbar";
+import Intro from "../../components/landing-page/Intro";
+import { Link, useNavigate } from "react-router-dom";
 
 function LandingPage() {
   return (
-    <div className="h-screen">
+    <div className="">
       <Navbar />
-      <div className="flex flex-col h-full ml-20 mr-20">
-        <div className="flex items-center h-full">
-          <div className="">
-            <p className="text-6xl">SkyRobotics</p>
+      <div className="flex flex-col h-[80vh]">
+        <div className="h-[80vh] justify-end items-center absolute overflow-hidden">
+          <img src="/skyr-render.png" alt="" />
+        </div>
+        <div
+          className="flex items-center h-[80vh] w-full absolute"
+          style={{
+            background: "linear-gradient(90deg, #00000088 10%, #ffffff44 100%)",
+          }}
+        >
+          <div className="flex flex-col ml-10">
+            <p className="text-7xl text-white font-extrabold underline">
+              SkyRobotics
+            </p>
             <div>
-              <p className="text-2xl">Ground Level Control</p>
-              <p className="text-2xl">Sky High Performance</p>
+              <p className="text-4xl text-white">Ground Level Control</p>
+              <div className="text-5xl text-sky-100 font-bold">
+                Sky High Performance
+              </div>
+            </div>
+            <div className="flex">
+              <Link
+                style={{ textDecoration: "none" }}
+                className="mt-4 mr-3 w-fit justify-center text-2xl text-center font-bold text-white rounded-3xl p-2 px-4 outline"
+                to="/login"
+              >
+                Log In
+              </Link>
+              <Link
+                style={{ textDecoration: "none" }}
+                className="mt-4 w-fit justify-center text-2xl text-center bg-blue-400 font-bold text-white rounded-3xl p-2 px-4"
+                to="/signup"
+              >
+                Sign Up
+              </Link>
             </div>
           </div>
         </div>
-        <div className="h-full justify-center items-center">
-          <img src="/skyr-render.png" alt="" />
-        </div>
       </div>
+      <Intro />
     </div>
   );
 }
