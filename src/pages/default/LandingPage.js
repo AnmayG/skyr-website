@@ -2,14 +2,11 @@ import Navbar from "../../components/general/Navbar";
 
 function LandingPage() {
   return (
-    <div className="h-screen min-h-screen">
+    <div className="h-screen">
       <Navbar />
-      <div className="flex flex-row-reverse ml-20 mr-20">
-        <div className="w-1/2">
-          <img src="" alt="" />
-        </div>
-        <div className="flex items-center w-1/2">
-          <div className="space-y-2">
+      <div className="flex flex-col h-full ml-20 mr-20">
+        <div className="flex items-center h-full">
+          <div className="">
             <p className="text-6xl">SkyRobotics</p>
             <div>
               <p className="text-2xl">Ground Level Control</p>
@@ -17,14 +14,11 @@ function LandingPage() {
             </div>
           </div>
         </div>
+        <div className="h-full justify-center items-center">
+          <img src="/skyr-render.png" alt="" />
+        </div>
       </div>
     </div>
-    // <div>
-    //   <Navbar history={history}></Navbar>
-    //   {/* <FirebaseRequests></FirebaseRequests>
-    //   <h2>cloud storage test</h2>
-    //   <StorageRequests></StorageRequests> */}
-    // </div>
   );
 }
 

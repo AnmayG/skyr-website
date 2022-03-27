@@ -94,15 +94,6 @@ const Navbar = () => {
         </div> */}
       </div>
       <div className="flex justify-evenly items-center whitespace-nowrap">
-        <div className="items-center text-center mr-8">
-          <Link
-            style={{ textDecoration: "none" }}
-            className="border-2 border-black touch-manipulation rounded-3xl p-2 text-base text-center font-semibold"
-            to="/newproject"
-          >
-            + NEW PROJECT
-          </Link>
-        </div>
         <div
           className={
             "flex justify-evenly items-center whitespace-nowrap " +
@@ -134,6 +125,15 @@ const Navbar = () => {
             (isAuthenticated ? "not-hidden" : "hidden")
           }
         >
+          <div className="items-center text-center mr-8">
+            <Link
+              style={{ textDecoration: "none" }}
+              className="border-2 border-black touch-manipulation rounded-3xl p-2 text-base text-center font-semibold"
+              to="/newproject"
+            >
+              + NEW PROJECT
+            </Link>
+          </div>
           <div className="items-end text-center">
             <Link
               style={{ textDecoration: "none" }}
