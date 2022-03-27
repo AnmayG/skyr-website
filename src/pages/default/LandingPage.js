@@ -1,6 +1,7 @@
 import Navbar from "../../components/general/Navbar";
 import IDEIntro from "../../components/landing-page/IDEIntro";
 import { Link, useNavigate } from "react-router-dom";
+import DashboardIntro from "../../components/landing-page/DashboardIntro";
 
 function LandingPage() {
   return (
@@ -46,6 +47,7 @@ function LandingPage() {
         </div>
       </div>
       <IDEIntro />
+      <DashboardIntro />
     </div>
   );
 }

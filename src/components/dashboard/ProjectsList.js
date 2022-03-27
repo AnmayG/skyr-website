@@ -13,7 +13,9 @@ function ProjectsList() {
     var cleanedUpDbListener = false;
     // Sets up a firestore listener for the documents
     if (!cleanedUpDbListener) {
-      db.collection(`/users/${auth.currentUser.uid}/documents/`).onSnapshot(
+      db.collection(`/users/${auth.currentUser.uid}/documents/`)
+      .orderBy('name')
+      .onSnapshot(
         (list) => {
           var tempList = [];
           for (const doc of list.docs) {

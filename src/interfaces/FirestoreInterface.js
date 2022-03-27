@@ -7,7 +7,7 @@ function initUser() {
     .set({
       name: auth.currentUser.displayName,
       date: new Date(auth.currentUser.metadata.creationTime),
-    })
+    });
 }
 
 async function addDocument(userID, documentMetaData) {
@@ -47,13 +47,14 @@ async function readFirestoreUserDocumentData(userID, documentID) {
 }
 
 async function updateFirestoreItemName(userID, documentID, newName) {
-  db.doc(`/users/${userID}/documents/${documentID}`)
-  .update({
-    name: newName
-  })
+  db.doc(`/users/${userID}/documents/${documentID}`).update({
+    name: newName,
+  });
 }
 
-function deleteFirestoreItem() {}
+function deleteFirestoreItem(userID, documentID) {
+  db.doc(`/users/${userID}/documents/${documentID}`).delete();
+}
 
 export {
   initUser,
