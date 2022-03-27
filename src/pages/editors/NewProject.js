@@ -18,17 +18,18 @@ function NewProjectInterstitialPage() {
   const dbRef = push(overallRef);
   const navigate = useNavigate();
 
+
   useEffect(() => {
     var dbRefConnected = false;
     set(dbRef, {
       value: sampleCode,
     }).then(() => {
+      // TODO: Work out a method to pass this info to the next page in order to save API calls
       addDocumentWithID(auth.currentUser.uid, dbRef.key, {
         date: new Date().toDateString(),
         name: "Untitled",
-        course: "None"
-      })
-      .then((output) => {
+        course: "None",
+      }).then((output) => {
         navigate(`/editor/?id=${dbRef.key}`);
       });
     });

@@ -7,9 +7,8 @@ function FirebaseRequests() {
     setValue(event.target.value);
   };
   const [values, setValues] = useState([]);
-
-  const [documents, setDocuments] = useState([]); // Create a list of currently cached documents
-
+  // Create a list of currently cached documents
+  const [documents, setDocuments] = useState([]);
   function addValue() {
     db.collection("values")
       .doc()

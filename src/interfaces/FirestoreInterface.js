@@ -8,15 +8,6 @@ function initUser() {
       name: auth.currentUser.displayName,
       date: new Date(auth.currentUser.metadata.creationTime),
     })
-    .then(() => {
-      // TODO: Figure out a way to condense this into one API call
-      db.collection("/users/" + auth.currentUser.uid + "/documents/")
-        .doc()
-        .set({
-          name: "My First Project",
-          date: new Date().getDate(),
-        });
-    });
 }
 
 async function addDocument(userID, documentMetaData) {
@@ -44,28 +35,23 @@ async function addDocumentWithID(userID, documentID, documentMetaData) {
 }
 
 async function readFirestoreUserDocumentData(userID, documentID) {
-  console.log(userID, documentID);
-  await db
+  return await db
     .doc(`/users/${userID}/documents/${documentID}`)
     .get()
     .then((doc) => {
-      console.log(doc, doc.data());
-      return doc.data;
+      return doc.data();
     })
     .catch((error) => {
       console.error(error);
     });
 }
 
-function listUserFirestoreDocuments(userId) {
-  db.collection(`/users/${userId}/documents/`).onSnapshot((list) => {
-    list.docs.forEach((doc) => {
-      console.log(doc);
-    });
-  });
+async function updateFirestoreItemName(userID, documentID, newName) {
+  db.doc(`/users/${userID}/documents/${documentID}`)
+  .update({
+    name: newName
+  })
 }
-
-function updateFirestoreItem() {}
 
 function deleteFirestoreItem() {}
 
@@ -74,7 +60,6 @@ export {
   addDocument,
   addDocumentWithID,
   readFirestoreUserDocumentData,
-  listUserFirestoreDocuments,
-  updateFirestoreItem,
+  updateFirestoreItemName,
   deleteFirestoreItem,
 };

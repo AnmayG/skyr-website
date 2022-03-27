@@ -2,7 +2,6 @@ import { rdb, db, auth } from "../firebase";
 import { set, ref, onValue, runTransaction } from "firebase/database";
 
 function updateDatabaseDocument(documentID, text) {
-  console.log("written");
   set(ref(rdb, "/" + documentID), {
     value: text,
   });

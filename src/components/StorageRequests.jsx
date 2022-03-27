@@ -28,7 +28,6 @@ function StorageRequests(props) {
   async function handleFetch() {
     console.log("Start fetch");
     const listRef = await ref(storage, "tutorials");
-    console.log(listRef);
     await listAll(listRef)
       .then(async (res) => {
         const tempURLs = [];

@@ -69,8 +69,7 @@ const Navbar = () => {
         >
           SkyRobotics
         </Link>
-        {/* <input type="text" className="bg-white rounded mx-16 w-full h-10 px-4 text-base shadow" placeholder="Search Tutorials" onKeyDown={handleDown} onChange={(e) => {setWord(e.target.value)}}/> */}
-        <div className="text-center mr-8">
+        {/* <div className="text-center mr-8">
           <Link style={{ textDecoration: "none" }} to="/aboutus">
             About Us
           </Link>
@@ -92,18 +91,9 @@ const Navbar = () => {
           >
             Community
           </Link>
-        </div>
+        </div> */}
       </div>
       <div className="flex justify-evenly items-center whitespace-nowrap">
-        <div className="items-center text-center mr-8">
-          <Link
-            style={{ textDecoration: "none" }}
-            className="border-2 border-black touch-manipulation rounded-3xl p-2 text-base text-center font-semibold"
-            to="/newproject"
-          >
-            + NEW PROJECT
-          </Link>
-        </div>
         <div
           className={
             "flex justify-evenly items-center whitespace-nowrap " +
@@ -135,6 +125,15 @@ const Navbar = () => {
             (isAuthenticated ? "not-hidden" : "hidden")
           }
         >
+          <div className="items-center text-center mr-8">
+            <Link
+              style={{ textDecoration: "none" }}
+              className="border-2 border-black touch-manipulation rounded-3xl p-2 text-base text-center font-semibold"
+              to="/newproject"
+            >
+              + NEW PROJECT
+            </Link>
+          </div>
           <div className="items-end text-center">
             <Link
               style={{ textDecoration: "none" }}

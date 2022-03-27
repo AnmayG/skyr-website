@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import CourseCard from "../../components/dashboard/CourseCard";
 import Navbar from "../../components/general/Navbar";
 import ProjectCard from "../../components/dashboard/ProjectCard";
-import {
-  addDocument,
-  listUserFirestoreDocuments,
-  initUser,
-} from "../../interfaces/FirestoreInterface";
+import { addDocument, initUser } from "../../interfaces/FirestoreInterface";
 import {
   readDatabaseDocument,
   updateDatabaseDocument,
 } from "../../interfaces/RealtimeDBInterface";
 import { auth, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import ProjectsList from "../../components/dashboard/ProjectsList";
+import CoursesList from "../../components/dashboard/CoursesList";
+import { Add } from "@mui/icons-material";
 
 const Dashboard = () => {
-  const [projects, setProjects] = useState([]);
+  const navigate = useNavigate();
+  const [docDataList, setDocDataList] = useState([]);
+  const docDataListRef = useRef([]);
 
   useEffect(() => {
     var createdUser = false;
-
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (
         user.metadata.creationTime === user.metadata.lastSignInTime &&
         !createdUser &&
@@ -32,8 +33,6 @@ const Dashboard = () => {
       } else {
         console.log("old user");
       }
-      console.log(user.uid);
-      listUserFirestoreDocuments(user.uid);
     });
 
     return () => {
@@ -42,37 +41,34 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="flex flex-col w-screen h-screen bg-white">
+    <div className="flex flex-col w-screen h-screen bg-slate-200">
       <Navbar />
-      <div className="w-screen h-[100%]">
-        <div className="max-h-[40%] h-[40%]">
-          <div
-            className="outline outline-1 w-fit"
-            onClick={() => {
-              addDocument(auth.currentUser.uid, {
-                name: "hello",
-                text: "Hello World!",
-                date: new Date().toDateString(),
-              });
-            }}
-          >
-            Add document
+      <div className="w-screen">
+        <div className="max-h-[40vh]">
+          <div className="mx-20">
+            <div className="flex justify-between w-full pt-3 m`r-3">
+              <div className="flex justify-start items-center">
+                <div className="ml-10">Project Name</div>
+              </div>
+              <div className="flex justify-end items-center">
+                <div className="mr-12">Created Date</div>
+                <Add
+                  className="mr-2"
+                  onClick={() => {
+                    navigate("/newproject");
+                  }}
+                >
+                  New Project
+                </Add>
+              </div>
+            </div>
+            <div className="h-1 bg-slate-300 mb-2 mt-0"></div>
           </div>
-          <div className="ml-10 mt-3 mb-3">Your Files:</div>
-          <div className="mx-20 h-full">
-            {}
-            <ProjectCard
-              fileName="test"
-              createdDate="22 02 2022"
-              creator={auth.currentUser}
-            />
-          </div>
-        </div>
-        <div className="max-h-[50%]">
-          <div className="ml-10 mt-10 mb-3">Enrolled Courses:</div>
-          <div className="mx-20 bg-white h-full">
-            <CourseCard courseName="test" enrolledDate="22 02 2022" />
-          </div>
+          <ProjectsList />
+          {/* <div className="max-h-[50vh]">
+            <div className="ml-10 mt-10 mb-3">Enrolled Courses:</div>
+            <CoursesList />
+          </div> */}
         </div>
       </div>
     </div>
