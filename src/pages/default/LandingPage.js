@@ -1,5 +1,5 @@
 import Navbar from "../../components/general/Navbar";
-import Intro from "../../components/landing-page/Intro";
+import IDEIntro from "../../components/landing-page/IDEIntro";
 import { Link, useNavigate } from "react-router-dom";
 
 function LandingPage() {
@@ -45,7 +45,7 @@ function LandingPage() {
           </div>
         </div>
       </div>
-      <Intro />
+      <IDEIntro />
     </div>
   );
 }
