@@ -1,7 +1,11 @@
 import React from "react";
 
 function Footer() {
-  return <div>Footer</div>;
+  return (
+    <div className="h-[50vh] bg-slate-400">
+      <div>Footer</div>
+    </div>
+  );
 }
 
 export default Footer;

@@ -18,7 +18,7 @@ function DashboardIntro() {
                 className="font-bold mt-3"
                 to="/dashboard"
               >
-                Show me
+                Start Sharing
                 <ChevronRight className="text-blue-500" />
               </Link>
             </div>
