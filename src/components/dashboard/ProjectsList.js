@@ -52,12 +52,12 @@ function ProjectsList() {
               button or click the "+" symbol to get started.
             </div>
             <div className="w-[200px]">
-              <img
+              {/* <img
                 alt=""
                 src={"/penguinWorking.svg"}
                 height={200}
                 width={200}
-              />
+              /> */}
             </div>
           </div>
         </div>
