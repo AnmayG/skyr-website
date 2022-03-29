@@ -19,14 +19,10 @@ import {
   disconnect,
 } from "../../interfaces/SocketInterface";
 import FileHeader from "../../components/code-editor/FileHeader";
-const sampleCode = `start()
-set_outputs(26, 19, 13)
-turn_off(26, 19, 13)
-
-while True:
-  blink(26, 0.2)
-  blink(19, 0.2)
-  blink(13, 0.2)`;
+const sampleCode = `# move forward for 1 second
+move(kit, 1, 0.05, -0.12, -0.1)
+# turn for 1 second
+turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
 
 const Editor = (props) => {
   // URL Params
@@ -125,6 +121,12 @@ const Editor = (props) => {
     // const uid = auth.currentUser.uid;
     completeTransaction(codeString);
   }
+
+  document.addEventListener("keydown", function(e) {
+    if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+      e.preventDefault();
+    }
+  }, false);
 
   return (
     <div className="h-screen overflow-clip">

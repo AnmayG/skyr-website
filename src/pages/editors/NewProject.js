@@ -4,14 +4,10 @@ import Navbar from "../../components/general/Navbar";
 import { set, push, ref, runTransaction } from "firebase/database";
 import { rdb, db, auth } from "../../firebase";
 import { addDocumentWithID } from "../../interfaces/FirestoreInterface";
-const sampleCode = `start()
-set_outputs(26, 19, 13)
-turn_off(26, 19, 13)
-
-while True:
-  blink(26, 0.2)
-  blink(19, 0.2)
-  blink(13, 0.2)`;
+const sampleCode = `# move forward for 1 second
+move(kit, 1, 0.05, -0.12, -0.1)
+# turn for 1 second
+turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
 
 function NewProjectInterstitialPage() {
   const overallRef = ref(rdb, `/`);

@@ -12,7 +12,7 @@ function pushPythonCode(socket, isConnected, recCodeString) {
   if (!isConnected) alert("Server disconnected");
 
   socket.emit("python-push", {
-    code: `from lib import *\n ${recCodeString}`,
+    code: `from lib import *\nfrom adafruit_servokit import ServoKit\nkit = ServoKit(channels=16)\n${recCodeString}`,
   });
 }
 
@@ -23,3 +23,5 @@ function disconnect(socket, isConnected) {
     command: "stop",
   });
 }
+
+export { socketLedToggle, pushPythonCode, disconnect };
