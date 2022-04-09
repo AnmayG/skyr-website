@@ -15,7 +15,9 @@ function TutorialsIntro() {
               Educational Tutorials
             </div>
             <div className="leading-loose">
-              SkyRobotics offers helpful tutorials that teach kids how to interact with computers and robotics on an easily understandable level, making the complex simple.
+              SkyRobotics offers helpful tutorials that teach kids how to
+              interact with computers and robotics on an easily understandable
+              level, making the complex simple.
             </div>
             <div className="flex">
               <Link

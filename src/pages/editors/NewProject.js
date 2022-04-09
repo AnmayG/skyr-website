@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/general/Navbar";
 import { set, push, ref, runTransaction } from "firebase/database";
 import { rdb, db, auth } from "../../firebase";
-import { addDocumentWithId, addDocumentWithPathWithId } from "../../interfaces/FirestoreInterface";
+import {
+  addDocumentWithId,
+  addDocumentWithPathWithId,
+} from "../../interfaces/FirestoreInterface";
 const sampleCode = `# move forward for 1 second
 move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
@@ -18,8 +21,9 @@ function NewProjectInterstitialPage() {
 
   useEffect(() => {
     var dbRefConnected = false;
-    set(dbRef, {
+    set(projectDocRef, {
       value: sampleCode,
+      order: 0,
     }).then(() => {
       // TODO: Work out a method to pass this info to the next page in order to save API calls
       addDocumentWithPathWithId(`projects/`, dbRef.key, {
@@ -36,8 +40,8 @@ function NewProjectInterstitialPage() {
         //   navigate(`/editor/?projid=${dbRef.key}`);
         // })
         addDocumentWithId(auth.currentUser.uid, dbRef.key, {
-          reference: db.doc(`projects/${dbRef.key}`)
-        })
+          reference: db.doc(`projects/${dbRef.key}`),
+        });
         navigate(`/editor/?projid=${dbRef.key}`);
       });
     });

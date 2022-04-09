@@ -58,15 +58,33 @@ async function readFirestoreUserDocumentData(userID, documentID) {
     });
 }
 
+async function readFirestoreDocumentDataWithPathWithId(path, documentId) {
+  return await db
+    .doc(`${path}/${documentId}`)
+    .get()
+    .then((doc) => {
+      return doc.data();
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
 async function updateFirestoreItemName(userID, documentID, newName) {
   db.doc(`/users/${userID}/projects/${documentID}`).update({
     name: newName,
   });
 }
 
+async function updateFirestoreItemNameWithPath(path, documentID, newName) {
+  db.doc(`${path}/${documentID}`).update({
+    name: newName,
+  });
+}
+
 function deleteFirestoreItem(path, documentID) {
-  if(path.slice(-1) === '/') path.slice(0, -1);
-  console.log(`${path}/${documentID}`)
+  if (path.slice(-1) === "/") path.slice(0, -1);
+  console.log(`${path}/${documentID}`);
   db.doc(`${path}/${documentID}`).delete();
   // TODO: Delete all firebase entries as well
 }
@@ -77,6 +95,8 @@ export {
   addDocumentWithId,
   addDocumentWithPathWithId,
   readFirestoreUserDocumentData,
+  readFirestoreDocumentDataWithPathWithId,
   updateFirestoreItemName,
+  updateFirestoreItemNameWithPath,
   deleteFirestoreItem,
 };

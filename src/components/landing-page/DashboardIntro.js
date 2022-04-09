@@ -8,9 +8,13 @@ function DashboardIntro() {
       <div className="mt-8 flex items-center">
         <div className="w-1/2 items-center">
           <div className="pr-4">
-            <div className="text-xl font-bold text-left">Collaborative Dashboard</div>
+            <div className="text-xl font-bold text-left">
+              Collaborative Dashboard
+            </div>
             <div className="leading-loose">
-              SkyRobotics allows students to save and share code among multiple computers, making it perfect for completing group projects and learning as much as they can.
+              SkyRobotics allows students to save and share code among multiple
+              computers, making it perfect for completing group projects and
+              learning as much as they can.
             </div>
             <div className="flex">
               <Link

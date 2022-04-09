@@ -6,11 +6,12 @@ import {
   deleteFirestoreItem,
 } from "../../interfaces/FirestoreInterface";
 import { auth } from "../../firebase";
+import { deleteDatabaseDocument } from "../../interfaces/RealtimeDBInterface";
 
 const UseFocus = () => {
   const htmlElRef = useRef(null);
   const setFocus = () => {
-    console.log(htmlElRef.current)
+    console.log(htmlElRef.current);
     htmlElRef.current && htmlElRef.current.focus();
   };
 
@@ -36,6 +37,7 @@ function ProjectCard(props) {
         `/users/${auth.currentUser.uid}/projects`,
         props.fileId
       );
+      deleteDatabaseDocument(`/${props.fileId}`);
     },
   ];
 
@@ -57,7 +59,6 @@ function ProjectCard(props) {
             }}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
-
                 updateFirestoreItemName(
                   auth.currentUser.uid,
                   props.fileId,

@@ -6,7 +6,14 @@ import Markdown from "../../components/code-editor/Markdown";
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import { rdb, db, auth } from "../../firebase";
-import { set, push, ref, onValue, runTransaction } from "firebase/database";
+import {
+  set,
+  push,
+  ref,
+  onValue,
+  runTransaction,
+  orderByChild,
+} from "firebase/database";
 import {
   readDatabaseDocument,
   updateDatabaseDocument,
@@ -29,7 +36,8 @@ const Editor = (props) => {
   const [params] = useSearchParams();
   const projId = params.get("projid");
   const projRef = ref(rdb, `/${projId}`);
-  var dbRef = push(projRef, { name: "Untitled" });
+  const [dbRef, setDbRef] = useState(null);
+  // var dbRef = push(projRef, { name: "Untitled" });
   const navigate = useNavigate();
 
   // Markdown state
@@ -50,6 +58,11 @@ const Editor = (props) => {
   // CodeMirror state
   const [sentCodeString, setSentCodeString] = useState(``);
   const [recCodeString, setRecCodeString] = useState("");
+
+  function addFile() {
+    var newFileRef = push(projRef, { name: "Untitled" });
+    setDbRef(newFileRef);
+  }
 
   // Websocket Connection
   useEffect(() => {
@@ -78,13 +91,15 @@ const Editor = (props) => {
     onValue(projRef, (snapshot) => {
       if (snapshot.val() && !dbRefConnected) {
         console.log(snapshot.val());
+        const tempRefArray = [];
         for (const document in snapshot.val()) {
-          console.log(document);
+          tempRefArray.push(document);
         }
-        //        const data = snapshot.val().value;
-        // setSentCodeString(data);
+        setDbRef(ref(rdb, `/${projId}/${tempRefArray[0]}`));
+        const data = snapshot.val()[tempRefArray[0]].value;
+        setSentCodeString(data);
       } else if (snapshot.val() === null) {
-        // navigate("/404");
+        navigate("/404");
       }
     });
     return () => {
@@ -97,7 +112,7 @@ const Editor = (props) => {
   // Send info thorough socket
   function buttonEventSend(type) {
     if (!isConnected) {
-      alert("Server disconnected");
+      alert("Disconnected from robot");
     }
     var red = redOn;
     var green = greenOn;
@@ -125,9 +140,11 @@ const Editor = (props) => {
   }
 
   function databaseTransaction(codeString) {
-    setRecCodeString(codeString);
-    // const uid = auth.currentUser.uid;
-    completeTransaction(dbRef, codeString);
+    if (dbRef) {
+      setRecCodeString(codeString);
+      // const uid = auth.currentUser.uid;
+      completeTransaction(dbRef, codeString);
+    }
   }
 
   document.addEventListener(
