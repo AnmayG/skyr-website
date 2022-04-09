@@ -38,6 +38,7 @@ function ProjectCard(props) {
         props.fileId
       );
       deleteDatabaseDocument(`/${props.fileId}`);
+      navigate("/dashboard")
     },
   ];
 

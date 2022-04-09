@@ -59,11 +59,6 @@ const Editor = (props) => {
   const [sentCodeString, setSentCodeString] = useState(``);
   const [recCodeString, setRecCodeString] = useState("");
 
-  function addFile() {
-    var newFileRef = push(projRef, { name: "Untitled" });
-    setDbRef(newFileRef);
-  }
-
   // Websocket Connection
   useEffect(() => {
     const newSocket = io(ipAddress, { transports: ["websocket"] });
@@ -92,6 +87,7 @@ const Editor = (props) => {
       if (snapshot.val() && !dbRefConnected) {
         console.log(snapshot.val());
         const tempRefArray = [];
+        // Write all document ids to a temporary array
         for (const document in snapshot.val()) {
           tempRefArray.push(document);
         }
@@ -107,8 +103,12 @@ const Editor = (props) => {
     };
   }, []);
 
-  // File Management
+  function addFile() {
+    var newFileRef = push(projRef, { name: "Untitled", value: sampleCode });
+    setDbRef(newFileRef);
+  }
 
+  // File Management
   // Send info thorough socket
   function buttonEventSend(type) {
     if (!isConnected) {
@@ -168,7 +168,15 @@ const Editor = (props) => {
         <div className="w-[70vw] flex">
           {/*Files Page*/}
           <div className="h-full w-[20vw]">
-            <ProjectsSection />
+            <button
+              className="m-1 p-1 text-center w-fit border border-1 border-black"
+              onClick={() => {
+                addFile()
+              }}
+            >
+              New +
+            </button>
+            <div></div>
           </div>
           {/* Code Editor */}
           <div className="h-full w-full">

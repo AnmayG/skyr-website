@@ -19,8 +19,8 @@ async function readDatabaseDocument(documentID) {
   });
 }
 
-async function deleteDatabaseDocument(dbRef) {
-  remove(dbRef);
+async function deleteDatabaseDocument(path) {
+  remove(ref(rdb, path));
 }
 
 async function completeTransaction(dbRef, codeString) {

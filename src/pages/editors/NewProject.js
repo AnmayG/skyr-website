@@ -22,8 +22,8 @@ function NewProjectInterstitialPage() {
   useEffect(() => {
     var dbRefConnected = false;
     set(projectDocRef, {
+      name: "Main",
       value: sampleCode,
-      order: 0,
     }).then(() => {
       // TODO: Work out a method to pass this info to the next page in order to save API calls
       addDocumentWithPathWithId(`projects/`, dbRef.key, {
