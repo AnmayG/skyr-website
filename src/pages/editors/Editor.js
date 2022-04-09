@@ -28,8 +28,8 @@ const Editor = (props) => {
   // URL Params
   const [params] = useSearchParams();
   const projId = params.get("projid");
-  const docId = params.get("docid");
-  const dbRef = ref(rdb, `/${projId}/${docId}`);
+  const projRef = ref(rdb, `/${projId}`);
+  var dbRef = push(projRef, { name: "Untitled" });
   const navigate = useNavigate();
 
   // Markdown state
@@ -57,6 +57,7 @@ const Editor = (props) => {
     newSocket.on("connect", () => {
       setConnected(true);
     });
+
     newSocket.on("disconnect", () => {
       setConnected(false);
     });
@@ -71,13 +72,17 @@ const Editor = (props) => {
     };
   }, [setSocket, ipAddress]);
 
-  // Check document exists else navigate to 404
+  // Check project exists else navigate to 404
   useEffect(() => {
     var dbRefConnected = false;
-    onValue(dbRef, (snapshot) => {
+    onValue(projRef, (snapshot) => {
       if (snapshot.val() && !dbRefConnected) {
-        const data = snapshot.val().value;
-        setSentCodeString(data);
+        console.log(snapshot.val());
+        for (const document in snapshot.val()) {
+          console.log(document);
+        }
+        //        const data = snapshot.val().value;
+        // setSentCodeString(data);
       } else if (snapshot.val() === null) {
         // navigate("/404");
       }
@@ -86,6 +91,8 @@ const Editor = (props) => {
       dbRefConnected = true;
     };
   }, []);
+
+  // File Management
 
   // Send info thorough socket
   function buttonEventSend(type) {
@@ -139,7 +146,7 @@ const Editor = (props) => {
   return (
     <div className="h-screen overflow-clip">
       <Navbar />
-      <FileHeader docID={docId} tempName={"Untitled"} />
+      <FileHeader docID={projRef.key} tempName={"Untitled"} />
       <div className="flex justify-start">
         <div className="w-[70vw] flex">
           {/*Files Page*/}

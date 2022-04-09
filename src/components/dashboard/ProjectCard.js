@@ -44,7 +44,7 @@ function ProjectCard(props) {
       <div
         className="flex justify-between w-full py-3"
         onClick={(event) => {
-          navigate(`/editor/?id=${props.fileId}`);
+          navigate(`/editor/?projid=${props.fileId}`);
         }}
       >
         <div className="flex justify-start items-center">

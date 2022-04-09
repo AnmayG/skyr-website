@@ -27,14 +27,18 @@ function NewProjectInterstitialPage() {
         name: "Untitled",
         course: "None",
       }).then((output) => {
-        addDocumentWithPathWithId(`projects/${dbRef.key}/files/`, projectDocRef.key, {
-          name: "Untitled",
-        }).then((output) => {
-          addDocumentWithId(auth.currentUser.uid, dbRef.key, {
-            reference: db.doc(`projects/${dbRef.key}`)
-          })
-          navigate(`/editor/?projid=${dbRef.key}&docid=${projectDocRef.key}`);
+        // addDocumentWithPathWithId(`projects/${dbRef.key}/files/`, projectDocRef.key, {
+        //   name: "Untitled",
+        // }).then((output) => {
+        //   addDocumentWithId(auth.currentUser.uid, dbRef.key, {
+        //     reference: db.doc(`projects/${dbRef.key}`)
+        //   })
+        //   navigate(`/editor/?projid=${dbRef.key}`);
+        // })
+        addDocumentWithId(auth.currentUser.uid, dbRef.key, {
+          reference: db.doc(`projects/${dbRef.key}`)
         })
+        navigate(`/editor/?projid=${dbRef.key}`);
       });
     });
 

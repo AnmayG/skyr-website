@@ -4,7 +4,7 @@ import { auth } from "../../firebase";
 
 function ProjectsSection() {
   useEffect(() => {
-    readFirestoreUserDocumentData(auth.currentUser.uid, );
+    // readFirestoreUserDocumentData(auth.currentUser.uid, );
 
     return () => {};
   }, []);
