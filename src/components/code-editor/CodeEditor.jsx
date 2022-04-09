@@ -23,8 +23,8 @@ export default function CodeEditor(props) {
         value={codeValue}
         autoFocus="true"
         height="67vh"
-        width="69.9vw"
-        className="border-2 border-black border-t-0 border-r-0"
+        // width="69.9vw"
+        // className="border-2 border-black border-t-0 border-r-0"
         extensions={[python()]}
         onChange={(value, viewUpdate) => {
           setCodeValue(value.trim());

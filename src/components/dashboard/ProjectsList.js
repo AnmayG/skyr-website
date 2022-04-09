@@ -13,12 +13,18 @@ function ProjectsList() {
     var cleanedUpDbListener = false;
     // Sets up a firestore listener for the documents
     if (!cleanedUpDbListener) {
-      db.collection(`/users/${auth.currentUser.uid}/documents/`)
-        .orderBy("name")
-        .onSnapshot((list) => {
+      db.collection(`/users/${auth.currentUser.uid}/projects/`)
+        // .orderBy("name")
+        .onSnapshot(async (list) => {
           var tempList = [];
           for (const doc of list.docs) {
-            tempList.push({ id: doc.id, value: doc.data() });
+            var reference = doc.data().reference;
+            if (reference) {
+              await reference.get().then((res) => {
+                console.log(res.id, res.data());
+                tempList.push({ id: res.id, value: res.data() });
+              });
+            }
           }
           setDocDataList(tempList);
           docDataListRef.current = tempList;

@@ -7,7 +7,6 @@ import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import { rdb, db, auth } from "../../firebase";
 import { set, push, ref, onValue, runTransaction } from "firebase/database";
-import { readFirestoreUserDocumentData } from "../../interfaces/FirestoreInterface";
 import {
   readDatabaseDocument,
   updateDatabaseDocument,
@@ -19,6 +18,7 @@ import {
   disconnect,
 } from "../../interfaces/SocketInterface";
 import FileHeader from "../../components/code-editor/FileHeader";
+import ProjectsSection from "../../components/code-editor/ProjectsSection";
 const sampleCode = `# move forward for 1 second
 move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
@@ -27,8 +27,9 @@ turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
 const Editor = (props) => {
   // URL Params
   const [params] = useSearchParams();
-  const docId = params.get("id");
-  const dbRef = ref(rdb, `/${docId}`);
+  const projId = params.get("projid");
+  const docId = params.get("docid");
+  const dbRef = ref(rdb, `/${projId}/${docId}`);
   const navigate = useNavigate();
 
   // Markdown state
@@ -78,7 +79,7 @@ const Editor = (props) => {
         const data = snapshot.val().value;
         setSentCodeString(data);
       } else if (snapshot.val() === null) {
-        navigate("/404");
+        // navigate("/404");
       }
     });
     return () => {
@@ -119,46 +120,61 @@ const Editor = (props) => {
   function databaseTransaction(codeString) {
     setRecCodeString(codeString);
     // const uid = auth.currentUser.uid;
-    completeTransaction(codeString);
+    completeTransaction(dbRef, codeString);
   }
 
-  document.addEventListener("keydown", function(e) {
-    if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
-      e.preventDefault();
-    }
-  }, false);
+  document.addEventListener(
+    "keydown",
+    function (e) {
+      if (
+        e.keyCode == 83 &&
+        (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)
+      ) {
+        e.preventDefault();
+      }
+    },
+    false
+  );
 
   return (
     <div className="h-screen overflow-clip">
       <Navbar />
       <FileHeader docID={docId} tempName={"Untitled"} />
       <div className="flex justify-start">
-        <div className="w-[70vw]">
-          {/* Code Editor */}
-          <div className="h-7 text-base border-2 border-black flex justify-between">
-            <div className="ml-2">Code Editor</div>
-            <div
-              onClick={() => {
-                databaseTransaction(recCodeString);
-              }}
-              className="mr-2"
-            >
-              Save
-            </div>
+        <div className="w-[70vw] flex">
+          {/*Files Page*/}
+          <div className="h-full w-[20vw]">
+            <ProjectsSection />
           </div>
-          <div className="h-[67vh] w-full align-top border-black border-0">
-            <CodeEditor
-              setChildData={(codeString) => {
-                databaseTransaction(codeString);
-              }}
-              CodeValue={sentCodeString}
-            />
+          {/* Code Editor */}
+          <div className="h-full w-full">
+            <div className="h-7 w-full text-base border-2 border-r-0 border-black flex justify-between">
+              <div className="ml-2">Code Editor</div>
+              <div
+                onClick={() => {
+                  databaseTransaction(recCodeString);
+                }}
+                className="mr-2"
+              >
+                Save
+              </div>
+            </div>
+            <div className="h-[67vh] w-full align-top border-black border-0 flex">
+              <div className="h-[67vh] w-full align-top border-black border-0">
+                <CodeEditor
+                  setChildData={(codeString) => {
+                    databaseTransaction(codeString);
+                  }}
+                  CodeValue={sentCodeString}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Markdown */}
         <div className="h-[67vh] w-[30vw]">
-          <div className="h-7 w-full text-base border-2 border-l-0 border-black pl-2">
+          <div className="h-7 w-full text-base border-2 border-black pl-2">
             Tutorials
           </div>
           {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
@@ -217,7 +233,7 @@ const Editor = (props) => {
               pushPythonCode(socket, isConnected, recCodeString);
             }}
           >
-            Push
+            Run
           </div>
           <div
             className="bg-red-200 text-center m-2 rounded-full"

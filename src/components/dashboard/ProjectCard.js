@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import KebabMenu from "../general/KebabMenu";
 import {
@@ -7,23 +7,40 @@ import {
 } from "../../interfaces/FirestoreInterface";
 import { auth } from "../../firebase";
 
+const UseFocus = () => {
+  const htmlElRef = useRef(null);
+  const setFocus = () => {
+    console.log(htmlElRef.current)
+    htmlElRef.current && htmlElRef.current.focus();
+  };
+
+  return [htmlElRef, setFocus];
+};
+
 function ProjectCard(props) {
   const navigate = useNavigate();
+  const [inputRef, setInputFocus] = UseFocus();
   // props includes fileName, createdDate, and creator uid
 
   const options = ["Rename", "Delete"];
 
   const optionFunctions = [
     () => {
-      console.log("clicked rename");
+      setInputFocus();
     },
     () => {
-      deleteFirestoreItem(auth.currentUser.uid, props.fileId);
+      // TODO: Decide if making all of these references was a good idea
+      // TODO: Add an alert during sharing stating that the project itself will not be deleted if its shared
+      deleteFirestoreItem("/projects", props.fileId);
+      deleteFirestoreItem(
+        `/users/${auth.currentUser.uid}/projects`,
+        props.fileId
+      );
     },
   ];
 
   return (
-    <div className="flex w-full bg-white items-center">
+    <div className="flex w-full border border-black bg-white items-center">
       <div
         className="flex justify-between w-full py-3"
         onClick={(event) => {
@@ -33,14 +50,14 @@ function ProjectCard(props) {
         <div className="flex justify-start items-center">
           {/* <div className="ml-10">{props.fileName}</div> */}
           <input
-            className="ml-10 w-[50vw]"
+            className="ml-10"
             defaultValue={props.fileName}
             onClick={(event) => {
               event.stopPropagation();
             }}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
-                console.log("here");
+
                 updateFirestoreItemName(
                   auth.currentUser.uid,
                   props.fileId,
@@ -48,6 +65,7 @@ function ProjectCard(props) {
                 );
               }
             }}
+            ref={inputRef}
           />
         </div>
         <div className="flex justify-end items-center">

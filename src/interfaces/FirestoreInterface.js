@@ -11,7 +11,7 @@ function initUser() {
 }
 
 async function addDocument(userID, documentMetaData) {
-  db.collection("/users/" + userID + "/documents/")
+  db.collection("/users/" + userID + "/projects/")
     .doc()
     .set(documentMetaData)
     .then(() => {
@@ -22,8 +22,20 @@ async function addDocument(userID, documentMetaData) {
     });
 }
 
-async function addDocumentWithID(userID, documentID, documentMetaData) {
-  db.collection("/users/" + userID + "/documents")
+async function addDocumentWithId(userID, documentID, documentMetaData) {
+  db.collection("/users/" + userID + "/projects")
+    .doc(documentID)
+    .set(documentMetaData)
+    .then(() => {
+      console.log("Addition with ID successful");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+async function addDocumentWithPathWithId(path, documentID, documentMetaData) {
+  db.collection(path)
     .doc(documentID)
     .set(documentMetaData)
     .then(() => {
@@ -36,7 +48,7 @@ async function addDocumentWithID(userID, documentID, documentMetaData) {
 
 async function readFirestoreUserDocumentData(userID, documentID) {
   return await db
-    .doc(`/users/${userID}/documents/${documentID}`)
+    .doc(`/users/${userID}/projects/${documentID}`)
     .get()
     .then((doc) => {
       return doc.data();
@@ -47,19 +59,23 @@ async function readFirestoreUserDocumentData(userID, documentID) {
 }
 
 async function updateFirestoreItemName(userID, documentID, newName) {
-  db.doc(`/users/${userID}/documents/${documentID}`).update({
+  db.doc(`/users/${userID}/projects/${documentID}`).update({
     name: newName,
   });
 }
 
-function deleteFirestoreItem(userID, documentID) {
-  db.doc(`/users/${userID}/documents/${documentID}`).delete();
+function deleteFirestoreItem(path, documentID) {
+  if(path.slice(-1) === '/') path.slice(0, -1);
+  console.log(`${path}/${documentID}`)
+  db.doc(`${path}/${documentID}`).delete();
+  // TODO: Delete all firebase entries as well
 }
 
 export {
   initUser,
   addDocument,
-  addDocumentWithID,
+  addDocumentWithId,
+  addDocumentWithPathWithId,
   readFirestoreUserDocumentData,
   updateFirestoreItemName,
   deleteFirestoreItem,
