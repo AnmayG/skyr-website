@@ -13,6 +13,7 @@ import {
   onValue,
   runTransaction,
   orderByChild,
+  remove,
 } from "firebase/database";
 import {
   readDatabaseDocument,
@@ -26,6 +27,7 @@ import {
 } from "../../interfaces/SocketInterface";
 import FileHeader from "../../components/code-editor/FileHeader";
 import ProjectsSection from "../../components/code-editor/ProjectsSection";
+import { Delete, KeyboardArrowDown } from "@mui/icons-material";
 const sampleCode = `# move forward for 1 second
 move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
@@ -185,7 +187,7 @@ const Editor = (props) => {
           {/*Files Page*/}
           <div className="h-full w-[20vw]">
             <button
-              className="m-1 p-1 mb-3 text-center w-fit border border-1 border-black"
+              className="m-1 p-1 mb-3 font-semibold text-center w-fit border border-1 border-black"
               onClick={() => {
                 addFile();
               }}
@@ -199,8 +201,8 @@ const Editor = (props) => {
                   <div
                     key={i}
                     className={
-                      "p-1 pl-3 border border-black " +
-                      (selectedIndex === i ? "text-red-500" : "text-black")
+                      "flex justify-between items-center border border-black " +
+                      (selectedIndex === i ? "bg-gray-300" : "bg-white")
                     }
                     onClick={() => {
                       setSelectedIndex(i);
@@ -208,7 +210,24 @@ const Editor = (props) => {
                       setSentCodeString(documentDataList[i].value);
                     }}
                   >
-                    {item.name}
+                    <div className={"p-1 pl-3 font-semibold "}>{item.name}</div>
+                    {i !== 0 ? (
+                      <Delete
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSelectedIndex(0);
+                          remove(documentRefListRef.current[i]);
+                          dbRef.current = documentRefListRef.current[0];
+                          setSentCodeString(documentDataList[0].value);
+                          documentRefListRef.current.splice(i, 1);
+                          var tempDataArray = [...documentDataList];
+                          tempDataArray.splice(i, 1);
+                          setDocumentDataList([...tempDataArray]);
+                        }}
+                      />
+                    ) : (
+                      <KeyboardArrowDown />
+                    )}
                   </div>
                 );
               })}
