@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/general/Navbar";
 import CodeEditor from "../../components/code-editor/CodeEditor";
@@ -36,8 +36,10 @@ const Editor = (props) => {
   const [params] = useSearchParams();
   const projId = params.get("projid");
   const projRef = ref(rdb, `/${projId}`);
-  const [dbRef, setDbRef] = useState(null);
-  // var dbRef = push(projRef, { name: "Untitled" });
+  const dbRef = useRef(null);
+  const documentRefListRef = useRef([]);
+  const [documentDataList, setDocumentDataList] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const navigate = useNavigate();
 
   // Markdown state
@@ -85,15 +87,22 @@ const Editor = (props) => {
     var dbRefConnected = false;
     onValue(projRef, (snapshot) => {
       if (snapshot.val() && !dbRefConnected) {
-        console.log(snapshot.val());
+        const snapshotData = snapshot.val();
         const tempRefArray = [];
+        const tempDataArray = [];
         // Write all document ids to a temporary array
-        for (const document in snapshot.val()) {
-          tempRefArray.push(document);
+        for (const document in snapshotData) {
+          tempRefArray.push(ref(rdb, `/${projId}/${document}`));
+          tempDataArray.push(snapshot.val()[document]);
         }
-        setDbRef(ref(rdb, `/${projId}/${tempRefArray[0]}`));
-        const data = snapshot.val()[tempRefArray[0]].value;
-        setSentCodeString(data);
+        documentRefListRef.current = tempRefArray;
+        setDocumentDataList([...tempDataArray]);
+        // If there isn't already a reference set then set it to the main file
+        if (!dbRef.current) {
+          dbRef.current = tempRefArray[0];
+          const data = tempDataArray[0].value;
+          setSentCodeString(data);
+        }
       } else if (snapshot.val() === null) {
         navigate("/404");
       }
@@ -105,7 +114,14 @@ const Editor = (props) => {
 
   function addFile() {
     var newFileRef = push(projRef, { name: "Untitled", value: sampleCode });
-    setDbRef(newFileRef);
+    documentRefListRef.current.push(newFileRef);
+    setDocumentDataList([
+      ...documentDataList,
+      { name: "Untitled", value: sampleCode },
+    ]);
+    dbRef.current = newFileRef;
+    const data = sampleCode;
+    setSentCodeString(data);
   }
 
   // File Management
@@ -140,10 +156,10 @@ const Editor = (props) => {
   }
 
   function databaseTransaction(codeString) {
-    if (dbRef) {
+    if (dbRef.current) {
       setRecCodeString(codeString);
       // const uid = auth.currentUser.uid;
-      completeTransaction(dbRef, codeString);
+      completeTransaction(dbRef.current, codeString);
     }
   }
 
@@ -151,7 +167,7 @@ const Editor = (props) => {
     "keydown",
     function (e) {
       if (
-        e.keyCode == 83 &&
+        e.key == 83 &&
         (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)
       ) {
         e.preventDefault();
@@ -169,14 +185,34 @@ const Editor = (props) => {
           {/*Files Page*/}
           <div className="h-full w-[20vw]">
             <button
-              className="m-1 p-1 text-center w-fit border border-1 border-black"
+              className="m-1 p-1 mb-3 text-center w-fit border border-1 border-black"
               onClick={() => {
-                addFile()
+                addFile();
               }}
             >
               New +
             </button>
-            <div></div>
+            {/* TODO: Refactor this into its own component in ProjectsSection */}
+            <div>
+              {documentDataList.map((item, i) => {
+                return (
+                  <div
+                    key={i}
+                    className={
+                      "p-1 pl-3 border border-black " +
+                      (selectedIndex === i ? "text-red-500" : "text-black")
+                    }
+                    onClick={() => {
+                      setSelectedIndex(i);
+                      dbRef.current = documentRefListRef.current[i];
+                      setSentCodeString(documentDataList[i].value);
+                    }}
+                  >
+                    {item.name}
+                  </div>
+                );
+              })}
+            </div>
           </div>
           {/* Code Editor */}
           <div className="h-full w-full">
