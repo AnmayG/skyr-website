@@ -14,6 +14,7 @@ import {
   runTransaction,
   orderByChild,
   remove,
+  update,
 } from "firebase/database";
 import {
   readDatabaseDocument,
@@ -27,7 +28,12 @@ import {
 } from "../../interfaces/SocketInterface";
 import FileHeader from "../../components/code-editor/FileHeader";
 import ProjectsSection from "../../components/code-editor/ProjectsSection";
-import { Delete, KeyboardArrowDown } from "@mui/icons-material";
+import {
+  Delete,
+  DriveFileRenameOutline,
+  KeyboardArrowDown,
+} from "@mui/icons-material";
+import { Modal } from "@mui/material";
 const sampleCode = `# move forward for 1 second
 move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
@@ -37,12 +43,22 @@ const Editor = (props) => {
   // URL Params
   const [params] = useSearchParams();
   const projId = params.get("projid");
+  const navigate = useNavigate();
+
+  // Project References
   const projRef = ref(rdb, `/${projId}`);
   const dbRef = useRef(null);
   const documentRefListRef = useRef([]);
   const [documentDataList, setDocumentDataList] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const navigate = useNavigate();
+
+  // Modal state
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [modalIndex, setModalIndex] = useState(null);
+  const [modalName, setModalName] = useState(null);
+  const modalInputRef = useRef(null);
 
   // Markdown state
   const [url] = useState(
@@ -210,7 +226,21 @@ const Editor = (props) => {
                       setSentCodeString(documentDataList[i].value);
                     }}
                   >
-                    <div className={"p-1 pl-3 font-semibold "}>{item.name}</div>
+                    <div
+                      className={
+                        "p-1 pl-3 w-full " + (i === 0 ? "font-semibold" : "")
+                      }
+                    >
+                      {item.name}
+                    </div>
+                    <DriveFileRenameOutline
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setModalIndex(i);
+                        setModalName(item.name);
+                        handleOpen();
+                      }}
+                    />
                     {i !== 0 ? (
                       <Delete
                         onClick={(event) => {
@@ -226,11 +256,60 @@ const Editor = (props) => {
                         }}
                       />
                     ) : (
-                      <KeyboardArrowDown />
+                      <div></div>
                     )}
                   </div>
                 );
               })}
+              <Modal open={open} onClose={handleClose}>
+                <div
+                  className={
+                    "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white text-black border-2 border-solid border-white shadow-md p-4"
+                  }
+                >
+                  <div className="text-2xl font-normal leading-normal mt-0 mb-2">
+                    Rename File
+                  </div>
+                  <div className="border-black border">
+                    <input
+                      className="bg-white p-3 w-full"
+                      placeholder={modalName}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          update(documentRefListRef.current[modalIndex], {
+                            name: event.target.value,
+                          });
+                          event.currentTarget.blur();
+                          handleClose();
+                        }
+                      }}
+                      ref={modalInputRef}
+                    />
+                  </div>
+                  <div className="flex mt-2">
+                    <button
+                      className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        update(documentRefListRef.current[modalIndex], {
+                          name: modalInputRef.current.value,
+                        });
+                        handleClose();
+                      }}
+                    >
+                      Rename
+                    </button>
+                    <button
+                      className="border-black border p-1 text-lg"
+                      onClick={() => {
+                        handleClose();
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </Modal>
             </div>
           </div>
           {/* Code Editor */}
