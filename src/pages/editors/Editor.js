@@ -197,124 +197,125 @@ const Editor = (props) => {
   return (
     <div className="h-screen overflow-clip">
       <Navbar />
-      <FileHeader docID={projRef.key} tempName={"Untitled"} />
       <div className="flex justify-start">
-        <div className="w-[70vw] flex">
-          {/*Files Page*/}
-          <div className="h-full w-[20vw]">
-            <button
-              className="m-1 p-1 mb-3 font-semibold text-center w-fit border border-1 border-black"
-              onClick={() => {
-                addFile();
-              }}
-            >
-              New +
-            </button>
-            {/* TODO: Refactor this into its own component in ProjectsSection */}
-            <div>
-              {documentDataList.map((item, i) => {
-                return (
-                  <div
-                    key={i}
-                    className={
-                      "flex justify-between items-center border border-black " +
-                      (selectedIndex === i ? "bg-gray-300" : "bg-white")
-                    }
-                    onClick={() => {
-                      setSelectedIndex(i);
-                      dbRef.current = documentRefListRef.current[i];
-                      setSentCodeString(documentDataList[i].value);
-                    }}
-                  >
+        <div>
+          <FileHeader docID={projRef.key} tempName={"Untitled"} />
+          <div className="w-[70vw] flex">
+            {/*Files Page*/}
+            <div className="h-full w-[20vw] border-y-0 border border-black">
+              <button
+                className="m-1 p-1 mb-2 font-semibold text-center w-fit border border-1 border-black"
+                onClick={() => {
+                  addFile();
+                }}
+              >
+                New +
+              </button>
+              {/* TODO: Refactor this into its own component in ProjectsSection */}
+              <div>
+                {documentDataList.map((item, i) => {
+                  return (
                     <div
+                      key={i}
                       className={
-                        "p-1 pl-3 w-full " + (i === 0 ? "font-semibold" : "")
+                        "flex justify-between items-center border border-black " +
+                        (selectedIndex === i ? "bg-gray-300" : "bg-white")
                       }
-                    >
-                      {item.name}
-                    </div>
-                    <DriveFileRenameOutline
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setModalIndex(i);
-                        setModalName(item.name);
-                        handleOpen();
+                      onClick={() => {
+                        setSelectedIndex(i);
+                        dbRef.current = documentRefListRef.current[i];
+                        setSentCodeString(documentDataList[i].value);
                       }}
-                    />
-                    {i !== 0 ? (
-                      <Delete
+                    >
+                      <div
+                        className={
+                          "p-1 pl-3 w-full " + (i === 0 ? "font-semibold" : "")
+                        }
+                      >
+                        {item.name}
+                      </div>
+                      <DriveFileRenameOutline
                         onClick={(event) => {
                           event.stopPropagation();
-                          setSelectedIndex(0);
-                          remove(documentRefListRef.current[i]);
-                          dbRef.current = documentRefListRef.current[0];
-                          setSentCodeString(documentDataList[0].value);
-                          documentRefListRef.current.splice(i, 1);
-                          var tempDataArray = [...documentDataList];
-                          tempDataArray.splice(i, 1);
-                          setDocumentDataList([...tempDataArray]);
+                          setModalIndex(i);
+                          setModalName(item.name);
+                          handleOpen();
                         }}
                       />
-                    ) : (
-                      <div></div>
-                    )}
-                  </div>
-                );
-              })}
-              <Modal open={open} onClose={handleClose}>
-                <div
-                  className={
-                    "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white text-black border-2 border-solid border-white shadow-md p-4"
-                  }
-                >
-                  <div className="text-2xl font-normal leading-normal mt-0 mb-2">
-                    Rename File
-                  </div>
-                  <div className="border-black border">
-                    <input
-                      className="bg-white p-3 w-full"
-                      placeholder={modalName}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter") {
+                      {i !== 0 ? (
+                        <Delete
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setSelectedIndex(0);
+                            remove(documentRefListRef.current[i]);
+                            dbRef.current = documentRefListRef.current[0];
+                            setSentCodeString(documentDataList[0].value);
+                            documentRefListRef.current.splice(i, 1);
+                            var tempDataArray = [...documentDataList];
+                            tempDataArray.splice(i, 1);
+                            setDocumentDataList([...tempDataArray]);
+                          }}
+                        />
+                      ) : (
+                        <div></div>
+                      )}
+                    </div>
+                  );
+                })}
+                <Modal open={open} onClose={handleClose}>
+                  <div
+                    className={
+                      "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white text-black border-2 border-solid border-white shadow-md p-4"
+                    }
+                  >
+                    <div className="text-2xl font-normal leading-normal mt-0 mb-2">
+                      Rename File
+                    </div>
+                    <div className="border-black border">
+                      <input
+                        className="bg-white p-3 w-full"
+                        placeholder={modalName}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            update(documentRefListRef.current[modalIndex], {
+                              name: event.target.value,
+                            });
+                            event.currentTarget.blur();
+                            handleClose();
+                          }
+                        }}
+                        ref={modalInputRef}
+                      />
+                    </div>
+                    <div className="flex mt-2">
+                      <button
+                        className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
+                        onClick={(event) => {
+                          event.stopPropagation();
                           update(documentRefListRef.current[modalIndex], {
-                            name: event.target.value,
+                            name: modalInputRef.current.value,
                           });
-                          event.currentTarget.blur();
                           handleClose();
-                        }
-                      }}
-                      ref={modalInputRef}
-                    />
+                        }}
+                      >
+                        Rename
+                      </button>
+                      <button
+                        className="border-black border p-1 text-lg"
+                        onClick={() => {
+                          handleClose();
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex mt-2">
-                    <button
-                      className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        update(documentRefListRef.current[modalIndex], {
-                          name: modalInputRef.current.value,
-                        });
-                        handleClose();
-                      }}
-                    >
-                      Rename
-                    </button>
-                    <button
-                      className="border-black border p-1 text-lg"
-                      onClick={() => {
-                        handleClose();
-                      }}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </Modal>
+                </Modal>
+              </div>
             </div>
-          </div>
-          {/* Code Editor */}
-          <div className="h-full w-full">
-            <div className="h-7 w-full text-base border-2 border-r-0 border-black flex justify-between">
+            {/* Code Editor */}
+            <div className="h-full w-full">
+              {/* <div className="h-7 w-full text-base border-2 border-r-0 border-black flex justify-between">
               <div className="ml-2">Code Editor</div>
               <div
                 onClick={() => {
@@ -324,27 +325,30 @@ const Editor = (props) => {
               >
                 Save
               </div>
-            </div>
-            <div className="h-[67vh] w-full align-top border-black border-0 flex">
-              <div className="h-[67vh] w-full align-top border-black border-0">
-                <CodeEditor
-                  setChildData={(codeString) => {
-                    databaseTransaction(codeString);
-                  }}
-                  CodeValue={sentCodeString}
-                />
+            </div> */}
+              <div className="h-[70vh] w-full align-top border-gray-300 border-0 flex">
+                <div className="h-[70vh] w-full align-top border-gray-300 border-0">
+                  <CodeEditor
+                    setChildData={(codeString) => {
+                      databaseTransaction(codeString);
+                    }}
+                    CodeValue={sentCodeString}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Markdown */}
-        <div className="h-[67vh] w-[30vw]">
-          <div className="h-7 w-full text-base border-2 border-black pl-2">
-            Tutorials
+        <div className="h-[70vh] w-[30vw]">
+          <div className="flex flex-col h-[5vh] w-full justify-center bg-slate-700 text-white">
+            <div className="mx-2 text-lg">
+              Tutorials
+            </div>
           </div>
           {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
-          <div className="h-full w-full overflow-y-auto border-2 border-black border-y-0">
+          <div className="h-full w-full overflow-y-auto border-4 border-gray-300 border-y-0">
             <Markdown downloadUrl={url} />
           </div>
         </div>
@@ -352,7 +356,7 @@ const Editor = (props) => {
 
       {/* Terminal and buttons */}
       <div className="flex h-[18vh] w-full">
-        {/* <div className="w-[90%] border-2 border-black p-[10px] h-full">
+        <div className="w-[70vw] border-2 border-gray-300 border-r-0 p-[10px] h-full">
           <div className="h-full">
             <div
               className="bg-red-500 text-center m-2 h-1/4"
@@ -379,9 +383,9 @@ const Editor = (props) => {
               Blue
             </div>
           </div>
-        </div> */}
+        </div>
         {/* w-[10%] */}
-        <div className="w-full border-2 border-black border-l-0 p-[10px] overflow-clip h-full">
+        <div className="w-[30vw] border-2 border-gray-300 p-[10px] overflow-clip h-full">
           <input
             type="text"
             className="w-full"

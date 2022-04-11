@@ -27,6 +27,7 @@ const SignUp = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
+        alert("User Credentials")
         if (user.email !== null) {
           console.log(user.email);
           navigate("/confirm");
@@ -35,7 +36,7 @@ const SignUp = () => {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
+        alert(errorCode, errorMessage);
       });
   }
 
@@ -74,7 +75,7 @@ const SignUp = () => {
             <div className="h-[1.5px] bg-gray-200 w-[40%] mr-2"></div>
           </div>
           <div className="mx-8 flex flex-col items-center justify-center my-0">
-            <form>
+            <div>
               <label className="text-sm text-left w-full mb-0 text-gray-500">
                 Email
               </label>
@@ -110,15 +111,17 @@ const SignUp = () => {
                   setImage("./penguin2.png");
                 }}
               />
-              <button
-                className="w-3/5 text-center justify-center items-center bg-blue-400 rounded-3xl px-4 py-2 mb-8"
-                onClick={createUser}
-              >
-                <span className="text-xl font-bold text-center text-white">
-                  Submit
-                </span>
-              </button>
-            </form>
+              <div className="flex justify-center items-center">
+                <button
+                  className="w-2/5 text-center justify-center items-center bg-blue-400 rounded-3xl px-4 py-2 mb-8"
+                  onClick={createUser}
+                >
+                  <span className="text-xl font-bold text-center text-white">
+                    Register
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <p className="text-base text-center mt-4 italic">
