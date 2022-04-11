@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/general/Navbar";
 import CodeEditor from "../../components/code-editor/CodeEditor";
@@ -6,8 +6,16 @@ import Markdown from "../../components/code-editor/Markdown";
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import { rdb, db, auth } from "../../firebase";
-import { set, push, ref, onValue, runTransaction } from "firebase/database";
-import { readFirestoreUserDocumentData } from "../../interfaces/FirestoreInterface";
+import {
+  set,
+  push,
+  ref,
+  onValue,
+  runTransaction,
+  orderByChild,
+  remove,
+  update,
+} from "firebase/database";
 import {
   readDatabaseDocument,
   updateDatabaseDocument,
@@ -19,6 +27,13 @@ import {
   disconnect,
 } from "../../interfaces/SocketInterface";
 import FileHeader from "../../components/code-editor/FileHeader";
+import ProjectsSection from "../../components/code-editor/ProjectsSection";
+import {
+  Delete,
+  DriveFileRenameOutline,
+  KeyboardArrowDown,
+} from "@mui/icons-material";
+import { Modal } from "@mui/material";
 const sampleCode = `# move forward for 1 second
 move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
@@ -27,9 +42,23 @@ turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
 const Editor = (props) => {
   // URL Params
   const [params] = useSearchParams();
-  const docId = params.get("id");
-  const dbRef = ref(rdb, `/${docId}`);
+  const projId = params.get("projid");
   const navigate = useNavigate();
+
+  // Project References
+  const projRef = ref(rdb, `/${projId}`);
+  const dbRef = useRef(null);
+  const documentRefListRef = useRef([]);
+  const [documentDataList, setDocumentDataList] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Modal state
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [modalIndex, setModalIndex] = useState(null);
+  const [modalName, setModalName] = useState(null);
+  const modalInputRef = useRef(null);
 
   // Markdown state
   const [url] = useState(
@@ -56,6 +85,7 @@ const Editor = (props) => {
     newSocket.on("connect", () => {
       setConnected(true);
     });
+
     newSocket.on("disconnect", () => {
       setConnected(false);
     });
@@ -70,13 +100,27 @@ const Editor = (props) => {
     };
   }, [setSocket, ipAddress]);
 
-  // Check document exists else navigate to 404
+  // Check project exists else navigate to 404
   useEffect(() => {
     var dbRefConnected = false;
-    onValue(dbRef, (snapshot) => {
+    onValue(projRef, (snapshot) => {
       if (snapshot.val() && !dbRefConnected) {
-        const data = snapshot.val().value;
-        setSentCodeString(data);
+        const snapshotData = snapshot.val();
+        const tempRefArray = [];
+        const tempDataArray = [];
+        // Write all document ids to a temporary array
+        for (const document in snapshotData) {
+          tempRefArray.push(ref(rdb, `/${projId}/${document}`));
+          tempDataArray.push(snapshot.val()[document]);
+        }
+        documentRefListRef.current = tempRefArray;
+        setDocumentDataList([...tempDataArray]);
+        // If there isn't already a reference set then set it to the main file
+        if (!dbRef.current) {
+          dbRef.current = tempRefArray[0];
+          const data = tempDataArray[0].value;
+          setSentCodeString(data);
+        }
       } else if (snapshot.val() === null) {
         navigate("/404");
       }
@@ -86,10 +130,23 @@ const Editor = (props) => {
     };
   }, []);
 
+  function addFile() {
+    var newFileRef = push(projRef, { name: "Untitled", value: sampleCode });
+    documentRefListRef.current.push(newFileRef);
+    setDocumentDataList([
+      ...documentDataList,
+      { name: "Untitled", value: sampleCode },
+    ]);
+    dbRef.current = newFileRef;
+    const data = sampleCode;
+    setSentCodeString(data);
+  }
+
+  // File Management
   // Send info thorough socket
   function buttonEventSend(type) {
     if (!isConnected) {
-      alert("Server disconnected");
+      alert("Disconnected from robot");
     }
     var red = redOn;
     var green = greenOn;
@@ -117,48 +174,173 @@ const Editor = (props) => {
   }
 
   function databaseTransaction(codeString) {
-    setRecCodeString(codeString);
-    // const uid = auth.currentUser.uid;
-    completeTransaction(codeString);
+    if (dbRef.current) {
+      setRecCodeString(codeString);
+      // const uid = auth.currentUser.uid;
+      completeTransaction(dbRef.current, codeString);
+    }
   }
 
-  document.addEventListener("keydown", function(e) {
-    if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
-      e.preventDefault();
-    }
-  }, false);
+  document.addEventListener(
+    "keydown",
+    function (e) {
+      if (
+        e.key == 83 &&
+        (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)
+      ) {
+        e.preventDefault();
+      }
+    },
+    false
+  );
 
   return (
     <div className="h-screen overflow-clip">
       <Navbar />
-      <FileHeader docID={docId} tempName={"Untitled"} />
+      <FileHeader docID={projRef.key} tempName={"Untitled"} />
       <div className="flex justify-start">
-        <div className="w-[70vw]">
-          {/* Code Editor */}
-          <div className="h-7 text-base border-2 border-black flex justify-between">
-            <div className="ml-2">Code Editor</div>
-            <div
+        <div className="w-[70vw] flex">
+          {/*Files Page*/}
+          <div className="h-full w-[20vw]">
+            <button
+              className="m-1 p-1 mb-3 font-semibold text-center w-fit border border-1 border-black"
               onClick={() => {
-                databaseTransaction(recCodeString);
+                addFile();
               }}
-              className="mr-2"
             >
-              Save
+              New +
+            </button>
+            {/* TODO: Refactor this into its own component in ProjectsSection */}
+            <div>
+              {documentDataList.map((item, i) => {
+                return (
+                  <div
+                    key={i}
+                    className={
+                      "flex justify-between items-center border border-black " +
+                      (selectedIndex === i ? "bg-gray-300" : "bg-white")
+                    }
+                    onClick={() => {
+                      setSelectedIndex(i);
+                      dbRef.current = documentRefListRef.current[i];
+                      setSentCodeString(documentDataList[i].value);
+                    }}
+                  >
+                    <div
+                      className={
+                        "p-1 pl-3 w-full " + (i === 0 ? "font-semibold" : "")
+                      }
+                    >
+                      {item.name}
+                    </div>
+                    <DriveFileRenameOutline
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setModalIndex(i);
+                        setModalName(item.name);
+                        handleOpen();
+                      }}
+                    />
+                    {i !== 0 ? (
+                      <Delete
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSelectedIndex(0);
+                          remove(documentRefListRef.current[i]);
+                          dbRef.current = documentRefListRef.current[0];
+                          setSentCodeString(documentDataList[0].value);
+                          documentRefListRef.current.splice(i, 1);
+                          var tempDataArray = [...documentDataList];
+                          tempDataArray.splice(i, 1);
+                          setDocumentDataList([...tempDataArray]);
+                        }}
+                      />
+                    ) : (
+                      <div></div>
+                    )}
+                  </div>
+                );
+              })}
+              <Modal open={open} onClose={handleClose}>
+                <div
+                  className={
+                    "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white text-black border-2 border-solid border-white shadow-md p-4"
+                  }
+                >
+                  <div className="text-2xl font-normal leading-normal mt-0 mb-2">
+                    Rename File
+                  </div>
+                  <div className="border-black border">
+                    <input
+                      className="bg-white p-3 w-full"
+                      placeholder={modalName}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          update(documentRefListRef.current[modalIndex], {
+                            name: event.target.value,
+                          });
+                          event.currentTarget.blur();
+                          handleClose();
+                        }
+                      }}
+                      ref={modalInputRef}
+                    />
+                  </div>
+                  <div className="flex mt-2">
+                    <button
+                      className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        update(documentRefListRef.current[modalIndex], {
+                          name: modalInputRef.current.value,
+                        });
+                        handleClose();
+                      }}
+                    >
+                      Rename
+                    </button>
+                    <button
+                      className="border-black border p-1 text-lg"
+                      onClick={() => {
+                        handleClose();
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </Modal>
             </div>
           </div>
-          <div className="h-[67vh] w-full align-top border-black border-0">
-            <CodeEditor
-              setChildData={(codeString) => {
-                databaseTransaction(codeString);
-              }}
-              CodeValue={sentCodeString}
-            />
+          {/* Code Editor */}
+          <div className="h-full w-full">
+            <div className="h-7 w-full text-base border-2 border-r-0 border-black flex justify-between">
+              <div className="ml-2">Code Editor</div>
+              <div
+                onClick={() => {
+                  databaseTransaction(recCodeString);
+                }}
+                className="mr-2"
+              >
+                Save
+              </div>
+            </div>
+            <div className="h-[67vh] w-full align-top border-black border-0 flex">
+              <div className="h-[67vh] w-full align-top border-black border-0">
+                <CodeEditor
+                  setChildData={(codeString) => {
+                    databaseTransaction(codeString);
+                  }}
+                  CodeValue={sentCodeString}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Markdown */}
         <div className="h-[67vh] w-[30vw]">
-          <div className="h-7 w-full text-base border-2 border-l-0 border-black pl-2">
+          <div className="h-7 w-full text-base border-2 border-black pl-2">
             Tutorials
           </div>
           {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
@@ -217,7 +399,7 @@ const Editor = (props) => {
               pushPythonCode(socket, isConnected, recCodeString);
             }}
           >
-            Push
+            Run
           </div>
           <div
             className="bg-red-200 text-center m-2 rounded-full"

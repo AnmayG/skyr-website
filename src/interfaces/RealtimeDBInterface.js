@@ -1,5 +1,5 @@
 import { rdb, db, auth } from "../firebase";
-import { set, ref, onValue, runTransaction } from "firebase/database";
+import { set, ref, onValue, runTransaction, remove } from "firebase/database";
 
 function updateDatabaseDocument(documentID, text) {
   set(ref(rdb, "/" + documentID), {
@@ -19,7 +19,12 @@ async function readDatabaseDocument(documentID) {
   });
 }
 
+async function deleteDatabaseDocument(path) {
+  remove(ref(rdb, path));
+}
+
 async function completeTransaction(dbRef, codeString) {
+  console.log(dbRef);
   await runTransaction(dbRef, (transaction) => {
     if (transaction) {
       // Set the value
@@ -29,4 +34,9 @@ async function completeTransaction(dbRef, codeString) {
   });
 }
 
-export { updateDatabaseDocument, readDatabaseDocument, completeTransaction };
+export {
+  updateDatabaseDocument,
+  readDatabaseDocument,
+  deleteDatabaseDocument,
+  completeTransaction,
+};
