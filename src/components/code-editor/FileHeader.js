@@ -32,7 +32,7 @@ const FileHeader = (props) => {
   }, []);
 
   return (
-    <div className="flex flex-col w-screen h-[5vh] bg-slate-200 justify-center">
+    <div className="flex flex-col w-full h-[5vh] bg-slate-200 justify-center">
       <div className="mx-2">
         <div className="text-lg">
           {/* This needs to contain the course name, course part, and file name. The NavBar may need to be replaced with just an image. */}

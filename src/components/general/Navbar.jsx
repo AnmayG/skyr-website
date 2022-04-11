@@ -218,7 +218,7 @@ const Navbar = () => {
                 </ListItemIcon>
                 <span>Logout</span>
               </MenuItem>
-              <MenuItem
+              {/* <MenuItem
                 onClick={() => {
                   // console.log("here")
                   signOut(auth)
@@ -234,7 +234,7 @@ const Navbar = () => {
                   <SwitchAccount fontSize="small" />
                 </ListItemIcon>
                 <span>Switch Account</span>
-              </MenuItem>
+              </MenuItem> */}
             </Menu>
           </div>
         </div>
