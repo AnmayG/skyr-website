@@ -40,6 +40,7 @@ move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
 turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
 
+// TODO: Refactor into multiple components; currently all in one in order to minimize prop drilling
 const Editor = (props) => {
   // URL Params
   const [params] = useSearchParams();
@@ -79,6 +80,15 @@ const Editor = (props) => {
   // CodeMirror state
   const [sentCodeString, setSentCodeString] = useState(``);
   const [recCodeString, setRecCodeString] = useState("");
+
+  // Split Pane State
+  var sizes = localStorage.getItem("files-split-sizes");
+
+  if (sizes) {
+    sizes = JSON.parse(sizes);
+  } else {
+    sizes = [15, 55, 30]; // default sizes
+  }
 
   // Websocket Connection
   useEffect(() => {
@@ -206,6 +216,10 @@ const Editor = (props) => {
         minSize={[0, 400, 0]}
         sizes={[15, 55, 30]}
         snapOffset={[130, 30, 300]}
+        onDragEnd={(newSizes) => {
+          alert(sizes, JSON.stringify(newSizes));
+          localStorage.setItem("files-split-sizes", JSON.stringify(newSizes));
+        }}
       >
         {/*Files Page*/}
         <div className="h-full w-full border-y-0 border border-black overflow-hidden">
@@ -235,12 +249,14 @@ const Editor = (props) => {
                 >
                   <div
                     className={
-                      "p-1 pl-3 w-full overflow-clip " + (i === 0 ? "font-semibold" : "")
+                      "p-1 pl-3 w-full overflow-clip " +
+                      (i === 0 ? "font-semibold" : "")
                     }
                   >
                     {item.name}
                   </div>
                   <DriveFileRenameOutline
+                    className="-z-10"
                     onClick={(event) => {
                       event.stopPropagation();
                       setModalIndex(i);
@@ -250,6 +266,7 @@ const Editor = (props) => {
                   />
                   {i !== 0 ? (
                     <Delete
+                      className="-z-10"
                       onClick={(event) => {
                         event.stopPropagation();
                         setSelectedIndex(0);
@@ -362,7 +379,11 @@ const Editor = (props) => {
       </Split>
 
       {/* Terminal and buttons */}
-      <Split sizes={[70, 30]} minSize={[0, 150]} className="split flex h-[18vh] w-screen">
+      <Split
+        sizes={[70, 30]}
+        minSize={[0, 150]}
+        className="split flex h-[18vh] w-screen"
+      >
         <div className="border-2 border-gray-300 border-r-0 h-full">
           <div className="h-full m-[10px]">
             <div
