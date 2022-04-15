@@ -68,7 +68,7 @@ const Editor = (props) => {
 
   // Connection state
   const [isConnected, setConnected] = useState(false);
-  const [ipAddress, setIpAddress] = useState("http://raspberrypi.local:9000");
+  const [ipAddress, setIpAddress] = useState("wss://raspberrypi.local:9000");
   const [socket, setSocket] = useState(null);
 
   // LED vars for testing
@@ -398,7 +398,7 @@ const Editor = (props) => {
             className="w-full"
             onKeyUp={(e) => {
               if (e.key === "Enter") {
-                setIpAddress("http://" + e.target.value + ":9000");
+                setIpAddress("wss://" + e.target.value + ":9000");
               }
             }}
             placeholder={ipAddress}
