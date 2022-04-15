@@ -1,6 +1,6 @@
 [
   {
-    "origin": ["http://localhost:3000"],
+    "origin": ["http://localhost:3000", "https://skyrobotics.vercel.app/"],
     "method": ["GET", "HEAD", "DELETE"],
     "responseHeader": ["Content-Type"],
     "maxAgeSeconds": 3600

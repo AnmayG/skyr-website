@@ -34,6 +34,7 @@ import {
   KeyboardArrowDown,
 } from "@mui/icons-material";
 import { Modal } from "@mui/material";
+import Split from "react-split";
 const sampleCode = `# move forward for 1 second
 move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
@@ -67,7 +68,7 @@ const Editor = (props) => {
 
   // Connection state
   const [isConnected, setConnected] = useState(false);
-  const [ipAddress, setIpAddress] = useState("http://raspberrypi.local:9000");
+  const [ipAddress, setIpAddress] = useState("wss://raspberrypi.local:9000");
   const [socket, setSocket] = useState(null);
 
   // LED vars for testing
@@ -81,7 +82,10 @@ const Editor = (props) => {
 
   // Websocket Connection
   useEffect(() => {
-    const newSocket = io(ipAddress, { transports: ["websocket"] });
+    const newSocket = io(ipAddress, {
+      transports: ["websocket"],
+      secure: "true",
+    });
     newSocket.on("connect", () => {
       setConnected(true);
     });
@@ -197,122 +201,127 @@ const Editor = (props) => {
   return (
     <div className="h-screen overflow-clip">
       <Navbar />
-      <div className="flex justify-start">
-        <div>
-          <FileHeader docID={projRef.key} tempName={"Untitled"} />
-          <div className="w-[70vw] flex">
-            {/*Files Page*/}
-            <div className="h-full w-[20vw] border-y-0 border border-black">
-              <button
-                className="m-1 p-1 mb-2 font-semibold text-center w-fit border border-1 border-black"
-                onClick={() => {
-                  addFile();
-                }}
-              >
-                New +
-              </button>
-              {/* TODO: Refactor this into its own component in ProjectsSection */}
-              <div>
-                {documentDataList.map((item, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className={
-                        "flex justify-between items-center border border-black " +
-                        (selectedIndex === i ? "bg-gray-300" : "bg-white")
-                      }
-                      onClick={() => {
-                        setSelectedIndex(i);
-                        dbRef.current = documentRefListRef.current[i];
-                        setSentCodeString(documentDataList[i].value);
-                      }}
-                    >
-                      <div
-                        className={
-                          "p-1 pl-3 w-full " + (i === 0 ? "font-semibold" : "")
-                        }
-                      >
-                        {item.name}
-                      </div>
-                      <DriveFileRenameOutline
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setModalIndex(i);
-                          setModalName(item.name);
-                          handleOpen();
-                        }}
-                      />
-                      {i !== 0 ? (
-                        <Delete
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            setSelectedIndex(0);
-                            remove(documentRefListRef.current[i]);
-                            dbRef.current = documentRefListRef.current[0];
-                            setSentCodeString(documentDataList[0].value);
-                            documentRefListRef.current.splice(i, 1);
-                            var tempDataArray = [...documentDataList];
-                            tempDataArray.splice(i, 1);
-                            setDocumentDataList([...tempDataArray]);
-                          }}
-                        />
-                      ) : (
-                        <div></div>
-                      )}
-                    </div>
-                  );
-                })}
-                <Modal open={open} onClose={handleClose}>
+      <Split
+        className="split flex justify-start"
+        minSize={[0, 400, 0]}
+        sizes={[15, 55, 30]}
+        snapOffset={[130, 30, 300]}
+      >
+        {/*Files Page*/}
+        <div className="h-full w-full border-y-0 border border-black overflow-hidden">
+          <button
+            className="m-1 p-1 mb-2 font-semibold text-center w-fit border border-1 border-black overflow-hidden"
+            onClick={() => {
+              addFile();
+            }}
+          >
+            New +
+          </button>
+          {/* TODO: Refactor this into its own component in ProjectsSection */}
+          <div>
+            {documentDataList.map((item, i) => {
+              return (
+                <div
+                  key={i}
+                  className={
+                    "flex justify-between items-center border border-black overflow-hidden" +
+                    (selectedIndex === i ? "bg-gray-300" : "bg-white")
+                  }
+                  onClick={() => {
+                    setSelectedIndex(i);
+                    dbRef.current = documentRefListRef.current[i];
+                    setSentCodeString(documentDataList[i].value);
+                  }}
+                >
                   <div
                     className={
-                      "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white text-black border-2 border-solid border-white shadow-md p-4"
+                      "p-1 pl-3 w-full overflow-clip " + (i === 0 ? "font-semibold" : "")
                     }
                   >
-                    <div className="text-2xl font-normal leading-normal mt-0 mb-2">
-                      Rename File
-                    </div>
-                    <div className="border-black border">
-                      <input
-                        className="bg-white p-3 w-full"
-                        placeholder={modalName}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter") {
-                            update(documentRefListRef.current[modalIndex], {
-                              name: event.target.value,
-                            });
-                            event.currentTarget.blur();
-                            handleClose();
-                          }
-                        }}
-                        ref={modalInputRef}
-                      />
-                    </div>
-                    <div className="flex mt-2">
-                      <button
-                        className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          update(documentRefListRef.current[modalIndex], {
-                            name: modalInputRef.current.value,
-                          });
-                          handleClose();
-                        }}
-                      >
-                        Rename
-                      </button>
-                      <button
-                        className="border-black border p-1 text-lg"
-                        onClick={() => {
-                          handleClose();
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
+                    {item.name}
                   </div>
-                </Modal>
+                  <DriveFileRenameOutline
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setModalIndex(i);
+                      setModalName(item.name);
+                      handleOpen();
+                    }}
+                  />
+                  {i !== 0 ? (
+                    <Delete
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setSelectedIndex(0);
+                        remove(documentRefListRef.current[i]);
+                        dbRef.current = documentRefListRef.current[0];
+                        setSentCodeString(documentDataList[0].value);
+                        documentRefListRef.current.splice(i, 1);
+                        var tempDataArray = [...documentDataList];
+                        tempDataArray.splice(i, 1);
+                        setDocumentDataList([...tempDataArray]);
+                      }}
+                    />
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
+              );
+            })}
+            <Modal open={open} onClose={handleClose}>
+              <div
+                className={
+                  "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white text-black border-2 border-solid border-white shadow-md p-4"
+                }
+              >
+                <div className="text-2xl font-normal leading-normal mt-0 mb-2">
+                  Rename File
+                </div>
+                <div className="border-black border">
+                  <input
+                    className="bg-white p-3 w-full"
+                    placeholder={modalName}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        update(documentRefListRef.current[modalIndex], {
+                          name: event.target.value,
+                        });
+                        event.currentTarget.blur();
+                        handleClose();
+                      }
+                    }}
+                    ref={modalInputRef}
+                  />
+                </div>
+                <div className="flex mt-2">
+                  <button
+                    className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      update(documentRefListRef.current[modalIndex], {
+                        name: modalInputRef.current.value,
+                      });
+                      handleClose();
+                    }}
+                  >
+                    Rename
+                  </button>
+                  <button
+                    className="border-black border p-1 text-lg"
+                    onClick={() => {
+                      handleClose();
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-            </div>
+            </Modal>
+          </div>
+        </div>
+        <div>
+          <FileHeader docID={projRef.key} tempName={"Untitled"} />
+          <div className="w-full flex">
             {/* Code Editor */}
             <div className="h-full w-full">
               {/* <div className="h-7 w-full text-base border-2 border-r-0 border-black flex justify-between">
@@ -343,21 +352,19 @@ const Editor = (props) => {
         {/* Markdown */}
         <div className="h-[70vh] w-[30vw]">
           <div className="flex flex-col h-[5vh] w-full justify-center bg-slate-700 text-white">
-            <div className="mx-2 text-lg">
-              Tutorials
-            </div>
+            <div className="mx-2 text-lg">Tutorials</div>
           </div>
           {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
           <div className="h-full w-full overflow-y-auto border-4 border-gray-300 border-y-0">
             <Markdown downloadUrl={url} />
           </div>
         </div>
-      </div>
+      </Split>
 
       {/* Terminal and buttons */}
-      <div className="flex h-[18vh] w-full">
-        <div className="w-[70vw] border-2 border-gray-300 border-r-0 p-[10px] h-full">
-          <div className="h-full">
+      <Split sizes={[70, 30]} minSize={[0, 150]} className="split flex h-[18vh] w-screen">
+        <div className="border-2 border-gray-300 border-r-0 h-full">
+          <div className="h-full m-[10px]">
             <div
               className="bg-red-500 text-center m-2 h-1/4"
               onClick={() => {
@@ -385,13 +392,13 @@ const Editor = (props) => {
           </div>
         </div>
         {/* w-[10%] */}
-        <div className="w-[30vw] border-2 border-gray-300 p-[10px] overflow-clip h-full">
+        <div className="w-full border-2 border-gray-300 p-[10px] overflow-clip h-full bg-white">
           <input
             type="text"
             className="w-full"
             onKeyUp={(e) => {
               if (e.key === "Enter") {
-                setIpAddress("http://" + e.target.value + ":9000");
+                setIpAddress("wss://" + e.target.value + ":9000");
               }
             }}
             placeholder={ipAddress}
@@ -414,7 +421,7 @@ const Editor = (props) => {
             Stop
           </div>
         </div>
-      </div>
+      </Split>
       {/* Courses */}
       <div></div>
     </div>

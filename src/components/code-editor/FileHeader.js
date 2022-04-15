@@ -38,7 +38,7 @@ const FileHeader = (props) => {
           {/* This needs to contain the course name, course part, and file name. The NavBar may need to be replaced with just an image. */}
           Project Name:
           <input
-            className="ml-2 overflow-auto w-50 bg-slate-200"
+            className="ml-2 overflow-auto bg-slate-200"
             defaultValue={nameObj.current.name}
             onClick={(event) => {
               event.stopPropagation();
