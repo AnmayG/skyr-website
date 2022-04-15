@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import Markdown from "../../components/code-editor/Markdown";
 import Navbar from "../../components/general/Navbar";
-import FirebaseRequests from "../../components/FirebaseRequests";
-import StorageRequests from "../../components/StorageRequests";
 
 export default function AboutUs() {
   const [url, setUrl] = useState(

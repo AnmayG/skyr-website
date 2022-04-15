@@ -82,13 +82,17 @@ const Editor = (props) => {
   const [recCodeString, setRecCodeString] = useState("");
 
   // Split Pane State
-  var sizes = localStorage.getItem("files-split-sizes");
+  const [fileSizes, setFileSizes] = useState(
+    localStorage.getItem("files-split-sizes")
+      ? JSON.parse(localStorage.getItem("files-split-sizes"))
+      : [15, 55, 30]
+  );
 
-  if (sizes) {
-    sizes = JSON.parse(sizes);
-  } else {
-    sizes = [15, 55, 30]; // default sizes
-  }
+  const fileSizesRef = useRef(
+    localStorage.getItem("files-split-sizes")
+      ? JSON.parse(localStorage.getItem("files-split-sizes"))
+      : [15, 55, 30]
+  );
 
   // Websocket Connection
   useEffect(() => {
@@ -214,11 +218,13 @@ const Editor = (props) => {
       <Split
         className="split flex justify-start"
         minSize={[0, 400, 0]}
-        sizes={[15, 55, 30]}
+        sizes={fileSizes}
         snapOffset={[130, 30, 300]}
         onDragEnd={(newSizes) => {
-          alert(sizes, JSON.stringify(newSizes));
+          //          alert(fileSizes, JSON.stringify(newSizes));
           localStorage.setItem("files-split-sizes", JSON.stringify(newSizes));
+          setFileSizes(newSizes);
+          fileSizesRef.current = newSizes;
         }}
       >
         {/*Files Page*/}
@@ -238,7 +244,7 @@ const Editor = (props) => {
                 <div
                   key={i}
                   className={
-                    "flex justify-between items-center border border-black overflow-hidden" +
+                    "flex justify-between items-center border border-black overflow-hidden " +
                     (selectedIndex === i ? "bg-gray-300" : "bg-white")
                   }
                   onClick={() => {
@@ -250,13 +256,12 @@ const Editor = (props) => {
                   <div
                     className={
                       "p-1 pl-3 w-full overflow-clip " +
-                      (i === 0 ? "font-semibold" : "")
+                      (selectedIndex === i ? "font-semibold" : "")
                     }
                   >
                     {item.name}
                   </div>
                   <DriveFileRenameOutline
-                    className="-z-10"
                     onClick={(event) => {
                       event.stopPropagation();
                       setModalIndex(i);
@@ -266,7 +271,6 @@ const Editor = (props) => {
                   />
                   {i !== 0 ? (
                     <Delete
-                      className="-z-10"
                       onClick={(event) => {
                         event.stopPropagation();
                         setSelectedIndex(0);
@@ -296,6 +300,7 @@ const Editor = (props) => {
                 </div>
                 <div className="border-black border">
                   <input
+                    autoFocus
                     className="bg-white p-3 w-full"
                     placeholder={modalName}
                     onKeyDown={(event) => {
@@ -380,7 +385,7 @@ const Editor = (props) => {
 
       {/* Terminal and buttons */}
       <Split
-        sizes={[70, 30]}
+        sizes={[90, 10]}
         minSize={[0, 150]}
         className="split flex h-[18vh] w-screen"
       >

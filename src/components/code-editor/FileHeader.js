@@ -13,9 +13,9 @@ const FileHeader = (props) => {
   const [name, setName] = useState(props.tempName);
 
   const [renameModalOpen, setRenameModalOpen] = useState(false);
-  const handleOpen = () => setRenameModalOpen(true);
-  const handleClose = () => setRenameModalOpen(false);
-  const modalInputRef = useRef(null);
+  const handleRenameModalOpen = () => setRenameModalOpen(true);
+  const handleRenameModalClose = () => setRenameModalOpen(false);
+  const renameModalInputRef = useRef(null);
 
   useEffect(() => {
     var docMetaDataFetched = false;
@@ -68,15 +68,21 @@ const FileHeader = (props) => {
           /> */}
         </div>
       </div>
-      <div>
+      <div className="flex">
         <button
-          className="border-2 border-blue-400 text-blue-400 rounded-lg p-1"
-          onClick={handleOpen}
+          className="border-2 border-blue-400 text-blue-400 rounded-lg p-1 mx-1"
+          onClick={handleRenameModalOpen}
         >
           Rename
         </button>
+        <button
+          className="border-2 border-blue-400 text-blue-400 rounded-lg p-1 mx-1"
+          onClick={handleRenameModalOpen}
+        >
+          Share
+        </button>
       </div>
-      <Modal open={renameModalOpen} onClose={handleClose}>
+      <Modal open={renameModalOpen} onClose={handleRenameModalClose}>
         <div
           className={
             "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white text-black border-2 border-solid border-white shadow-md p-4"
@@ -92,10 +98,10 @@ const FileHeader = (props) => {
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
                   updateName(event.target.value);
-                  handleClose();
+                  handleRenameModalClose();
                 }
               }}
-              ref={modalInputRef}
+              ref={renameModalInputRef}
             />
           </div>
           <div className="flex mt-2">
@@ -103,8 +109,8 @@ const FileHeader = (props) => {
               className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
               onClick={(event) => {
                 event.stopPropagation();
-                updateName(modalInputRef.current.value);
-                handleClose();
+                updateName(renameModalInputRef.current.value);
+                handleRenameModalClose();
               }}
             >
               Rename
@@ -112,7 +118,7 @@ const FileHeader = (props) => {
             <button
               className="border-black border p-1 text-lg"
               onClick={() => {
-                handleClose();
+                handleRenameModalClose();
               }}
             >
               Cancel
