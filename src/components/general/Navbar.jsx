@@ -216,7 +216,7 @@ const Navbar = () => {
                 <ListItemIcon>
                   <Logout fontSize="small" />
                 </ListItemIcon>
-                <span>Logout</span>
+                <span>Log Out</span>
               </MenuItem>
               {/* <MenuItem
                 onClick={() => {

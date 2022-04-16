@@ -40,6 +40,7 @@ const SignUp = () => {
       });
   }
 
+  // This is VERY SKETCHY but it's the only way to replace "sign in with google" with "sign up with google"
   useEffect(() => {
     const texts = document.querySelectorAll(
       ".firebaseui-idp-text-long, .firebaseui-title"

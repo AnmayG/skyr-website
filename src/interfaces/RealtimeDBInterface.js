@@ -24,7 +24,6 @@ async function deleteDatabaseDocument(path) {
 }
 
 async function completeTransaction(dbRef, codeString) {
-  console.log(dbRef);
   await runTransaction(dbRef, (transaction) => {
     if (transaction) {
       // Set the value

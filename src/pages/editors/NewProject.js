@@ -13,9 +13,9 @@ move(kit, 1, 0.05, -0.12, -0.1)
 turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
 
 function NewProjectInterstitialPage() {
-  const overallRef = ref(rdb, `/`);
+  const overallRef = ref(rdb, `/projects/`);
   const dbRef = push(overallRef);
-  const projRef = ref(rdb, `/${dbRef.key}/`);
+  const projRef = ref(rdb, `/projects/${dbRef.key}/`);
   const projectDocRef = push(projRef);
   const navigate = useNavigate();
 
@@ -30,6 +30,8 @@ function NewProjectInterstitialPage() {
         date: new Date().toDateString(),
         name: "Untitled",
         course: "None",
+        memberIds: [auth.currentUser.uid],
+        ownerId: auth.currentUser.uid
       }).then((output) => {
         // addDocumentWithPathWithId(`projects/${dbRef.key}/files/`, projectDocRef.key, {
         //   name: "Untitled",

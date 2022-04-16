@@ -48,7 +48,7 @@ const Editor = (props) => {
   const navigate = useNavigate();
 
   // Project References
-  const projRef = ref(rdb, `/${projId}`);
+  const projRef = ref(rdb, `/projects/${projId}`);
   const dbRef = useRef(null);
   const documentRefListRef = useRef([]);
   const [documentDataList, setDocumentDataList] = useState([]);
@@ -121,6 +121,7 @@ const Editor = (props) => {
   // Check project exists else navigate to 404
   useEffect(() => {
     var dbRefConnected = false;
+
     onValue(projRef, (snapshot) => {
       if (snapshot.val() && !dbRefConnected) {
         const snapshotData = snapshot.val();
@@ -156,6 +157,8 @@ const Editor = (props) => {
       { name: "Untitled", value: sampleCode },
     ]);
     dbRef.current = newFileRef;
+    alert(documentRefListRef.current.length, documentRefListRef.current);
+    setSelectedIndex(documentRefListRef.current.length - 2);
     const data = sampleCode;
     setSentCodeString(data);
   }
