@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import { Modal } from "@mui/material";
 
-function ShareModal(props) {
-  const shareModalInputRef = useRef(null);
+function RenameProjectModal(props) {
+  const renameModalInputRef = useRef(null);
 
   return (
     <Modal open={props.modalOpen} onClose={props.handleClose}>
@@ -12,19 +12,20 @@ function ShareModal(props) {
         }
       >
         <div className="text-2xl font-normal leading-normal mt-0 mb-2">
-          Share Project
+          Rename Project
         </div>
         <div className="border-black border">
           <input
             autoFocus
             className="bg-white p-3 w-full"
-            placeholder={"someone@example.com"}
+            placeholder={props.placeholderName}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
+                props.updateName(event.target.value);
                 props.handleClose();
               }
             }}
-            ref={shareModalInputRef}
+            ref={renameModalInputRef}
           />
         </div>
         <div className="flex mt-2">
@@ -32,10 +33,11 @@ function ShareModal(props) {
             className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
             onClick={(event) => {
               event.stopPropagation();
+              props.updateName(renameModalInputRef.current.value);
               props.handleClose();
             }}
           >
-            Share
+            Rename
           </button>
           <button
             className="border-black border p-1 text-lg"
@@ -51,4 +53,4 @@ function ShareModal(props) {
   );
 }
 
-export default ShareModal;
+export default RenameProjectModal;

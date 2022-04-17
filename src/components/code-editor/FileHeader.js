@@ -8,6 +8,8 @@ import {
 } from "../../interfaces/FirestoreInterface";
 import { Modal } from "@mui/material";
 import ShareModal from "./modals/ShareModal";
+import RenameProjectModal from "./modals/RenameProjectModal";
+import useModalState from "./modals/useModalState";
 
 const FileHeader = (props) => {
   const navigate = useNavigate();
@@ -15,15 +17,11 @@ const FileHeader = (props) => {
   const nameObj = useRef({ name: props.tempName });
   const [name, setName] = useState(props.tempName);
 
-  const [renameModalOpen, setRenameModalOpen] = useState(false);
-  const handleRenameModalOpen = () => setRenameModalOpen(true);
-  const handleRenameModalClose = () => setRenameModalOpen(false);
-  const renameModalInputRef = useRef(null);
+  const [renameModalOpen, handleRenameModalOpen, handleRenameModalClose] =
+    useModalState(false);
 
-  const [shareModalOpen, setShareModalOpen] = useState(false);
-  const handleShareModalOpen = () => setShareModalOpen(true);
-  const handleShareModalClose = () => setShareModalOpen(false);
-  const shareModalInputRef = useRef(null);
+  const [shareModalOpen, handleShareModalOpen, handleShareModalClose] =
+    useModalState(false);
 
   useEffect(() => {
     var docMetaDataFetched = false;
@@ -57,24 +55,6 @@ const FileHeader = (props) => {
         <div className="text-lg">
           {/* This needs to contain the course name, course part, and file name. The NavBar may need to be replaced with just an image. */}
           {name}
-          {/* <input
-            className="ml-2 overflow-auto bg-slate-200"
-            defaultValue={name}
-            onClick={(event) => {
-              event.stopPropagation();
-            }}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                console.log("here");
-                updateFirestoreItemNameWithPath(
-                  `/projects`,
-                  docId,
-                  event.target.value
-                );
-                event.currentTarget.blur();
-              }
-            }}
-          /> */}
         </div>
       </div>
       <div className="flex">
@@ -91,54 +71,16 @@ const FileHeader = (props) => {
           Share
         </button>
       </div>
-      <Modal open={renameModalOpen} onClose={handleRenameModalClose}>
-        <div
-          className={
-            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white text-black border-2 border-solid border-white shadow-md p-4"
-          }
-        >
-          <div className="text-2xl font-normal leading-normal mt-0 mb-2">
-            Rename Project
-          </div>
-          <div className="border-black border">
-            <input
-              autoFocus
-              className="bg-white p-3 w-full"
-              placeholder={name}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  updateName(event.target.value);
-                  handleRenameModalClose();
-                }
-              }}
-              ref={renameModalInputRef}
-            />
-          </div>
-          <div className="flex mt-2">
-            <button
-              className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
-              onClick={(event) => {
-                event.stopPropagation();
-                updateName(renameModalInputRef.current.value);
-                handleRenameModalClose();
-              }}
-            >
-              Rename
-            </button>
-            <button
-              className="border-black border p-1 text-lg"
-              onClick={() => {
-                handleRenameModalClose();
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </Modal>
-      <Modal open={shareModalOpen} onClose={handleShareModalClose}>
-        <ShareModal handleClose={handleShareModalClose} />
-      </Modal>
+      <RenameProjectModal
+        modalOpen={renameModalOpen}
+        handleClose={handleRenameModalClose}
+        updateName={updateName}
+        placeholderName={name}
+      />
+      <ShareModal
+        modalOpen={shareModalOpen}
+        handleClose={handleShareModalClose}
+      />
     </div>
   );
 };
