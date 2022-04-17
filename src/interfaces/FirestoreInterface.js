@@ -35,6 +35,7 @@ async function addDocumentWithId(userID, documentID, documentMetaData) {
 }
 
 async function addDocumentWithPathWithId(path, documentID, documentMetaData) {
+  alert(path)
   db.collection(path)
     .doc(documentID)
     .set(documentMetaData)

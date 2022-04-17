@@ -6,7 +6,6 @@ import {
   readFirestoreDocumentDataWithPathWithId,
   updateFirestoreItemNameWithPath,
 } from "../../interfaces/FirestoreInterface";
-import { Modal } from "@mui/material";
 import ShareModal from "./modals/ShareModal";
 import RenameProjectModal from "./modals/RenameProjectModal";
 import useModalState from "./modals/useModalState";

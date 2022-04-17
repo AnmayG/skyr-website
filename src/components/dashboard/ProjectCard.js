@@ -11,7 +11,6 @@ import { deleteDatabaseDocument } from "../../interfaces/RealtimeDBInterface";
 const UseFocus = () => {
   const htmlElRef = useRef(null);
   const setFocus = () => {
-    console.log(htmlElRef.current);
     htmlElRef.current && htmlElRef.current.focus();
   };
 
@@ -37,7 +36,7 @@ function ProjectCard(props) {
         `/users/${auth.currentUser.uid}/projects`,
         props.fileId
       );
-      deleteDatabaseDocument(`/${props.fileId}`);
+      deleteDatabaseDocument(`/projects/${props.fileId}`);
       navigate("/dashboard")
     },
   ];

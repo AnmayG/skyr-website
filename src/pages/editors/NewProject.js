@@ -31,7 +31,7 @@ function NewProjectInterstitialPage() {
         name: "Untitled",
         course: "None",
         memberIds: [auth.currentUser.uid],
-        ownerId: auth.currentUser.uid
+        ownerId: auth.currentUser.uid,
       }).then((output) => {
         // addDocumentWithPathWithId(`projects/${dbRef.key}/files/`, projectDocRef.key, {
         //   name: "Untitled",
@@ -43,8 +43,9 @@ function NewProjectInterstitialPage() {
         // })
         addDocumentWithId(auth.currentUser.uid, dbRef.key, {
           reference: db.doc(`projects/${dbRef.key}`),
+        }).then(() => {
+          navigate(`/editor/?projid=${dbRef.key}`);
         });
-        navigate(`/editor/?projid=${dbRef.key}`);
       });
     });
 

@@ -33,8 +33,10 @@ import {
   DriveFileRenameOutline,
   KeyboardArrowDown,
 } from "@mui/icons-material";
-import { Modal } from "@mui/material";
 import Split from "react-split";
+import { Modal } from "@mui/material";
+import RenameModal from "../../components/code-editor/modals/RenameModal";
+import useModalState from "../../components/code-editor/modals/useModalState";
 const sampleCode = `# move forward for 1 second
 move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
@@ -55,12 +57,9 @@ const Editor = (props) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   // Modal state
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [open, handleOpen, handleClose] = useModalState(false);
   const [modalIndex, setModalIndex] = useState(null);
   const [modalName, setModalName] = useState(null);
-  const modalInputRef = useRef(null);
 
   // Markdown state
   const [url] = useState(
@@ -129,7 +128,7 @@ const Editor = (props) => {
         const tempDataArray = [];
         // Write all document ids to a temporary array
         for (const document in snapshotData) {
-          tempRefArray.push(ref(rdb, `/${projId}/${document}`));
+          tempRefArray.push(ref(rdb, `/projects/${projId}/${document}`));
           tempDataArray.push(snapshot.val()[document]);
         }
         documentRefListRef.current = tempRefArray;
@@ -157,7 +156,6 @@ const Editor = (props) => {
       { name: "Untitled", value: sampleCode },
     ]);
     dbRef.current = newFileRef;
-    alert(documentRefListRef.current.length, documentRefListRef.current);
     setSelectedIndex(documentRefListRef.current.length - 2);
     const data = sampleCode;
     setSentCodeString(data);
@@ -202,6 +200,7 @@ const Editor = (props) => {
     }
   }
 
+  // override ctrl-s so it doesn't save
   document.addEventListener(
     "keydown",
     function (e) {
@@ -214,6 +213,13 @@ const Editor = (props) => {
     },
     false
   );
+
+  function updateName(newName) {
+    alert(modalIndex)
+    update(documentRefListRef.current[modalIndex], {
+      name: newName,
+    })
+  }
 
   return (
     <div className="h-screen overflow-clip">
@@ -292,56 +298,12 @@ const Editor = (props) => {
                 </div>
               );
             })}
-            <Modal open={open} onClose={handleClose}>
-              <div
-                className={
-                  "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white text-black border-2 border-solid border-white shadow-md p-4"
-                }
-              >
-                <div className="text-2xl font-normal leading-normal mt-0 mb-2">
-                  Rename File
-                </div>
-                <div className="border-black border">
-                  <input
-                    autoFocus
-                    className="bg-white p-3 w-full"
-                    placeholder={modalName}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter") {
-                        update(documentRefListRef.current[modalIndex], {
-                          name: event.target.value,
-                        });
-                        event.currentTarget.blur();
-                        handleClose();
-                      }
-                    }}
-                    ref={modalInputRef}
-                  />
-                </div>
-                <div className="flex mt-2">
-                  <button
-                    className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      update(documentRefListRef.current[modalIndex], {
-                        name: modalInputRef.current.value,
-                      });
-                      handleClose();
-                    }}
-                  >
-                    Rename
-                  </button>
-                  <button
-                    className="border-black border p-1 text-lg"
-                    onClick={() => {
-                      handleClose();
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </Modal>
+            <RenameModal
+              modalOpen={open}
+              handleClose={handleClose}
+              updateName={updateName}
+              placeholderName={modalName}
+            />
           </div>
         </div>
         <div>
