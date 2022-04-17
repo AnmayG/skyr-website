@@ -140,7 +140,7 @@ const Editor = (props) => {
           setSentCodeString(data);
         }
       } else if (snapshot.val() === null) {
-        navigate("/404");
+        // navigate("/404");
       }
     });
     return () => {
@@ -215,7 +215,6 @@ const Editor = (props) => {
   );
 
   function updateName(newName) {
-    alert(modalIndex)
     update(documentRefListRef.current[modalIndex], {
       name: newName,
     })

@@ -35,15 +35,17 @@ async function addDocumentWithId(userID, documentID, documentMetaData) {
 }
 
 async function addDocumentWithPathWithId(path, documentID, documentMetaData) {
-  alert(path)
-  db.collection(path)
+  return await db.collection(path)
     .doc(documentID)
     .set(documentMetaData)
     .then(() => {
-      console.log("Addition with ID successful");
+      // True is success
+      return true;
     })
     .catch((error) => {
       console.error(error);
+      // False is failure/error
+      return false;
     });
 }
 
@@ -85,7 +87,6 @@ async function updateFirestoreItemNameWithPath(path, documentID, newName) {
 
 function deleteFirestoreItem(path, documentID) {
   if (path.slice(-1) === "/") path.slice(0, -1);
-  console.log(`${path}/${documentID}`);
   db.doc(`${path}/${documentID}`).delete();
   // TODO: Delete all firebase entries as well
 }
