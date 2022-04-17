@@ -33,13 +33,16 @@ import {
   DriveFileRenameOutline,
   KeyboardArrowDown,
 } from "@mui/icons-material";
-import { Modal } from "@mui/material";
 import Split from "react-split";
+import { Modal } from "@mui/material";
+import RenameModal from "../../components/code-editor/modals/RenameModal";
+import useModalState from "../../components/code-editor/modals/useModalState";
 const sampleCode = `# move forward for 1 second
 move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
 turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
 
+// TODO: Refactor into multiple components; currently all in one in order to minimize prop drilling
 const Editor = (props) => {
   // URL Params
   const [params] = useSearchParams();
@@ -47,19 +50,16 @@ const Editor = (props) => {
   const navigate = useNavigate();
 
   // Project References
-  const projRef = ref(rdb, `/${projId}`);
+  const projRef = ref(rdb, `/projects/${projId}`);
   const dbRef = useRef(null);
   const documentRefListRef = useRef([]);
   const [documentDataList, setDocumentDataList] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   // Modal state
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [open, handleOpen, handleClose] = useModalState(false);
   const [modalIndex, setModalIndex] = useState(null);
   const [modalName, setModalName] = useState(null);
-  const modalInputRef = useRef(null);
 
   // Markdown state
   const [url] = useState(
@@ -79,6 +79,19 @@ const Editor = (props) => {
   // CodeMirror state
   const [sentCodeString, setSentCodeString] = useState(``);
   const [recCodeString, setRecCodeString] = useState("");
+
+  // Split Pane State
+  const [fileSizes, setFileSizes] = useState(
+    localStorage.getItem("files-split-sizes")
+      ? JSON.parse(localStorage.getItem("files-split-sizes"))
+      : [15, 55, 30]
+  );
+
+  const fileSizesRef = useRef(
+    localStorage.getItem("files-split-sizes")
+      ? JSON.parse(localStorage.getItem("files-split-sizes"))
+      : [15, 55, 30]
+  );
 
   // Websocket Connection
   useEffect(() => {
@@ -107,6 +120,7 @@ const Editor = (props) => {
   // Check project exists else navigate to 404
   useEffect(() => {
     var dbRefConnected = false;
+
     onValue(projRef, (snapshot) => {
       if (snapshot.val() && !dbRefConnected) {
         const snapshotData = snapshot.val();
@@ -114,7 +128,7 @@ const Editor = (props) => {
         const tempDataArray = [];
         // Write all document ids to a temporary array
         for (const document in snapshotData) {
-          tempRefArray.push(ref(rdb, `/${projId}/${document}`));
+          tempRefArray.push(ref(rdb, `/projects/${projId}/${document}`));
           tempDataArray.push(snapshot.val()[document]);
         }
         documentRefListRef.current = tempRefArray;
@@ -126,7 +140,7 @@ const Editor = (props) => {
           setSentCodeString(data);
         }
       } else if (snapshot.val() === null) {
-        navigate("/404");
+        // navigate("/404");
       }
     });
     return () => {
@@ -142,6 +156,7 @@ const Editor = (props) => {
       { name: "Untitled", value: sampleCode },
     ]);
     dbRef.current = newFileRef;
+    setSelectedIndex(documentRefListRef.current.length - 2);
     const data = sampleCode;
     setSentCodeString(data);
   }
@@ -185,6 +200,7 @@ const Editor = (props) => {
     }
   }
 
+  // override ctrl-s so it doesn't save
   document.addEventListener(
     "keydown",
     function (e) {
@@ -198,14 +214,26 @@ const Editor = (props) => {
     false
   );
 
+  function updateName(newName) {
+    update(documentRefListRef.current[modalIndex], {
+      name: newName,
+    })
+  }
+
   return (
     <div className="h-screen overflow-clip">
       <Navbar />
       <Split
         className="split flex justify-start"
         minSize={[0, 400, 0]}
-        sizes={[15, 55, 30]}
+        sizes={fileSizes}
         snapOffset={[130, 30, 300]}
+        onDragEnd={(newSizes) => {
+          //          alert(fileSizes, JSON.stringify(newSizes));
+          localStorage.setItem("files-split-sizes", JSON.stringify(newSizes));
+          setFileSizes(newSizes);
+          fileSizesRef.current = newSizes;
+        }}
       >
         {/*Files Page*/}
         <div className="h-full w-full border-y-0 border border-black overflow-hidden">
@@ -224,7 +252,7 @@ const Editor = (props) => {
                 <div
                   key={i}
                   className={
-                    "flex justify-between items-center border border-black overflow-hidden" +
+                    "flex justify-between items-center border border-black overflow-hidden " +
                     (selectedIndex === i ? "bg-gray-300" : "bg-white")
                   }
                   onClick={() => {
@@ -235,7 +263,8 @@ const Editor = (props) => {
                 >
                   <div
                     className={
-                      "p-1 pl-3 w-full overflow-clip " + (i === 0 ? "font-semibold" : "")
+                      "p-1 pl-3 w-full overflow-clip " +
+                      (selectedIndex === i ? "font-semibold" : "")
                     }
                   >
                     {item.name}
@@ -268,55 +297,12 @@ const Editor = (props) => {
                 </div>
               );
             })}
-            <Modal open={open} onClose={handleClose}>
-              <div
-                className={
-                  "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white text-black border-2 border-solid border-white shadow-md p-4"
-                }
-              >
-                <div className="text-2xl font-normal leading-normal mt-0 mb-2">
-                  Rename File
-                </div>
-                <div className="border-black border">
-                  <input
-                    className="bg-white p-3 w-full"
-                    placeholder={modalName}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter") {
-                        update(documentRefListRef.current[modalIndex], {
-                          name: event.target.value,
-                        });
-                        event.currentTarget.blur();
-                        handleClose();
-                      }
-                    }}
-                    ref={modalInputRef}
-                  />
-                </div>
-                <div className="flex mt-2">
-                  <button
-                    className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      update(documentRefListRef.current[modalIndex], {
-                        name: modalInputRef.current.value,
-                      });
-                      handleClose();
-                    }}
-                  >
-                    Rename
-                  </button>
-                  <button
-                    className="border-black border p-1 text-lg"
-                    onClick={() => {
-                      handleClose();
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </Modal>
+            <RenameModal
+              modalOpen={open}
+              handleClose={handleClose}
+              updateName={updateName}
+              placeholderName={modalName}
+            />
           </div>
         </div>
         <div>
@@ -362,7 +348,11 @@ const Editor = (props) => {
       </Split>
 
       {/* Terminal and buttons */}
-      <Split sizes={[70, 30]} minSize={[0, 150]} className="split flex h-[18vh] w-screen">
+      <Split
+        sizes={[90, 10]}
+        minSize={[0, 150]}
+        className="split flex h-[18vh] w-screen"
+      >
         <div className="border-2 border-gray-300 border-r-0 h-full">
           <div className="h-full m-[10px]">
             <div

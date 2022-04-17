@@ -9,7 +9,6 @@ function KebabMenu(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
-    console.log("current target", event.currentTarget);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = (event) => {

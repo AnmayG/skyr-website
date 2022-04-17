@@ -13,38 +13,39 @@ move(kit, 1, 0.05, -0.12, -0.1)
 turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
 
 function NewProjectInterstitialPage() {
-  const overallRef = ref(rdb, `/`);
+  const overallRef = ref(rdb, `/projects/`);
   const dbRef = push(overallRef);
-  const projRef = ref(rdb, `/${dbRef.key}/`);
+  const projRef = ref(rdb, `/projects/${dbRef.key}/`);
   const projectDocRef = push(projRef);
   const navigate = useNavigate();
 
   useEffect(() => {
     var dbRefConnected = false;
-    set(projectDocRef, {
-      name: "Main",
-      value: sampleCode,
-    }).then(() => {
-      // TODO: Work out a method to pass this info to the next page in order to save API calls
-      addDocumentWithPathWithId(`projects/`, dbRef.key, {
-        date: new Date().toDateString(),
-        name: "Untitled",
-        course: "None",
-      }).then((output) => {
-        // addDocumentWithPathWithId(`projects/${dbRef.key}/files/`, projectDocRef.key, {
-        //   name: "Untitled",
-        // }).then((output) => {
-        //   addDocumentWithId(auth.currentUser.uid, dbRef.key, {
-        //     reference: db.doc(`projects/${dbRef.key}`)
-        //   })
-        //   navigate(`/editor/?projid=${dbRef.key}`);
-        // })
-        addDocumentWithId(auth.currentUser.uid, dbRef.key, {
-          reference: db.doc(`projects/${dbRef.key}`),
-        });
-        navigate(`/editor/?projid=${dbRef.key}`);
+    if (!dbRefConnected) {
+      set(projectDocRef, {
+        name: "Main",
+        value: sampleCode,
+      }).then(() => {
+        // TODO: Work out a method to pass this info to the next page in order to save API calls
+        addDocumentWithPathWithId(`projects/`, dbRef.key, {
+          date: new Date().toDateString(),
+          name: "Untitled",
+          course: "None",
+          memberIds: [auth.currentUser.uid],
+          ownerId: auth.currentUser.uid,
+        })
+          .then((output) => {
+            addDocumentWithId(auth.currentUser.uid, dbRef.key, {
+              reference: db.doc(`projects/${dbRef.key}`),
+            }).then(() => {
+              navigate(`/editor/?projid=${dbRef.key}`);
+            });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       });
-    });
+    }
 
     return () => {
       // clear memory leak

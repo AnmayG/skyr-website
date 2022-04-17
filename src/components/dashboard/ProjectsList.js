@@ -21,7 +21,6 @@ function ProjectsList() {
             var reference = doc.data().reference;
             if (reference) {
               await reference.get().then((res) => {
-                console.log(res.id, res.data());
                 tempList.push({ id: res.id, value: res.data() });
               });
             }
