@@ -65,7 +65,7 @@ const FileHeader = (props) => {
           Rename
         </button>
         <button
-          className="border-2 border-blue-400 text-blue-400 rounded-lg p-1 mx-1"
+          className="border-2 border-blue-400 text-blue-400 rounded-lg p-1 ml-1"
           onClick={handleShareModalOpen}
         >
           Share

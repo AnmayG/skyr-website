@@ -71,26 +71,27 @@ const Editor = (props) => {
   const [ipAddress, setIpAddress] = useState("wss://raspberrypi.local:9000");
   const [socket, setSocket] = useState(null);
 
-  // LED vars for testing
-  const [redOn, setRedOn] = useState(false);
-  const [blueOn, setBlueOn] = useState(false);
-  const [greenOn, setGreenOn] = useState(false);
-
   // CodeMirror state
   const [sentCodeString, setSentCodeString] = useState(``);
   const [recCodeString, setRecCodeString] = useState("");
 
   // Split Pane State
-  const [fileSizes, setFileSizes] = useState(
-    localStorage.getItem("files-split-sizes")
-      ? JSON.parse(localStorage.getItem("files-split-sizes"))
-      : [15, 55, 30]
+  const [codeTutorialSizes, setCodeTutorialSizes] = useState(
+    localStorage.getItem("editor-tutorial-split-sizes")
+      ? JSON.parse(localStorage.getItem("editor-tutorial-split-sizes"))
+      : [70, 30]
   );
 
-  const fileSizesRef = useRef(
-    localStorage.getItem("files-split-sizes")
-      ? JSON.parse(localStorage.getItem("files-split-sizes"))
-      : [15, 55, 30]
+  const [fileEditorSizes, setFileEditorSizes] = useState(
+    localStorage.getItem("file-editor-split-sizes")
+      ? JSON.parse(localStorage.getItem("file-editor-split-sizes"))
+      : [10, 90]
+  );
+
+  const [terminalRunSizes, setTerminalRunSizes] = useState(
+    localStorage.getItem("terminal-run-split-sizes")
+      ? JSON.parse(localStorage.getItem("terminal-run-split-sizes"))
+      : [90, 10]
   );
 
   // XTerm Ref
@@ -155,6 +156,7 @@ const Editor = (props) => {
     };
   }, []);
 
+  // File Management
   function addFile() {
     var newFileRef = push(projRef, { name: "Untitled", value: sampleCode });
     documentRefListRef.current.push(newFileRef);
@@ -166,37 +168,6 @@ const Editor = (props) => {
     setSelectedIndex(documentRefListRef.current.length - 2);
     const data = sampleCode;
     setSentCodeString(data);
-  }
-
-  // File Management
-  // Send info thorough socket
-  function buttonEventSend(type) {
-    if (!isConnected) {
-      alert("Disconnected from robot");
-    }
-    var red = redOn;
-    var green = greenOn;
-    var blue = blueOn;
-
-    // TODO: Fix this terrible code it sucks :(
-    switch (type) {
-      case "red":
-        setRedOn(!redOn);
-        red = !redOn;
-        break;
-      case "green":
-        setGreenOn(!greenOn);
-        green = !greenOn;
-        break;
-      case "blue":
-        setBlueOn(!blueOn);
-        blue = !blueOn;
-        break;
-      default:
-        console.log("how");
-    }
-
-    socketLedToggle(socket, red, green, blue);
   }
 
   function databaseTransaction(codeString) {
@@ -231,21 +202,23 @@ const Editor = (props) => {
     <div className="h-screen overflow-clip">
       <Navbar />
       <Split
+        sizes={fileEditorSizes}
+        minSize={[0, 750]}
+        snapOffset={[75, 30]}
         className="split flex justify-start"
-        minSize={[0, 400, 0]}
-        sizes={fileSizes}
-        snapOffset={[75, 30, 30]}
         onDragEnd={(newSizes) => {
           //          alert(fileSizes, JSON.stringify(newSizes));
-          localStorage.setItem("files-split-sizes", JSON.stringify(newSizes));
-          setFileSizes(newSizes);
-          fileSizesRef.current = newSizes;
+          localStorage.setItem(
+            "file-editor-split-sizes",
+            JSON.stringify(newSizes)
+          );
+          setFileEditorSizes(newSizes);
         }}
       >
         {/*Files Page*/}
-        <div className="h-full w-full border-y-0 border border-black overflow-hidden">
+        <div className="h-full w-full border-y-0 border border-black overflow-scroll">
           <button
-            className="m-1 p-1 mb-2 font-semibold text-center w-fit border border-1 border-black overflow-hidden"
+            className="m-1 p-1 mb-2 font-semibold text-center w-fit border border-1 border-black overflow-hidden sticky"
             onClick={() => {
               addFile();
             }}
@@ -253,7 +226,13 @@ const Editor = (props) => {
             New +
           </button>
           {/* TODO: Refactor this into its own component in ProjectsSection */}
-          <div>
+          <div
+            className="h-full overflow-scroll"
+            style={{
+              direction: "rtl",
+              overflow: "auto",
+            }}
+          >
             {documentDataList.map((item, i) => {
               return (
                 <div
@@ -262,6 +241,7 @@ const Editor = (props) => {
                     "flex justify-between items-center border border-black overflow-ellipsis " +
                     (selectedIndex === i ? "bg-gray-300" : "bg-white")
                   }
+                  style={{ direction: "ltr" }}
                   onClick={() => {
                     setSelectedIndex(i);
                     dbRef.current = documentRefListRef.current[i];
@@ -317,11 +297,26 @@ const Editor = (props) => {
           </div>
         </div>
         <div>
-          <FileHeader docID={projRef.key} tempName={"Untitled"} />
-          <div className="w-full flex">
-            {/* Code Editor */}
-            <div className="h-full w-full">
-              {/* <div className="h-7 w-full text-base border-2 border-r-0 border-black flex justify-between">
+          <Split
+            className="split flex justify-start"
+            minSize={[400, 0]}
+            sizes={codeTutorialSizes}
+            snapOffset={[30, 30]}
+            onDragEnd={(newSizes) => {
+              //          alert(fileSizes, JSON.stringify(newSizes));
+              localStorage.setItem(
+                "editor-tutorial-split-sizes",
+                JSON.stringify(newSizes)
+              );
+              setCodeTutorialSizes(newSizes);
+            }}
+          >
+            <div>
+              <FileHeader docID={projRef.key} tempName={"Untitled"} />
+              <div className="w-full flex">
+                {/* Code Editor */}
+                <div className="h-full w-full">
+                  {/* <div className="h-7 w-full text-base border-2 border-r-0 border-black flex justify-between">
               <div className="ml-2">Code Editor</div>
               <div
                 onClick={() => {
@@ -332,70 +327,84 @@ const Editor = (props) => {
                 Save
               </div>
             </div> */}
-              <div className="h-[70vh] w-full align-top border-gray-300 border-0 flex">
-                <div className="h-[70vh] w-full align-top border-gray-300 border-0">
-                  <CodeEditor
-                    setChildData={(codeString) => {
-                      databaseTransaction(codeString);
-                    }}
-                    CodeValue={sentCodeString}
-                  />
+                  <div className="h-[70vh] w-full align-top border-gray-300 border-0 flex">
+                    <div className="h-[70vh] w-full align-top border-gray-300 border-0">
+                      <CodeEditor
+                        setChildData={(codeString) => {
+                          databaseTransaction(codeString);
+                        }}
+                        CodeValue={sentCodeString}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Markdown */}
-        <div className="h-[70vh] w-[30vw]">
-          <div className="flex flex-col h-[5vh] w-full justify-center bg-slate-700 text-white">
-            <div className="mx-2 text-lg">Tutorials</div>
-          </div>
-          {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
-          <div className="h-full w-full overflow-y-auto border-4 border-gray-300 border-y-0">
-            <Markdown downloadUrl={url} />
-          </div>
-        </div>
-      </Split>
+            {/* Markdown */}
+            <div className="h-[70vh] w-[30vw]">
+              <div className="flex flex-col h-[5vh] w-full justify-center bg-slate-700 text-white">
+                <div className="mx-2 text-lg">Tutorials</div>
+              </div>
+              {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
+              <div className="h-full w-full overflow-y-auto border-4 border-gray-300 border-y-0">
+                <Markdown downloadUrl={url} />
+              </div>
+            </div>
+          </Split>
 
-      {/* Terminal and buttons */}
-      <Split
-        sizes={[90, 10]}
-        minSize={[720, 150]}
-        className="split flex h-[18vh]"
-      >
-        <div className="border-2 border-gray-300 border-l-0 border-r-0 h-full">
-          <XTerm ref={xtermRef} options={{theme: {background: '#334155'}}}/>
-        </div>
-        {/* w-[10%] */}
-        <div className="w-full border-2 border-gray-300 p-[10px] overflow-clip h-full bg-white">
-          <input
-            type="text"
-            className="w-full"
-            onKeyUp={(e) => {
-              if (e.key === "Enter") {
-                setIpAddress("wss://" + e.target.value + ":9000");
-              }
-            }}
-            placeholder={ipAddress}
-          />
-          <div>Joined: {isConnected.toString()}</div>
-          <div
-            className="bg-blue-200 text-center m-2 rounded-full"
-            onClick={() => {
-              pushPythonCode(socket, isConnected, recCodeString);
+          {/* Terminal and buttons */}
+          <Split
+            sizes={terminalRunSizes}
+            minSize={[720, 200]}
+            className="split flex h-[18vh]"
+            onDragEnd={(newSizes) => {
+              //          alert(fileSizes, JSON.stringify(newSizes));
+              localStorage.setItem(
+                "terminal-run-split-sizes",
+                JSON.stringify(newSizes)
+              );
+              setTerminalRunSizes(newSizes);
             }}
           >
-            Run
-          </div>
-          <div
-            className="bg-red-200 text-center m-2 rounded-full"
-            onClick={() => {
-              disconnect(socket, isConnected);
-            }}
-          >
-            Stop
-          </div>
+            <div className="w-full border-2 border-gray-300 border-x-0 border-b-0 bg-slate-700 h-full">
+              <XTerm
+                className="p-2"
+                ref={xtermRef}
+                options={{ theme: { background: "#334155" } }}
+              />
+            </div>
+            {/* w-[10%] */}
+            <div className="w-full border-2 border-gray-300 p-[10px] overflow-clip h-full bg-white">
+              <input
+                type="text"
+                className="w-full"
+                onKeyUp={(e) => {
+                  if (e.key === "Enter") {
+                    setIpAddress("wss://" + e.target.value + ":9000");
+                  }
+                }}
+                placeholder={ipAddress}
+              />
+              <div>Joined: {isConnected.toString()}</div>
+              <div
+                className="bg-blue-200 text-center m-2 rounded-full"
+                onClick={() => {
+                  pushPythonCode(socket, isConnected, recCodeString);
+                }}
+              >
+                Run
+              </div>
+              <div
+                className="bg-red-200 text-center m-2 rounded-full"
+                onClick={() => {
+                  disconnect(socket, isConnected);
+                }}
+              >
+                Stop
+              </div>
+            </div>
+          </Split>
         </div>
       </Split>
       {/* Courses */}

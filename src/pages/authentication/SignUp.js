@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/general/Navbar";
-import { auth } from "../../firebase";
+import { db, auth } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { StyledFirebaseAuth } from "react-firebaseui";
 import firebase from "firebase/compat/app";
@@ -9,6 +9,7 @@ import "firebase/compat/auth";
 
 const SignUp = () => {
   const [image, setImage] = useState("./penguin1.png");
+  const [username, setUsername] = useState("")
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // const [error, setError] = useState("")
@@ -27,7 +28,7 @@ const SignUp = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
-        alert("User Credentials")
+        alert("User Credentials");
         if (user.email !== null) {
           console.log(user.email);
           navigate("/confirm");
@@ -77,10 +78,25 @@ const SignUp = () => {
           <div className="mx-8 flex flex-col items-center justify-center my-0">
             <div>
               <label className="text-sm text-left w-full mb-0 text-gray-500">
-                Email
+                Username
               </label>
               <input
                 autoComplete="username"
+                className="shadow appearance-none border rounded w-full p-3 px-3 text-gray leading-tight focus:outline-none focus:shadow-outline text-lg"
+                type="text"
+                placeholder="Username"
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+                onFocus={() => {
+                  setImage("./penguin1.png");
+                }}
+              />
+              <label className="text-sm text-left w-full mb-0 text-gray-500">
+                Email
+              </label>
+              <input
+                autoComplete="email"
                 className="shadow appearance-none border rounded w-full p-3 px-3 text-gray leading-tight focus:outline-none focus:shadow-outline text-lg"
                 type="text"
                 placeholder="Email Address"
