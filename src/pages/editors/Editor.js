@@ -217,7 +217,7 @@ const Editor = (props) => {
   function updateName(newName) {
     update(documentRefListRef.current[modalIndex], {
       name: newName,
-    })
+    });
   }
 
   return (
@@ -227,7 +227,7 @@ const Editor = (props) => {
         className="split flex justify-start"
         minSize={[0, 400, 0]}
         sizes={fileSizes}
-        snapOffset={[130, 30, 300]}
+        snapOffset={[75, 30, 30]}
         onDragEnd={(newSizes) => {
           //          alert(fileSizes, JSON.stringify(newSizes));
           localStorage.setItem("files-split-sizes", JSON.stringify(newSizes));
@@ -252,7 +252,7 @@ const Editor = (props) => {
                 <div
                   key={i}
                   className={
-                    "flex justify-between items-center border border-black overflow-hidden " +
+                    "flex justify-between items-center border border-black overflow-ellipsis " +
                     (selectedIndex === i ? "bg-gray-300" : "bg-white")
                   }
                   onClick={() => {
@@ -261,24 +261,26 @@ const Editor = (props) => {
                     setSentCodeString(documentDataList[i].value);
                   }}
                 >
-                  <div
+                  <p
                     className={
-                      "p-1 pl-3 w-full overflow-clip " +
+                      "w-full p-1 pl-3 truncate " +
                       (selectedIndex === i ? "font-semibold" : "")
                     }
                   >
                     {item.name}
-                  </div>
-                  <DriveFileRenameOutline
+                  </p>
+                  <button
                     onClick={(event) => {
                       event.stopPropagation();
                       setModalIndex(i);
                       setModalName(item.name);
                       handleOpen();
                     }}
-                  />
+                  >
+                    <DriveFileRenameOutline />
+                  </button>
                   {i !== 0 ? (
-                    <Delete
+                    <button
                       onClick={(event) => {
                         event.stopPropagation();
                         setSelectedIndex(0);
@@ -290,7 +292,9 @@ const Editor = (props) => {
                         tempDataArray.splice(i, 1);
                         setDocumentDataList([...tempDataArray]);
                       }}
-                    />
+                    >
+                      <Delete />
+                    </button>
                   ) : (
                     <div></div>
                   )}
@@ -351,7 +355,7 @@ const Editor = (props) => {
       <Split
         sizes={[90, 10]}
         minSize={[0, 150]}
-        className="split flex h-[18vh] w-screen"
+        className="split flex h-[18vh]"
       >
         <div className="border-2 border-gray-300 border-r-0 h-full">
           <div className="h-full m-[10px]">
