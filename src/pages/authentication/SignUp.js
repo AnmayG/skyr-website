@@ -77,7 +77,7 @@ const SignUp = () => {
           </div>
           <div className="mx-8 flex flex-col items-center justify-center my-0">
             <div>
-              <label className="text-sm text-left w-full mb-0 text-gray-500">
+              <label className="text-sm text-left w-full mt-3 mb-0 text-gray-500">
                 Username
               </label>
               <input
