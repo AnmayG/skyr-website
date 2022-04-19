@@ -35,6 +35,7 @@ import {
 } from "@mui/icons-material";
 import Split from "react-split";
 import { XTerm } from "xterm-for-react";
+import { FitAddon } from "xterm-addon-fit"
 import RenameModal from "../../components/code-editor/modals/RenameModal";
 import useModalState from "../../components/code-editor/modals/useModalState";
 const sampleCode = `# move forward for 1 second
@@ -94,8 +95,12 @@ const Editor = (props) => {
       : [90, 10]
   );
 
-  // XTerm Ref
-  const xtermRef = React.useRef(null);
+  // XTerm Vars
+  const xtermRef = useRef(null);
+  const fitAddonObject = new FitAddon();
+  useEffect(() => {
+    fitAddonObject.fit();
+  }, [])
 
   // Websocket Connection
   useEffect(() => {
@@ -199,11 +204,11 @@ const Editor = (props) => {
   }
 
   return (
-    <div className="h-screen overflow-clip">
+    <div className="h-screen">
       <Navbar />
       <Split
         sizes={fileEditorSizes}
-        minSize={[0, 750]}
+        minSize={[0, 800]}
         snapOffset={[75, 30]}
         className="split flex justify-start"
         onDragEnd={(newSizes) => {
@@ -227,7 +232,7 @@ const Editor = (props) => {
           </button>
           {/* TODO: Refactor this into its own component in ProjectsSection */}
           <div
-            className="h-full overflow-scroll"
+            className="h-full no-scrollbar overflow-scroll"
             style={{
               direction: "rtl",
               overflow: "auto",
@@ -357,7 +362,7 @@ const Editor = (props) => {
           <Split
             sizes={terminalRunSizes}
             minSize={[720, 200]}
-            className="split flex h-[18vh]"
+            className="split flex h-[18vh] w-full"
             onDragEnd={(newSizes) => {
               //          alert(fileSizes, JSON.stringify(newSizes));
               localStorage.setItem(
@@ -369,13 +374,14 @@ const Editor = (props) => {
           >
             <div className="w-full border-2 border-gray-300 border-x-0 border-b-0 bg-slate-700 h-full">
               <XTerm
-                className="p-2"
+                className="p-2 h-full overflow-scroll no-scrollbar"
                 ref={xtermRef}
                 options={{ theme: { background: "#334155" } }}
+                addons={[fitAddonObject]}
               />
             </div>
             {/* w-[10%] */}
-            <div className="w-full border-2 border-gray-300 p-[10px] overflow-clip h-full bg-white">
+            <div className="w-full h-full border-2 border-gray-300 p-[10px] overflow-clip">
               <input
                 type="text"
                 className="w-full"
