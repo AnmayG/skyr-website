@@ -5,39 +5,25 @@ import CodeEditor from "../../components/code-editor/CodeEditor";
 import Markdown from "../../components/code-editor/Markdown";
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
-import { rdb, db, auth } from "../../firebase";
-import {
-  set,
-  push,
-  ref,
-  onValue,
-  runTransaction,
-  orderByChild,
-  remove,
-  update,
-} from "firebase/database";
-import {
-  readDatabaseDocument,
-  updateDatabaseDocument,
-  completeTransaction,
-} from "../../interfaces/RealtimeDBInterface";
-import {
-  socketLedToggle,
-  pushPythonCode,
-  disconnect,
-} from "../../interfaces/SocketInterface";
+import { rdb } from "../../firebase";
+import { push, ref, onValue, remove, update } from "firebase/database";
+import { completeTransaction } from "../../interfaces/RealtimeDBInterface";
+import { pushPythonCode, disconnect } from "../../interfaces/SocketInterface";
 import FileHeader from "../../components/code-editor/FileHeader";
-import ProjectsSection from "../../components/code-editor/ProjectsSection";
 import {
+  Cancel,
+  CheckCircle,
   Delete,
   DriveFileRenameOutline,
-  KeyboardArrowDown,
+  Send,
+  StopCircle,
 } from "@mui/icons-material";
 import Split from "react-split";
 import { XTerm } from "xterm-for-react";
-import { FitAddon } from "xterm-addon-fit"
+import { FitAddon } from "xterm-addon-fit";
 import RenameModal from "../../components/code-editor/modals/RenameModal";
 import useModalState from "../../components/code-editor/modals/useModalState";
+import { Button } from "@mui/material";
 const sampleCode = `# move forward for 1 second
 move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
@@ -100,7 +86,7 @@ const Editor = (props) => {
   const fitAddonObject = new FitAddon();
   useEffect(() => {
     fitAddonObject.fit();
-  }, [])
+  }, []);
 
   // Websocket Connection
   useEffect(() => {
@@ -221,7 +207,7 @@ const Editor = (props) => {
         }}
       >
         {/*Files Page*/}
-        <div className="h-full w-full border-y-0 border border-black overflow-scroll">
+        <div className="h-full w-full border-y-0 border border-black overflow-auto">
           <button
             className="m-1 p-1 mb-2 font-semibold text-center w-fit border border-1 border-black overflow-hidden sticky"
             onClick={() => {
@@ -232,10 +218,9 @@ const Editor = (props) => {
           </button>
           {/* TODO: Refactor this into its own component in ProjectsSection */}
           <div
-            className="h-full no-scrollbar overflow-scroll"
+            className="h-[88vh] overflow-auto"
             style={{
               direction: "rtl",
-              overflow: "auto",
             }}
           >
             {documentDataList.map((item, i) => {
@@ -362,9 +347,8 @@ const Editor = (props) => {
           <Split
             sizes={terminalRunSizes}
             minSize={[720, 200]}
-            className="split flex h-[18vh] w-full"
+            className="split flex h-[18vh] w-full border-8 border-gray-300 border-x-0 border-b-0"
             onDragEnd={(newSizes) => {
-              //          alert(fileSizes, JSON.stringify(newSizes));
               localStorage.setItem(
                 "terminal-run-split-sizes",
                 JSON.stringify(newSizes)
@@ -372,7 +356,7 @@ const Editor = (props) => {
               setTerminalRunSizes(newSizes);
             }}
           >
-            <div className="w-full border-2 border-gray-300 border-x-0 border-b-0 bg-slate-700 h-full">
+            <div className="w-full bg-slate-700 h-full">
               <XTerm
                 className="p-2 h-full overflow-scroll no-scrollbar"
                 ref={xtermRef}
@@ -381,7 +365,7 @@ const Editor = (props) => {
               />
             </div>
             {/* w-[10%] */}
-            <div className="w-full h-full border-2 border-gray-300 p-[10px] overflow-clip">
+            <div className="w-full h-full p-[10px] overflow-hidden">
               <input
                 type="text"
                 className="w-full"
@@ -392,23 +376,37 @@ const Editor = (props) => {
                 }}
                 placeholder={ipAddress}
               />
-              <div>Joined: {isConnected.toString()}</div>
-              <div
-                className="bg-blue-200 text-center m-2 rounded-full"
+              <div className="flex items-center my-2">
+                <div className="text-lg flex items-center justify-center">
+                  <p>Connection Status:</p>
+                </div>
+                {isConnected ? (
+                  <CheckCircle className="ml-1" style={{ color: "green" }} />
+                ) : (
+                  <Cancel className="ml-1" style={{ color: "darkred" }} />
+                )}
+              </div>
+              <Button
+                className="w-full mb-2"
+                variant="contained"
+                endIcon={<Send />}
                 onClick={() => {
                   pushPythonCode(socket, isConnected, recCodeString);
                 }}
               >
                 Run
-              </div>
-              <div
-                className="bg-red-200 text-center m-2 rounded-full"
+              </Button>
+              <Button
+                className="w-full"
+                variant="outlined"
+                color="error"
+                endIcon={<StopCircle />}
                 onClick={() => {
                   disconnect(socket, isConnected);
                 }}
               >
                 Stop
-              </div>
+              </Button>
             </div>
           </Split>
         </div>
