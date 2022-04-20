@@ -218,7 +218,7 @@ const Editor = (props) => {
           </button>
           {/* TODO: Refactor this into its own component in ProjectsSection */}
           <div
-            className="h-[88vh] overflow-auto"
+            className="h-[87vh] overflow-auto"
             style={{
               direction: "rtl",
             }}
@@ -346,7 +346,7 @@ const Editor = (props) => {
           {/* Terminal and buttons */}
           <Split
             sizes={terminalRunSizes}
-            minSize={[720, 200]}
+            minSize={[720, 220]}
             className="split flex h-[18vh] w-full border-8 border-gray-300 border-x-0 border-b-0"
             onDragEnd={(newSizes) => {
               localStorage.setItem(
@@ -365,7 +365,7 @@ const Editor = (props) => {
               />
             </div>
             {/* w-[10%] */}
-            <div className="w-full h-full p-[10px] overflow-hidden">
+            <div className="w-full h-full p-2">
               <input
                 type="text"
                 className="w-full"
@@ -376,9 +376,9 @@ const Editor = (props) => {
                 }}
                 placeholder={ipAddress}
               />
-              <div className="flex items-center my-2">
-                <div className="text-lg flex items-center justify-center">
-                  <p>Connection Status:</p>
+              <div className="flex items-center my-1 overflow-y-auto">
+                <div className="text-md flex items-center justify-center">
+                  <p>Connected:</p>
                 </div>
                 {isConnected ? (
                   <CheckCircle className="ml-1" style={{ color: "green" }} />
@@ -386,17 +386,32 @@ const Editor = (props) => {
                   <Cancel className="ml-1" style={{ color: "darkred" }} />
                 )}
               </div>
-              <Button
-                className="w-full mb-2"
-                variant="contained"
-                endIcon={<Send />}
-                onClick={() => {
-                  pushPythonCode(socket, isConnected, recCodeString);
-                }}
-              >
-                Run
-              </Button>
-              <Button
+              <div className="flex w-full">
+                <div
+                  className="w-full mr-1 bg-red-600 py-1 rounded-sm shadow-md flex items-center justify-center text-white font-semibold"
+                  onClick={() => {
+                    disconnect(socket, isConnected);
+                    // pushPythonCode(socket, isConnected, recCodeString);
+                  }}
+                >
+                  <p className="text-md mr-1 p-1">STOP</p>
+                  <div className="">
+                    <StopCircle className="h-[1vh]" fontSize="15" />
+                  </div>
+                </div>
+                <div
+                  className="w-full ml-1 bg-blue-600 py-1 rounded-sm shadow-md flex items-center justify-center text-white font-semibold"
+                  onClick={() => {
+                    pushPythonCode(socket, isConnected, recCodeString);
+                  }}
+                >
+                  <p className="text-md mr-1 p-1">RUN</p>
+                  <div className="">
+                    <Send />
+                  </div>
+                </div>
+              </div>
+              {/* <Button
                 className="w-full"
                 variant="outlined"
                 color="error"
@@ -406,13 +421,12 @@ const Editor = (props) => {
                 }}
               >
                 Stop
-              </Button>
+              </Button> */}
             </div>
           </Split>
         </div>
       </Split>
       {/* Courses */}
-      <div></div>
     </div>
   );
 };
