@@ -6,11 +6,13 @@ import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { StyledFirebaseAuth } from "react-firebaseui";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import { ErrorOutline } from "@mui/icons-material";
 
 const LogIn = () => {
   const [image, setImage] = useState("./penguin1.png");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -31,8 +33,11 @@ const LogIn = () => {
       })
       .catch((error) => {
         const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
+        var returnedErrorMessage = error.message;
+        const parenthesesIndex = returnedErrorMessage.indexOf("(");
+        returnedErrorMessage = returnedErrorMessage.slice(10, parenthesesIndex);
+        console.log(errorCode, returnedErrorMessage);
+        setErrorMessage(returnedErrorMessage);
       });
   }
 
@@ -52,7 +57,7 @@ const LogIn = () => {
     <div className="flex flex-col h-screen w-screen">
       <Navbar />
       <div className="flex flex-col flex-grow items-center justify-start bg-gray-200 rounded-lg">
-        <img alt="" src={image} height={400} width={400} />
+        <img className="mt-8" alt="" src={image} height={150} width={150} />
         <div className="min-w-[500px] border-2 border-gray-400 bg-white border-opacity-30 shadow rounded-xl">
           <p className="text-2xl font-bold text-center mt-8 mb-2">
             Welcome Back
@@ -73,6 +78,13 @@ const LogIn = () => {
           </div>
           <div className="mx-8 flex flex-col items-center justify-center my-0">
             <div>
+              {errorMessage !== "" ? (
+                <div className="flex text-red-500">
+                  <ErrorOutline className="mr-1"/> {errorMessage}
+                </div>
+              ) : (
+                <div />
+              )}
               <label className="text-sm text-left w-full mb-0 text-gray-500">
                 Email
               </label>

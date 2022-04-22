@@ -8,11 +8,13 @@ function socketLedToggle(socket, red, green, blue) {
   });
 }
 
+const headerCode = `from lib import *\nfrom adafruit_servokit import ServoKit\nkit = ServoKit(channels=16)\n`;
+// const headerCode = `from lib import *\nfrom adafruit_servokit import ServoKit\n`
 function pushPythonCode(socket, isConnected, recCodeString) {
   if (!isConnected) alert("Server disconnected");
 
   socket.emit("python-push", {
-    code: `from lib import *\nfrom adafruit_servokit import ServoKit\nkit = ServoKit(channels=16)\n${recCodeString}`,
+    code: `${headerCode}${recCodeString}`,
   });
 }
 

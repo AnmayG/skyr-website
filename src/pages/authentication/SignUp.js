@@ -7,12 +7,14 @@ import { StyledFirebaseAuth } from "react-firebaseui";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import { addDocumentWithPathWithId } from "../../interfaces/FirestoreInterface";
+import { ErrorOutline } from "@mui/icons-material";
 
 const SignUp = () => {
   const [image, setImage] = useState("./penguin1.png");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   // const [error, setError] = useState("")
   const navigate = useNavigate();
 
@@ -37,7 +39,11 @@ const SignUp = () => {
       })
       .catch((error) => {
         const errorCode = error.code;
-        const errorMessage = error.message;
+        var returnedErrorMessage = error.message;
+        const parenthesesIndex = returnedErrorMessage.indexOf("(");
+        returnedErrorMessage = returnedErrorMessage.slice(10, parenthesesIndex);
+        console.log(errorCode, returnedErrorMessage);
+        setErrorMessage(returnedErrorMessage);
       });
   }
 
@@ -78,6 +84,13 @@ const SignUp = () => {
           </div>
           <div className="mx-8 flex flex-col items-center justify-center my-0">
             <div>
+              {errorMessage !== "" ? (
+                <div className="flex text-red-500">
+                  <ErrorOutline className="mr-1" /> {errorMessage}
+                </div>
+              ) : (
+                <div />
+              )}
               <label className="text-sm text-left w-full mt-3 mb-0 text-gray-500">
                 Username
               </label>

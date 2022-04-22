@@ -33,7 +33,6 @@ const FileHeader = (props) => {
           })
           .catch((error) => {
             console.error(error);
-            alert(error);
             // navigate("/404");
           });
       }

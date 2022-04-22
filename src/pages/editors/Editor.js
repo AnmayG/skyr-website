@@ -6,7 +6,7 @@ import Markdown from "../../components/code-editor/Markdown";
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import { rdb } from "../../firebase";
-import { push, ref, onValue, remove, update } from "firebase/database";
+import { push, ref, onValue, remove, update, get } from "firebase/database";
 import { completeTransaction } from "../../interfaces/RealtimeDBInterface";
 import { pushPythonCode, disconnect } from "../../interfaces/SocketInterface";
 import FileHeader from "../../components/code-editor/FileHeader";
@@ -16,12 +16,15 @@ import {
   Delete,
   DriveFileRenameOutline,
   Send,
+  SendOutlined,
+  Settings,
   StopCircle,
 } from "@mui/icons-material";
 import Split from "react-split";
 import { XTerm } from "xterm-for-react";
 import { FitAddon } from "xterm-addon-fit";
 import RenameModal from "../../components/code-editor/modals/RenameModal";
+import ConnectionSettingsModal from "../../components/code-editor/modals/ConnectionSettingsModal";
 import useModalState from "../../components/code-editor/modals/useModalState";
 import { Button } from "@mui/material";
 const sampleCode = `# move forward for 1 second
@@ -48,6 +51,9 @@ const Editor = (props) => {
   const [modalIndex, setModalIndex] = useState(null);
   const [modalName, setModalName] = useState(null);
 
+  // Settings Modal State
+  const [settingsOpen, handleSettingsOpen, handleSettingsClose] = useModalState(false);
+
   // Markdown state
   const [url] = useState(
     "https://firebasestorage.googleapis.com/v0/b/skyrobotics-fc578.appspot.com/o/tutorials%2Ftutorial-1.md?alt=media&token=24b05721-9dd7-4204-9f25-1739f37b2709"
@@ -55,7 +61,10 @@ const Editor = (props) => {
 
   // Connection state
   const [isConnected, setConnected] = useState(false);
-  const [ipAddress, setIpAddress] = useState("wss://raspberrypi.local:9000");
+  const serverType = "http";
+  const [ipAddress, setIpAddress] = useState(
+    serverType + "://raspberrypi.local:9000"
+  );
   const [socket, setSocket] = useState(null);
 
   // CodeMirror state
@@ -107,7 +116,7 @@ const Editor = (props) => {
     xtermRef.current.terminal.writeln("Connect to robot to see output");
     newSocket.on("program-output", (data) => {
       // print program logs
-      xtermRef.current.terminal.writeln(data);
+      xtermRef.current.terminal.writeln(data.value);
     });
 
     setSocket(newSocket);
@@ -360,49 +369,87 @@ const Editor = (props) => {
               <XTerm
                 className="p-2 h-full overflow-scroll no-scrollbar"
                 ref={xtermRef}
-                options={{ theme: { background: "#334155" } }}
+                options={{ theme: { background: "#334155" }, convertEol: true }}
                 addons={[fitAddonObject]}
               />
             </div>
             {/* w-[10%] */}
             <div className="w-full h-full p-2">
-              <input
+              {/* <input
                 type="text"
                 className="w-full"
                 onKeyUp={(e) => {
                   if (e.key === "Enter") {
-                    setIpAddress("wss://" + e.target.value + ":9000");
+                    setIpAddress(serverType + "://" + e.target.value + ":9000");
                   }
                 }}
                 placeholder={ipAddress}
-              />
-              <div className="flex items-center my-1 overflow-y-auto">
-                <div className="text-md flex items-center justify-center">
-                  <p>Connected:</p>
+              /> */}
+              <div className="flex items-center my-1 overflow-y-auto justify-between">
+                <div className="flex items-center px-1">
+                  <div className="text-md flex items-center justify-center">
+                    <p>Connected:</p>
+                  </div>
+                  {isConnected ? (
+                    <CheckCircle className="ml-1" style={{ color: "green" }} />
+                  ) : (
+                    <Cancel className="ml-1" style={{ color: "darkred" }} />
+                  )}
                 </div>
-                {isConnected ? (
-                  <CheckCircle className="ml-1" style={{ color: "green" }} />
-                ) : (
-                  <Cancel className="ml-1" style={{ color: "darkred" }} />
-                )}
+                <Settings onClick={handleSettingsOpen}/>
+                <ConnectionSettingsModal modalOpen={settingsOpen} handleClose={handleSettingsClose} updateConnection={setIpAddress} currentConnection={ipAddress} />
+              </div>
+              <div
+                className="w-full my-1 bg-red-600 py-1 rounded-sm shadow-md flex items-center justify-center text-white font-semibold"
+                onClick={() => {
+                  disconnect(socket, isConnected);
+                  xtermRef.current.terminal.clear();
+                  xtermRef.current.terminal.writeln("Script stopped");
+                  // pushPythonCode(socket, isConnected, recCodeString);
+                }}
+              >
+                <p className="text-md mr-1 p-1">STOP</p>
+                <div className="">
+                  <StopCircle className="h-[1vh]" fontSize="15" />
+                </div>
               </div>
               <div className="flex w-full">
                 <div
-                  className="w-full mr-1 bg-red-600 py-1 rounded-sm shadow-md flex items-center justify-center text-white font-semibold"
+                  className="w-full bg-blue-600 py-1 rounded-sm shadow-md flex items-center justify-center text-white font-semibold"
                   onClick={() => {
-                    disconnect(socket, isConnected);
-                    // pushPythonCode(socket, isConnected, recCodeString);
+                    pushPythonCode(socket, isConnected, recCodeString);
+                    xtermRef.current.terminal.clear();
                   }}
                 >
-                  <p className="text-md mr-1 p-1">STOP</p>
+                  <p className="text-md mr-1 p-1">RUN FILE</p>
                   <div className="">
-                    <StopCircle className="h-[1vh]" fontSize="15" />
+                    <SendOutlined />
                   </div>
                 </div>
                 <div
-                  className="w-full ml-1 bg-blue-600 py-1 rounded-sm shadow-md flex items-center justify-center text-white font-semibold"
+                  className="w-full ml-1 bg-green-600 py-1 rounded-sm shadow-md flex items-center justify-center text-white font-semibold"
                   onClick={() => {
-                    pushPythonCode(socket, isConnected, recCodeString);
+                    get(projRef).then((snapshot) => {
+                      if (snapshot.exists()) {
+                        const projectDocumentValue = snapshot.val();
+                        var sentString = "";
+                        var i = 0;
+                        var mainFile = "";
+                        for (const fileKey in projectDocumentValue) {
+                          const file = projectDocumentValue[fileKey];
+                          const fileValue = file.value;
+                          if (i === 0) {
+                            mainFile = `${fileValue}\n`;
+                          } else {
+                            sentString += `${fileValue}\n`;
+                            i++;
+                          }
+                        }
+                        sentString += mainFile;
+                        pushPythonCode(socket, isConnected, sentString);
+                        xtermRef.current.terminal.clear();
+                      }
+                    });
                   }}
                 >
                   <p className="text-md mr-1 p-1">RUN</p>
