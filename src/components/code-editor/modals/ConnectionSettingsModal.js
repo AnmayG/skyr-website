@@ -15,7 +15,7 @@ function RenameModal(props) {
           Connection Settings
         </div>
         <div className="text-md font-normal leading-normal mt-0 mb-2">
-            IP Address:
+          IP Address:
         </div>
         <div className="border-black border">
           <input
@@ -37,7 +37,9 @@ function RenameModal(props) {
             className="bg-blue-500 p-1 mr-1 text-lg text-white font-semibold"
             onClick={(event) => {
               event.stopPropagation();
-              props.updateConnection(modalInputRef.current.value);
+              if (modalInputRef.current.value) {
+                props.updateConnection(modalInputRef.current.value);
+              }
               props.handleClose();
             }}
           >

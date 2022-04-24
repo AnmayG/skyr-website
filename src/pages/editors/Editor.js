@@ -31,6 +31,8 @@ const sampleCode = `# move forward for 1 second
 move(kit, 1, 0.05, -0.12, -0.1)
 # turn for 1 second
 turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
+const headingCodeWithRobot = `from lib import *\nfrom adafruit_servokit import ServoKit\nkit = ServoKit(channels=16)\n`;
+const headingCodeWithoutRobot = `from lib import *\nfrom adafruit_servokit import ServoKit\n`;
 
 // TODO: Refactor into multiple components; currently all in one in order to minimize prop drilling
 const Editor = (props) => {
@@ -52,7 +54,8 @@ const Editor = (props) => {
   const [modalName, setModalName] = useState(null);
 
   // Settings Modal State
-  const [settingsOpen, handleSettingsOpen, handleSettingsClose] = useModalState(false);
+  const [settingsOpen, handleSettingsOpen, handleSettingsClose] =
+    useModalState(false);
 
   // Markdown state
   const [url] = useState(
@@ -66,6 +69,7 @@ const Editor = (props) => {
     serverType + "://raspberrypi.local:9000"
   );
   const [socket, setSocket] = useState(null);
+  const [useHeading, setUseHeading] = useState(headingCodeWithRobot);
 
   // CodeMirror state
   const [sentCodeString, setSentCodeString] = useState(``);
@@ -396,8 +400,13 @@ const Editor = (props) => {
                     <Cancel className="ml-1" style={{ color: "darkred" }} />
                   )}
                 </div>
-                <Settings onClick={handleSettingsOpen}/>
-                <ConnectionSettingsModal modalOpen={settingsOpen} handleClose={handleSettingsClose} updateConnection={setIpAddress} currentConnection={ipAddress} />
+                <Settings onClick={handleSettingsOpen} />
+                <ConnectionSettingsModal
+                  modalOpen={settingsOpen}
+                  handleClose={handleSettingsClose}
+                  updateConnection={setIpAddress}
+                  currentConnection={ipAddress}
+                />
               </div>
               <div
                 className="w-full my-1 bg-red-600 py-1 rounded-sm shadow-md flex items-center justify-center text-white font-semibold"
