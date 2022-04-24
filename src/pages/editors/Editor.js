@@ -69,7 +69,7 @@ const Editor = (props) => {
     serverType + "://raspberrypi.local:9000"
   );
   const [socket, setSocket] = useState(null);
-  const [useHeading, setUseHeading] = useState(headingCodeWithRobot);
+  const [useHeading, setUseHeading] = useState(headingCodeWithoutRobot);
 
   // CodeMirror state
   const [sentCodeString, setSentCodeString] = useState(``);
@@ -426,7 +426,12 @@ const Editor = (props) => {
                 <div
                   className="w-full bg-blue-600 py-1 rounded-sm shadow-md flex items-center justify-center text-white font-semibold"
                   onClick={() => {
-                    pushPythonCode(socket, isConnected, recCodeString);
+                    pushPythonCode(
+                      socket,
+                      isConnected,
+                      recCodeString,
+                      useHeading
+                    );
                     xtermRef.current.terminal.clear();
                   }}
                 >
@@ -451,11 +456,16 @@ const Editor = (props) => {
                             mainFile = `${fileValue}\n`;
                           } else {
                             sentString += `${fileValue}\n`;
-                            i++;
                           }
+                          i++;
                         }
-                        sentString += mainFile;
-                        pushPythonCode(socket, isConnected, sentString);
+                        sentString = `${sentString}${mainFile}`;
+                        pushPythonCode(
+                          socket,
+                          isConnected,
+                          sentString,
+                          useHeading
+                        );
                         xtermRef.current.terminal.clear();
                       }
                     });
