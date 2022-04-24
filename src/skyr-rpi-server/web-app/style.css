@@ -1,0 +1,60 @@
+html, body {
+  font-size: 14px;
+  font-family: 'Roboto Condensed', sans-serif;
+  color: #333333;
+}
+
+body {
+  padding: 30px;
+  margin: 0px;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+/* Application title */
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  line-height: 1;
+}
+
+/* Buttons container */
+.buttons-container {
+  margin-top: 30px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 10px;
+  background-color: #dce4e8;  
+}
+
+.buttons-container__button {
+  display: flex;
+  width: 80px;
+  height: 60px;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0 20px;
+  cursor: pointer;
+
+  flex: 0 0 auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttons-container__button:hover{
+  opacity: 0.75;
+}
+
+.buttons-container__button--red { background-color: red; }
+.buttons-container__button--green { background-color: green; }
+.buttons-container__button--blue { background-color: blue; }
