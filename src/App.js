@@ -15,6 +15,7 @@ import PasswordReset from "./pages/authentication/PasswordReset";
 import Dashboard from "./pages/editors/Dashboard";
 import RequireAuth from "./pages/authentication/RequireAuth";
 import NewProjectInterstitialPage from "./pages/editors/NewProject";
+import InitializeUser from "./pages/authentication/InitializeUser";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route exact path="/signup" element={<SignUp />} />
         <Route exact path="/confirm" element={<Confirmation />} />
         <Route exact path="/passwordreset" element={<PasswordReset />} />
+        <Route exact path="/initializeuser" element={<InitializeUser />} />
         <Route
           exact
           path="/dashboard"

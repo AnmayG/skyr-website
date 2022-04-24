@@ -8,11 +8,11 @@ function socketLedToggle(socket, red, green, blue) {
   });
 }
 
-function pushPythonCode(socket, isConnected, recCodeString) {
+function pushPythonCode(socket, isConnected, recCodeString, headingCode) {
   if (!isConnected) alert("Server disconnected");
 
   socket.emit("python-push", {
-    code: `from lib import *\nfrom adafruit_servokit import ServoKit\nkit = ServoKit(channels=16)\n${recCodeString}`,
+    code: `${headingCode}${recCodeString}`,
   });
 }
 
