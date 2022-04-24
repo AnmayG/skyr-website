@@ -34,7 +34,7 @@ const SignUp = () => {
         });
         const user = userCredential.user;
         if (user.email !== null) {
-          navigate("/confirm");
+          navigate("/initializeuser");
         }
       })
       .catch((error) => {
