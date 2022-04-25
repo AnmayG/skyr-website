@@ -458,7 +458,7 @@ const Editor = (props) => {
                           if (i === 0) {
                             mainFile = `${fileValue}\n`;
                           } else {
-                            sentString += `${fileValue}\n`;
+                            sentString = `${fileValue}\n${sentString}`;
                           }
                           i++;
                         }
