@@ -27,10 +27,13 @@ import RenameModal from "../../components/code-editor/modals/RenameModal";
 import ConnectionSettingsModal from "../../components/code-editor/modals/ConnectionSettingsModal";
 import useModalState from "../../components/code-editor/modals/useModalState";
 import { Button } from "@mui/material";
-const sampleCode = `# move forward for 1 second
-move(kit, 1, 0.05, -0.12, -0.1)
-# turn for 1 second
-turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
+const sampleCode = `# move forward at full power for 1 second
+move(kit=kit, delay=1, power=1)
+# turn at full power for 1 second
+turn(kit=kit, delay=1, motor=1, power=1)
+# spin at full power for one second
+spin_turn(kit, delay=1, power=1)
+`;
 const headingCodeWithRobot = `from lib import *\nfrom adafruit_servokit import ServoKit\nkit = ServoKit(channels=16)\n`;
 const headingCodeWithoutRobot = `from lib import *\nfrom adafruit_servokit import ServoKit\n`;
 
@@ -69,7 +72,7 @@ const Editor = (props) => {
     serverType + "://raspberrypi.local:9000"
   );
   const [socket, setSocket] = useState(null);
-  const [useHeading, setUseHeading] = useState(headingCodeWithoutRobot);
+  const [useHeading, setUseHeading] = useState(headingCodeWithRobot);
 
   // CodeMirror state
   const [sentCodeString, setSentCodeString] = useState(``);
