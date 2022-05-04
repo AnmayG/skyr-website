@@ -29,7 +29,7 @@ import useModalState from "../../components/code-editor/modals/useModalState";
 import { Button } from "@mui/material";
 const sampleCode = `# move forward at full power for 1 second
 move(kit=kit, delay=1, power=1)
-# turn at full power for 1 second
+# turn motor 1 at full power for 1 second
 turn(kit=kit, delay=1, motor=1, power=1)
 # spin at full power for one second
 spin_turn(kit, delay=1, power=1)

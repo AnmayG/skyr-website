@@ -7,10 +7,13 @@ import {
   addDocumentWithId,
   addDocumentWithPathWithId,
 } from "../../interfaces/FirestoreInterface";
-const sampleCode = `# move forward for 1 second
-move(kit, 1, 0.05, -0.12, -0.1)
-# turn for 1 second
-turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
+const sampleCode = `# move forward at full power for 1 second
+move(kit=kit, delay=1, power=1)
+# turn motor 1 at full power for 1 second
+turn(kit=kit, delay=1, motor=1, power=1)
+# spin at full power for one second
+spin_turn(kit, delay=1, power=1)
+`;
 
 function NewProjectInterstitialPage() {
   const overallRef = ref(rdb, `/projects/`);

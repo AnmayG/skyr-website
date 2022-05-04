@@ -9,7 +9,7 @@ function socketLedToggle(socket, red, green, blue) {
 }
 
 function pushPythonCode(socket, isConnected, recCodeString, headingCode) {
-  if (!isConnected) alert("Server disconnected");
+  if (!isConnected) alert("Robot disconnected");
 
   socket.emit("python-push", {
     code: `${headingCode}${recCodeString}`,
@@ -17,7 +17,7 @@ function pushPythonCode(socket, isConnected, recCodeString, headingCode) {
 }
 
 function disconnect(socket, isConnected) {
-  if (!isConnected) alert("Server disconnected");
+  if (!isConnected) alert("Robot disconnected");
 
   socket.emit("python-kill", {
     command: "stop",
