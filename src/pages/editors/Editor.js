@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/general/Navbar";
 import CodeEditor from "../../components/code-editor/CodeEditor";
-import Markdown from "../../components/code-editor/Markdown";
+import Markdown from "../../components/markdown-tabs/Markdown";
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import { rdb } from "../../firebase";
@@ -26,7 +26,8 @@ import { FitAddon } from "xterm-addon-fit";
 import RenameModal from "../../components/code-editor/modals/RenameModal";
 import ConnectionSettingsModal from "../../components/code-editor/modals/ConnectionSettingsModal";
 import useModalState from "../../components/code-editor/modals/useModalState";
-import { Button } from "@mui/material";
+import BasicTabs from "../../components/markdown-tabs/TabView";
+import { Button, Tab, Tabs } from "@mui/material";
 const sampleCode = `# move forward at full power for 1 second
 move(kit=kit, delay=1, power=1)
 # turn motor 1 at full power for 1 second
@@ -59,11 +60,6 @@ const Editor = (props) => {
   // Settings Modal State
   const [settingsOpen, handleSettingsOpen, handleSettingsClose] =
     useModalState(false);
-
-  // Markdown state
-  const [url] = useState(
-    "https://firebasestorage.googleapis.com/v0/b/skyrobotics-fc578.appspot.com/o/tutorials%2Ftutorial-1.md?alt=media&token=24b05721-9dd7-4204-9f25-1739f37b2709"
-  );
 
   // Connection state
   const [isConnected, setConnected] = useState(false);
@@ -348,14 +344,15 @@ const Editor = (props) => {
             </div>
 
             {/* Markdown */}
-            <div className="h-[70vh] w-[30vw]">
-              <div className="flex flex-col h-[5vh] w-full justify-center bg-slate-700 text-white">
+            <div className="h-[70vh] w-[30vw] border-4">
+              <BasicTabs />
+              {/* <div className="flex flex-col h-[5vh] w-full justify-center bg-slate-700 text-white">
                 <div className="mx-2 text-lg">Tutorials</div>
-              </div>
+              </div> */}
               {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
-              <div className="h-full w-full overflow-y-auto border-4 border-gray-300 border-y-0">
+              {/* <div className="h-full w-full overflow-y-auto border-4 border-gray-300 border-y-0">
                 <Markdown downloadUrl={url} />
-              </div>
+              </div> */}
             </div>
           </Split>
 

@@ -191,7 +191,7 @@ const Navbar = () => {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              <MenuItem>
+              {/* <MenuItem>
                 <Avatar /> Your Account
               </MenuItem>
               <Divider />
@@ -200,7 +200,7 @@ const Navbar = () => {
                   <Settings fontSize="small" />
                 </ListItemIcon>
                 Settings
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem
                 onClick={() => {
                   // console.log("here")
