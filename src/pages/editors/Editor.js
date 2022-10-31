@@ -26,16 +26,16 @@ import { FitAddon } from "xterm-addon-fit";
 import RenameModal from "../../components/code-editor/modals/RenameModal";
 import ConnectionSettingsModal from "../../components/code-editor/modals/ConnectionSettingsModal";
 import useModalState from "../../components/code-editor/modals/useModalState";
-import BasicTabs from "../../components/markdown-tabs/TabView";
+import TabView from "../../components/markdown-tabs/TabView";
 import { Button, Tab, Tabs } from "@mui/material";
-const sampleCode = `# move forward at full power for 1 second
-move(kit=kit, delay=1, power=1)
-# turn motor 1 at full power for 1 second
-turn(kit=kit, delay=1, motor=1, power=1)
-# spin at full power for one second
-spin_turn(kit, delay=1, power=1)
-`;
-const headingCodeWithRobot = `from lib import *\nfrom adafruit_servokit import ServoKit\nkit = ServoKit(channels=16)\n`;
+// const sampleCode = `# move forward at full power for 1 second
+// move(kit=kit, delay=1, power=1)
+// # turn motor 1 at full power for 1 second
+// turn(kit=kit, delay=1, motor=1, power=1)
+// # spin at full power for one second
+// spin_turn(kit, delay=1, power=1)
+// `;
+const headingCodeWithRobot = `from libZ import *\nfrom adafruit_servokit import ServoKit\nkit = ServoKit(channels=16)\n`;
 const headingCodeWithoutRobot = `from lib import *\nfrom adafruit_servokit import ServoKit\n`;
 
 // TODO: Refactor into multiple components; currently all in one in order to minimize prop drilling
@@ -161,15 +161,12 @@ const Editor = (props) => {
 
   // File Management
   function addFile() {
-    var newFileRef = push(projRef, { name: "Untitled", value: sampleCode });
+    var newFileRef = push(projRef, { name: "Untitled", value: "" });
     documentRefListRef.current.push(newFileRef);
-    setDocumentDataList([
-      ...documentDataList,
-      { name: "Untitled", value: sampleCode },
-    ]);
+    setDocumentDataList([...documentDataList, { name: "Untitled", value: "" }]);
     dbRef.current = newFileRef;
     setSelectedIndex(documentRefListRef.current.length - 2);
-    const data = sampleCode;
+    const data = "";
     setSentCodeString(data);
   }
 
@@ -344,8 +341,8 @@ const Editor = (props) => {
             </div>
 
             {/* Markdown */}
-            <div className="h-[70vh] w-[30vw] border-4">
-              <BasicTabs />
+            <div className="h-[75vh] w-[30vw]">
+              <TabView />
               {/* <div className="flex flex-col h-[5vh] w-full justify-center bg-slate-700 text-white">
                 <div className="mx-2 text-lg">Tutorials</div>
               </div> */}
