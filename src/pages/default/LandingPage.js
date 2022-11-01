@@ -4,6 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import DashboardIntro from "../../components/landing-page/DashboardIntro";
 import TutorialsIntro from "../../components/landing-page/TutorialsIntro";
 import Footer from "../../components/general/Footer";
+import QuotesIntro from "../../components/landing-page/QuotesIntro"
+import Stats from "../../components/landing-page/Stats";
+import SignUpCall from "../../components/landing-page/SignUpCall";
 
 function LandingPage() {
   return (
@@ -51,6 +54,9 @@ function LandingPage() {
       <IDEIntro />
       <DashboardIntro />
       <TutorialsIntro />
+      <QuotesIntro />
+      <Stats />
+      <SignUpCall />
       <Footer />
     </div>
   );

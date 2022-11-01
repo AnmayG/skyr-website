@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/general/Navbar";
 import CodeEditor from "../../components/code-editor/CodeEditor";
-import Markdown from "../../components/code-editor/Markdown";
+import Markdown from "../../components/markdown-tabs/Markdown";
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import { rdb } from "../../firebase";
@@ -26,12 +26,16 @@ import { FitAddon } from "xterm-addon-fit";
 import RenameModal from "../../components/code-editor/modals/RenameModal";
 import ConnectionSettingsModal from "../../components/code-editor/modals/ConnectionSettingsModal";
 import useModalState from "../../components/code-editor/modals/useModalState";
-import { Button } from "@mui/material";
-const sampleCode = `# move forward for 1 second
-move(kit, 1, 0.05, -0.12, -0.1)
-# turn for 1 second
-turn(kit, 1, 1, 0.05, -0.12, -0.1)`;
-const headingCodeWithRobot = `from lib import *\nfrom adafruit_servokit import ServoKit\nkit = ServoKit(channels=16)\n`;
+import TabView from "../../components/markdown-tabs/TabView";
+import { Button, Tab, Tabs } from "@mui/material";
+// const sampleCode = `# move forward at full power for 1 second
+// move(kit=kit, delay=1, power=1)
+// # turn motor 1 at full power for 1 second
+// turn(kit=kit, delay=1, motor=1, power=1)
+// # spin at full power for one second
+// spin_turn(kit, delay=1, power=1)
+// `;
+const headingCodeWithRobot = `from libZ import *\nfrom adafruit_servokit import ServoKit\nkit = ServoKit(channels=16)\n`;
 const headingCodeWithoutRobot = `from lib import *\nfrom adafruit_servokit import ServoKit\n`;
 
 // TODO: Refactor into multiple components; currently all in one in order to minimize prop drilling
@@ -56,11 +60,6 @@ const Editor = (props) => {
   // Settings Modal State
   const [settingsOpen, handleSettingsOpen, handleSettingsClose] =
     useModalState(false);
-
-  // Markdown state
-  const [url] = useState(
-    "https://firebasestorage.googleapis.com/v0/b/skyrobotics-fc578.appspot.com/o/tutorials%2Ftutorial-1.md?alt=media&token=24b05721-9dd7-4204-9f25-1739f37b2709"
-  );
 
   // Connection state
   const [isConnected, setConnected] = useState(false);
@@ -162,15 +161,12 @@ const Editor = (props) => {
 
   // File Management
   function addFile() {
-    var newFileRef = push(projRef, { name: "Untitled", value: sampleCode });
+    var newFileRef = push(projRef, { name: "Untitled", value: "" });
     documentRefListRef.current.push(newFileRef);
-    setDocumentDataList([
-      ...documentDataList,
-      { name: "Untitled", value: sampleCode },
-    ]);
+    setDocumentDataList([...documentDataList, { name: "Untitled", value: "" }]);
     dbRef.current = newFileRef;
     setSelectedIndex(documentRefListRef.current.length - 2);
-    const data = sampleCode;
+    const data = "";
     setSentCodeString(data);
   }
 
@@ -345,14 +341,15 @@ const Editor = (props) => {
             </div>
 
             {/* Markdown */}
-            <div className="h-[70vh] w-[30vw]">
-              <div className="flex flex-col h-[5vh] w-full justify-center bg-slate-700 text-white">
+            <div className="h-[75vh] w-[30vw]">
+              <TabView />
+              {/* <div className="flex flex-col h-[5vh] w-full justify-center bg-slate-700 text-white">
                 <div className="mx-2 text-lg">Tutorials</div>
-              </div>
+              </div> */}
               {/* <StorageRequests setUrl={setUrl} className="p-2"/> */}
-              <div className="h-full w-full overflow-y-auto border-4 border-gray-300 border-y-0">
+              {/* <div className="h-full w-full overflow-y-auto border-4 border-gray-300 border-y-0">
                 <Markdown downloadUrl={url} />
-              </div>
+              </div> */}
             </div>
           </Split>
 
@@ -426,7 +423,12 @@ const Editor = (props) => {
                 <div
                   className="w-full bg-blue-600 py-1 rounded-sm shadow-md flex items-center justify-center text-white font-semibold"
                   onClick={() => {
-                    pushPythonCode(socket, isConnected, recCodeString);
+                    pushPythonCode(
+                      socket,
+                      isConnected,
+                      recCodeString,
+                      useHeading
+                    );
                     xtermRef.current.terminal.clear();
                   }}
                 >
@@ -450,12 +452,17 @@ const Editor = (props) => {
                           if (i === 0) {
                             mainFile = `${fileValue}\n`;
                           } else {
-                            sentString += `${fileValue}\n`;
-                            i++;
+                            sentString = `${fileValue}\n${sentString}`;
                           }
+                          i++;
                         }
-                        sentString += mainFile;
-                        pushPythonCode(socket, isConnected, sentString);
+                        sentString = `${sentString}${mainFile}`;
+                        pushPythonCode(
+                          socket,
+                          isConnected,
+                          sentString,
+                          useHeading
+                        );
                         xtermRef.current.terminal.clear();
                       }
                     });
