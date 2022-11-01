@@ -69,29 +69,6 @@ const Navbar = () => {
         >
           SkyRobotics
         </Link>
-        {/* <div className="text-center mr-8">
-          <Link style={{ textDecoration: "none" }} to="/aboutus">
-            About Us
-          </Link>
-        </div>
-        <div className="text-center mr-8">
-          <Link
-            style={{ textDecoration: "none" }}
-            className="text-base"
-            to="/courses"
-          >
-            Courses
-          </Link>
-        </div>
-        <div className="text-center mr-8">
-          <Link
-            style={{ textDecoration: "none" }}
-            className="text-base"
-            to="/community"
-          >
-            Community
-          </Link>
-        </div> */}
       </div>
       <div className="flex justify-evenly items-center whitespace-nowrap">
         <div
